@@ -1,52 +1,46 @@
-@import url("https://fonts.googleapis.com/css2?family=Roboto&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Lexend&display=swap");
-@import url("https://fonts.cdnfonts.com/css/anurati");
+@import url('https://fonts.googleapis.com/css2?family=Archivo+Black&display=swap');
 @import "tailwindcss";
-
+@custom-variant dark (&:where([data-theme=dark], [class=dark] *));
 @plugin "daisyui" {
   themes: all;
-}
+} 
 
-@theme {
-  --font-roboto: "Roboto", sans-serif;
-  --font-lexend: "Lexend", sans-serif;
-  --font-anurati: "Anurati", sans-serif;
-}
-
+/* Enhanced scrollbar hiding for all browsers */
 .scrollbar-hide {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+  -ms-overflow-style: none !important;  /* IE and Edge */
+  scrollbar-width: none !important;     /* Firefox */
+  overflow: -moz-scrollbars-none;       /* Old Firefox */
+  -webkit-overflow-scrolling: touch;    /* Smooth scrolling on iOS */
 }
 
 .scrollbar-hide::-webkit-scrollbar {
-  display: none;
+  display: none !important;             /* Chrome, Safari, Opera */
+  width: 0 !important;
+  height: 0 !important;
+  background: transparent !important;    /* Optional: just make sure */
 }
 
-/* Simple animations that might be useful */
-@keyframes float {
-  0% {
-    transform: translateY(0) scale(1);
-  }
-  50% {
-    transform: translateY(-10px) scale(1.01);
-  }
-  100% {
-    transform: translateY(0) scale(1);
-  }
+/* Apply scrollbar hiding to html and body by default */
+html, body {
+  touch-action: pan-x pan-y;
+  -ms-touch-action: pan-x pan-y;
+  overscroll-behavior: none;
+  -ms-overflow-style: none !important;
+  scrollbar-width: none !important;
+  overflow: -moz-scrollbars-none;
+  -webkit-overflow-scrolling: touch;
 }
 
-@keyframes glow {
-  0% {
-    opacity: 0.2;
-    transform: scale(0.95);
-  }
-  50% {
-    opacity: 0.3;
-    transform: scale(1.05);
-  }
-  100% {
-    opacity: 0.2;
-    transform: scale(0.95);
-  }
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
 }
 
+.archivo-black-regular {
+  font-family: "Archivo Black", sans-serif;
+  font-weight: 800;
+  font-style: normal;
+  font-size: 48px;
+}

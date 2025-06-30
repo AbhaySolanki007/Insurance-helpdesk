@@ -1,126 +1,151 @@
-import Navbar from "./components/Navbar";
-import Chats from "./pages/Chats";
-import Error from "./components/Error";
-import { loginAction } from "./utils/Actions";
-import { useEffect, useState } from "react";
-import AdminDashboard from "./pages/Admin";
-import Policy from "./pages/Policy";
-import Profile from "./pages/Profile";
-import {
-  Hero,
-  Login,
-} from "./pages";
-import {
-  createBrowserRouter,
-  Navigate,
-  Outlet,
-  RouterProvider,
-  useParams,
-} from "react-router";
+import { useState, useEffect, useContext } from 'react';
+import { RouterProvider, createBrowserRouter, createRoutesFromElements, Route, Outlet } from 'react-router-dom';
+import Navbar from './components/Navbar';
+import { Context } from './context/ContextApi';
+import Login from './pages/Login';
+import Chats from './pages/Chats';
+import Hero from './pages/Hero';
+import Profile from './pages/Profile';
+import Video from './pages/Video';
+import Admin from './pages/Admin';
+import Error from './components/Error';
+import bgVideo from './assets/bg-blocks.mp4';
+import ChatLayout from './pages/Chat/components/ChatLayout';
+import ChatView from './pages/Chat/components/ChatView';
+import ChatHistory from './pages/Chat/components/ChatHistory';
+import Policy from './pages/Chat/components/Policy';
 
-// Create a layout component that includes the navbar and an outlet for the page content
-const RootLayout = () => {
+// Create a layout component that includes the navbar and background
+const RootLayout = ({ theme, toggleTheme, themePreference, updateThemePreference }) => {
   return (
-    <>
-      <Navbar />
-    <div className="h-screen flex flex-col scrollbar-hide" data-theme="lemonade">
-      <Outlet />
+    <div className="min-h-screen bg-white dark:bg-[#1e1e1e] text-slate-900 dark:text-white relative scrollbar-hide overflow-x-hidden">
+      {/* Background Video */}
+      <div className="fixed inset-0 w-full h-full z-0">
+        <video
+          autoPlay
+          loop
+          muted
+          className="absolute min-w-full min-h-full object-cover opacity-10 dark:opacity-5"
+        >
+          <source src={bgVideo} type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+      </div>
+
+      <div className="relative z-10 flex flex-col min-h-screen scrollbar-hide">
+        {/* Fixed Navbar */}
+        <Navbar
+          currentTheme={theme}
+          toggleTheme={toggleTheme}
+          themePreference={themePreference}
+          updateThemePreference={updateThemePreference}
+        />
+
+        {/* Main Content - Positioned below navbar */}
+        <main className="flex-1 mt-16 scrollbar-hide overflow-y-auto overflow-x-hidden">
+          <Outlet context={{ theme, toggleTheme, themePreference, updateThemePreference }} />
+        </main>
+      </div>
     </div>
-    </>
   );
 };
 
-const ProtectedRoute = () => {
-  const { id } = useParams();
-  const [isAuthenticated, setIsAuthenticated] = useState(null);
+function App() {
+  // Initialize theme and preference from localStorage or default values
+  const [theme, setTheme] = useState(() => localStorage.getItem("theme") || "light");
+  const [themePreference, setThemePreference] = useState(() => localStorage.getItem("themePreference") || "auto");
+  const { signingOut } = useContext(Context);
 
+  // Custom function to update theme preference
+  const updateThemePreference = (newPreference) => {
+    setThemePreference(newPreference);
+    localStorage.setItem("themePreference", newPreference);
+  };
+
+  // Theme management
   useEffect(() => {
-    const storedUserId = localStorage.getItem("user_id");
-    const storedUserName = localStorage.getItem("name");
-    
-    if (storedUserId && storedUserName && storedUserId === id) {
-      setIsAuthenticated(true);
-    } else {
-      setIsAuthenticated(false);
+    const updateTheme = () => {
+      let selectedTheme = theme;
+
+      if (themePreference === "auto") {
+        const hour = new Date().getHours();
+        const isDay = hour >= 6 && hour < 18;
+        selectedTheme = isDay ? "light" : "dark";
+      } else {
+        selectedTheme = themePreference;
+      }
+
+      setTheme(selectedTheme);
+      localStorage.setItem("theme", selectedTheme);
+      document.documentElement.setAttribute("data-theme", selectedTheme);
+
+      if (selectedTheme === "dark") {
+        document.documentElement.classList.add("dark");
+      } else {
+        document.documentElement.classList.remove("dark");
+      }
+    };
+
+    updateTheme();
+
+    // Only set interval for auto mode
+    let interval;
+    if (themePreference === "auto") {
+      interval = setInterval(updateTheme, 60000); // Check every minute
     }
-  }, [id]);
 
-  if (isAuthenticated === null) {
-    return (
-      <div className="h-screen flex items-center justify-center">
-        <div className="loading loading-ring loading-lg"></div>
-      </div>
-    );
-  }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [themePreference, theme]);
 
-  return isAuthenticated ? <Outlet /> : <Navigate to="/" replace />;
-};
+  const toggleTheme = () => {
+    const newTheme = theme === "light" ? "dark" : "light";
+    setTheme(newTheme);
+    localStorage.setItem("theme", newTheme);
+    updateThemePreference(newTheme);
+  };
 
+  // Create the router configuration
+  const router = createBrowserRouter(
+    createRoutesFromElements(
+      <Route
+        element={
+          <RootLayout
+            theme={theme}
+            toggleTheme={toggleTheme}
+            themePreference={themePreference}
+            updateThemePreference={updateThemePreference}
+          />
+        }
+        errorElement={<Error />}
+      >
+        <Route path="/" element={<Hero />} />
+        <Route path="login" element={<Login />} />
+        {/* <Route path="chat/:id" element={<Chats />} />
+        <Route path="chat/:id/policy" element={<Chats />} /> */}
+        <Route path="/chat/:userId" element={<ChatLayout />}>
+          <Route index element={<ChatView />} />
+          <Route path="history" element={<ChatHistory />} />
+          <Route path="policy" element={<Policy />} />
+        </Route>
+        <Route path="profile" element={<Profile />} />
+        <Route path="video" element={<Video />} />
+        <Route path="admin" element={<Admin />} />
+      </Route>
+    )
+  );
 
-// Then modify your router configuration
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <RootLayout />,
-    errorElement: <Error />,
-    children: [
-      {
-        path: "",
-        element: <Hero />,
-      },
-      {
-        path: "login",
-        element: <Login />,
-        action: loginAction,
-      },
-      {
-        // Protected routes go under this path
-        element: <ProtectedRoute />,
-        children: [
-          {
-            path: "chat/:id",
-            element: <Chats />,
-          },
-          {
-            path: "chat/:id/policy",
-            element: <Chats />,
-          },
-          {
-            path: "policies/:id",
-            element: <Policy />,
-          },
-          {
-            path: "profile/:id",
-            element: <Profile />,
-          },
-          // {
-          //   path: "admin/:id",
-          //   element: <AdminDashboard />,
-          // },
-          // Add other protected routes here
-        ],
-      },
-    ],
-  },
-  {
-    // Protected routes go under this path
-    element: <ProtectedRoute />,
-    children: [
-      {
-        path: "admin/:id",
-        element: <AdminDashboard />,
-      },
-      // Add other protected routes here
-    ],
-  },
-  // {
-  //   path: "/admin",
-  //   element: <AdminDashboard />,
-  // },
-]);
-
-const App = () => {
-  return <RouterProvider router={router} />;
-};
+  return (
+    <>
+      {signingOut && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm">
+          <div className="animate-spin rounded-full h-10 w-10 border-4 border-white border-t-transparent"></div>
+        </div>
+      )}
+      <RouterProvider router={router} />
+    </>
+  );
+}
 
 export default App;

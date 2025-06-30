@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { 
   ChevronRight, 
   MessageSquare, 
@@ -14,7 +14,6 @@ import {
   PieChart,
   BarChart3,
   TrendingUp,
-  LineChart,
   Percent
 } from "lucide-react";
 import VideoBg5 from '../assets/videoplayback.mp4';
@@ -177,7 +176,7 @@ const Hero = () => {
   }, []);
 
   return (
-    <div ref={containerRef} className="relative scrollbar-hide w-full min-h-screen overflow-x-hidden overflow-y-auto pt-16">
+    <div ref={containerRef} className="relative scrollbar-hide w-full min-h-screen overflow-x-hidden overflow-y-auto">
       {/* Video Background */}
       <video
         className="fixed top-0 left-0 w-full h-full object-cover"

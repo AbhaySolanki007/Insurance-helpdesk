@@ -1,0 +1,123 @@
+import { useState, useContext, useEffect } from "react";
+import { useNavigate, useLocation, Outlet } from "react-router-dom";
+import { Plus, MessageSquare, FileText, ChevronDown, Globe } from "lucide-react";
+import { Context } from "../../../context/ContextApi";
+import Sidebar from "./Sidebar";
+
+function ChatLayout() {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [showChat, setShowChat] = useState(true);
+  const [showChatHistory, setShowChatHistory] = useState(false);
+  const { toggle, setToggle, theme } = useContext(Context);
+  const [isL2Panel, setIsL2Panel] = useState(false);
+  
+  // Language selection state and options
+  const [selectedLanguage, setSelectedLanguage] = useState("en");
+  const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false);
+
+  const languages = [
+    { code: "en", name: "English", flag: "🇺🇸" },
+    { code: "es", name: "Spanish", flag: "🇪🇸" },
+    { code: "pt-BR", name: "Portuguese", flag: "🇵🇹-🇧🇷" },
+  ];
+
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const handleLanguageSelect = (languageCode) => {
+    setSelectedLanguage(languageCode);
+    setIsLanguageDropdownOpen(false);
+  };
+
+  const getCurrentLanguage = () => {
+    return languages.find(lang => lang.code === selectedLanguage) || languages[0];
+  };
+
+  // Handle view changes
+  const startNewChat = () => {
+    const userId = localStorage.getItem("user_id");
+    setShowChat(true);
+    setShowChatHistory(false);
+    navigate(`/chat/${userId}`, { replace: true });
+  };
+
+  const handlePolicyClick = () => {
+    const userId = localStorage.getItem("user_id");
+    setShowChat(false);
+    setShowChatHistory(false);
+    navigate(`/chat/${userId}/policy`, { replace: true });
+  };
+
+  const handleChatClick = () => {
+    const userId = localStorage.getItem("user_id");
+    setShowChat(true);
+    setShowChatHistory(false);
+    navigate(`/chat/${userId}`, { replace: true });
+  };
+
+  const handleChatHistoryClick = () => {
+    const userId = localStorage.getItem("user_id");
+    setShowChatHistory(true);
+    setShowChat(false);
+    navigate(`/chat/${userId}/history`, { replace: true });
+  };
+
+  // Effect to sync URL with view state
+  useEffect(() => {
+    const userId = localStorage.getItem("user_id");
+    if (!userId) return;
+
+    if (location.pathname.endsWith('/policy')) {
+      setShowChat(false);
+      setShowChatHistory(false);
+    } else if (location.pathname.endsWith('/history')) {
+      setShowChatHistory(true);
+      setShowChat(false);
+    } else if (location.pathname === `/chat/${userId}`) {
+      setShowChat(true);
+      setShowChatHistory(false);
+    }
+  }, [location.pathname]);
+
+  return (
+    <div className="flex h-[calc(100vh-64px)] bg-white dark:bg-[#1e1e1e]">
+      <Sidebar 
+        isSidebarOpen={isSidebarOpen}
+        setIsSidebarOpen={setIsSidebarOpen}
+        startNewChat={startNewChat}
+        handleChatClick={handleChatClick}
+        handlePolicyClick={handlePolicyClick}
+        handleChatHistoryClick={handleChatHistoryClick}
+        showChat={showChat}
+        showChatHistory={showChatHistory}
+        isL2Panel={isL2Panel}
+        setIsL2Panel={setIsL2Panel}
+        toggle={toggle}
+        setToggle={setToggle}
+        languages={languages}
+        selectedLanguage={selectedLanguage}
+        isLanguageDropdownOpen={isLanguageDropdownOpen}
+        setIsLanguageDropdownOpen={setIsLanguageDropdownOpen}
+        getCurrentLanguage={getCurrentLanguage}
+        handleLanguageSelect={handleLanguageSelect}
+      />
+
+      {/* Main Content Area */}
+      <div 
+        className={`flex-1 ${isSidebarOpen ? 'ml-72' : 'ml-20'} relative h-[calc(100vh-64px)]`}
+      >
+        <Outlet context={{ 
+          selectedLanguage,
+          isL2Panel,
+          setIsL2Panel,
+          showChat,
+          showChatHistory,
+          theme,
+          isSidebarOpen
+        }} />
+      </div>
+    </div>
+  );
+}
+
+export default ChatLayout; 

@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useContext } from "react";
-import { Send, Mic, StopCircle, MessageSquare, User } from "lucide-react";
+import { Send, Mic, StopCircle, MessageSquare, User, ArrowDown } from "lucide-react";
 import { Context } from "../../../context/ContextApi";
 import MarkdownRenderer from "../../../components/MarkdownRenderer";
 import { useOutletContext } from "react-router-dom";
@@ -16,6 +16,7 @@ function ChatView() {
   const { toggle, setToggle, setOnChat } = useContext(Context);
   const [isTyping, setIsTyping] = useState(false);
   const [isThinking, setIsThinking] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
   const [manualInput, setManualInput] = useState("");
 
   const {
@@ -43,21 +44,22 @@ function ChatView() {
     setToggle,
     setIsL2Panel,
     isChatStarted,
-    displayValue
+    displayValue,
+    setIsThinking
   });
 
   const handleSend = async (e) => {
     e.preventDefault();
-    if (isTyping || isThinking) return;
+    if (isTyping || isProcessing) return;
     
     const currentInput = displayValue.trim();
     if (!currentInput) return;
 
     try {
-      setIsThinking(true);
+      setIsProcessing(true);
       await originalHandleSend(e);
     } finally {
-      setIsThinking(false);
+      setIsProcessing(false);
     }
   };
 
@@ -87,7 +89,7 @@ function ChatView() {
   const handleKeyDown = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      if (!isTyping && !isThinking) {
+      if (!isTyping && !isProcessing) {
         handleSend(e);
       }
     }
@@ -131,24 +133,67 @@ function ChatView() {
               key={index}
               className={`flex ${msg.sender === "user" ? "justify-end" : "justify-start"}`}
             >
-              <div className={`flex items-start max-w-3xl mt-7 ${msg.sender === "user" ? "flex-row-reverse" : "flex-row"}`}>
-                <div
-                  className={`px-4 py-3 rounded-2xl backdrop-blur-sm ${
-                    msg.sender === "user"
-                      ? "bg-purple-200/20 dark:bg-purple-600/20 text-black dark:text-white border border-purple-200 dark:border-purple-500/20"
-                      : "bg-gray-100 dark:bg-white/5 text-black dark:text-white border border-gray-200 dark:border-white/5"
-                  }`}
-                >
-                  <MarkdownRenderer content={msg.text} />
+              {msg.isTransition ? (
+                <div className="w-full my-6 flex flex-col items-center gap-2">
+                  <div className="w-full border-t-2 border-dashed border-red-300 dark:border-red-500/30"></div>
+                  <div className="flex items-center gap-2 px-4 py-2 bg-red-50 dark:bg-red-500/10 rounded-full border border-red-200 dark:border-red-500/20">
+                    <ArrowDown className="w-4 h-4 text-red-500 dark:text-red-400" />
+                    <span className="text-sm font-medium text-red-600 dark:text-red-400">
+                      Transferring to L2 Support Agent
+                    </span>
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <div className={`flex items-start max-w-3xl mt-7 ${msg.sender === "user" ? "flex-row-reverse" : "flex-row"} gap-3`}>
+                  {/* Avatar Container */}
+                  <div className={`flex-shrink-0 ${msg.sender === "user" ? "ml-3" : "mr-3"}`}>
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                      msg.sender === "user" 
+                        ? "bg-purple-100 dark:bg-purple-500/20 text-purple-600 dark:text-purple-400 ring-2 ring-purple-200 dark:ring-purple-500/30"
+                        : msg.isL2
+                          ? "bg-red-100 dark:bg-red-500/20 text-red-600 dark:text-red-400 ring-2 ring-red-200 dark:ring-red-500/30"
+                          : "bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 ring-2 ring-emerald-200 dark:ring-emerald-500/30"
+                    }`}>
+                      {msg.sender === "user" ? (
+                        <User className="w-4 h-4" />
+                      ) : (
+                        <div className="text-xs font-semibold">
+                          {msg.isL2 ? 'L2' : 'L1'}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <div
+                    className={`px-4 py-3 rounded-2xl backdrop-blur-sm ${
+                      msg.sender === "user"
+                        ? "bg-purple-200/20 dark:bg-purple-600/20 text-black dark:text-white border border-purple-200 dark:border-purple-500/20"
+                        : "bg-gray-100 dark:bg-white/5 text-black dark:text-white border border-gray-200 dark:border-white/5"
+                    }`}
+                  >
+                    <MarkdownRenderer content={msg.text} />
+                  </div>
+                </div>
+              )}
             </div>
           ))}
 
-          {/* Thinking indicator */}
-          {isThinking && (
+          {/* Thinking indicator - only shown during initial processing */}
+          {isThinking && !isTyping && (
             <div className="flex justify-start mt-7">
-              <div className="flex items-start max-w-3xl">
+              <div className="flex items-start max-w-3xl gap-3">
+                <div className="flex-shrink-0 mr-3">
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                    isL2Panel
+                      ? "bg-red-100 dark:bg-red-500/20 text-red-600 dark:text-red-400 ring-2 ring-red-200 dark:ring-red-500/30"
+                      : "bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 ring-2 ring-emerald-200 dark:ring-emerald-500/30"
+                  }`}>
+                    <div className="text-xs font-semibold">
+                      {isL2Panel ? 'L2' : 'L1'}
+                    </div>
+                  </div>
+                </div>
+
                 <div className="px-4 py-3 rounded-2xl bg-gray-100 dark:bg-white/5 backdrop-blur-sm border border-gray-200 dark:border-white/5">
                   <div className="flex space-x-2">
                     <div className="w-2 h-2 bg-black/50 dark:bg-white/50 rounded-full animate-bounce"></div>
@@ -196,14 +241,14 @@ function ChatView() {
                 </button>
                 <button
                   onClick={handleSend}
-                  disabled={isTyping || isThinking || !displayValue.trim()}
+                  disabled={isTyping || isProcessing || !displayValue.trim()}
                   className={`p-2 rounded-lg transition-all ${
-                    isTyping || isThinking || !displayValue.trim()
+                    isTyping || isProcessing || !displayValue.trim()
                       ? "bg-purple-100 dark:bg-purple-600/10 text-purple-600 dark:text-purple-300 cursor-not-allowed opacity-70"
                       : "bg-purple-100 dark:bg-purple-600/20 hover:bg-purple-200 dark:hover:bg-purple-600/30 text-purple-600 dark:text-purple-300"
                   }`}
                 >
-                  {isTyping || isThinking ? (
+                  {isTyping || isProcessing ? (
                     <div className="flex items-center justify-center w-5 h-5">
                       <div className="w-4 h-4 border-2 border-purple-600 dark:border-purple-300 border-t-transparent rounded-full animate-spin"></div>
                     </div>

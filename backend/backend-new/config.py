@@ -23,7 +23,7 @@ PORT = int(os.getenv("PORT", "8001"))
 # Vector Store Paths
 FAQ_DB_PATH = os.getenv(
     "FAQ_DB_PATH",
-    r"D:\Cywarden\Insurance-Helpdesk_new\backend\backend-pythonNEW _Copy\Unified_Bot\data\faq_database",
+    r"C:\Projects\Insurance-Helpdesk-Internal\backend\backend-new\faq_database",
 )
 
 FAQ_COLLECTION_NAME = os.getenv("FAQ_COLLECTION_NAME", "FAQ_Article_Updated")
@@ -39,11 +39,11 @@ JIRA_PROJECT_KEY = os.getenv("JIRA_PROJECT_KEY")  # The key for your JIRA projec
 
 # PostgreSQL Database Settings
 DB_CONFIG = {
-    "host": os.getenv("DB_HOST", "localhost"),
-    "database": os.getenv("DB_NAME", "Testdb1"),
-    "user": os.getenv("DB_USER", "postgres"),
-    "password": os.getenv("DB_PASSWORD", "123"),
-    "port": os.getenv("DB_PORT", "5432"),
+    "host": os.getenv("DB_HOST"),
+    "database": os.getenv("DB_NAME"),
+    "user": os.getenv("DB_USER"),
+    "password": os.getenv("DB_PASSWORD"),
+    "port": os.getenv("DB_PORT"),
 }
 
 # Audio Settings

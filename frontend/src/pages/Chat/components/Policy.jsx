@@ -254,7 +254,7 @@ const Policy = ({ isSidebarOpen }) => {
                       </div>
                       <span className="text-gray-600 dark:text-slate-400 text-sm font-medium">Premium Amount</span>
                     </div>
-                    <div className="text-2xl font-bold text-gray-800 dark:text-white mb-1">₹{policy.premium_amount}</div>
+                    <div className="text-2xl font-bold text-gray-800 dark:text-white mb-1">${policy.premium_amount}</div>
                     <div className="flex items-center gap-1 text-green-600 dark:text-green-400 text-sm">
                       <TrendingUp className="h-3 w-3" />
                       <span>Annual</span>

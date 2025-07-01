@@ -129,7 +129,7 @@ function App() {
           <Route path="history" element={<ChatHistory />} />
           <Route path="policy" element={<Policy />} />
         </Route>
-        <Route path="profile" element={<Profile />} />
+        <Route path="profile/:id" element={<Profile />} />
         <Route path="video" element={<Video />} />
         <Route path="admin" element={<Admin />} />
       </Route>

@@ -122,8 +122,6 @@ function App() {
       >
         <Route path="/" element={<Hero />} />
         <Route path="login" element={<Login />} />
-        {/* <Route path="chat/:id" element={<Chats />} />
-        <Route path="chat/:id/policy" element={<Chats />} /> */}
         <Route path="/chat/:userId" element={<ChatLayout />}>
           <Route index element={<ChatView />} />
           <Route path="history" element={<ChatHistory />} />

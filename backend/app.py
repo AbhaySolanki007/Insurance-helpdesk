@@ -121,8 +121,19 @@ def chat():
         # 4. EXTRACT the final response and L2 status from the result.
         final_response = final_state["history"][-1]["output"]
         is_l2_now = final_state.get("is_l2_session", False)
+
+        # Filter out the is_l2_session field before saving to database
+        # This field is only for internal backend use, not for frontend display
+        filtered_history = []
+        for turn in final_state["history"]:
+            filtered_turn = {
+                "input": turn.get("input", ""),
+                "output": turn.get("output", ""),
+            }
+            filtered_history.append(filtered_turn)
+
         # This saves a complete copy of the conversation to your PostgreSQL DB
-        update_user_history(user_id, final_state["history"])
+        update_user_history(user_id, filtered_history)
 
         return jsonify(
             {"response": final_response, "user_id": user_id, "is_l2": is_l2_now}

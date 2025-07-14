@@ -59,7 +59,7 @@ const Navbar = ({ isSidebarOpen, currentTheme, toggleTheme }) => {
       );
       
       toast.success("Logged out successfully!");
-      navigate("/login");
+      navigate("/");
     } catch (error) {
       console.error("Logout error:", error);
       // Already cleared localStorage above, just redirect

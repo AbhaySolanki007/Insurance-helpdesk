@@ -31,7 +31,7 @@ function ChatView() {
     deepgramSocketRef
   } = useAudioRecording(selectedLanguage);
 
-  const displayValue = manualInput || `${finalTranscript}${interimTranscript ? ` ${interimTranscript}` : ''}`.trim();
+  const displayValue = manualInput || `${finalTranscript}${interimTranscript ?  `${interimTranscript}` : ''}`.trim();
 
   const { handleSend: originalHandleSend } = useChat({
     setIsTyping,
@@ -133,7 +133,6 @@ function ChatView() {
               key={index}
               className={`flex ${msg.sender === "user" ? "justify-end" : "justify-start"}`}
             >
-              {console.log("message in chatview:", msg)}
               {msg.isTransition ? (
                 <div className="w-full my-6 flex flex-col items-center gap-2">
                   <div className="w-full border-t-2 border-dashed border-red-300 dark:border-red-500/30"></div>
@@ -145,9 +144,9 @@ function ChatView() {
                   </div>
                 </div>
               ) : (
-                <div className={`flex items-start max-w-3xl mt-7 ${msg.sender === "user" ? "flex-row-reverse" : "flex-row"} gap-3`}>
+                  <div className={`flex items-start max-w-3xl mt-7 ${msg.sender === "user" ? "flex-row-reverse" : "flex-row"} gap-3`}>
                   {/* Avatar Container */}
-                  <div className={`flex-shrink-0 ${msg.sender === "user" ? "ml-3" : "mr-3"}`}>
+                  <div className={`flex-shrink-0 pt-2 ${msg.sender === "user" ? "ml-3" : "mr-3"}`}>
                     <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
                       msg.sender === "user" 
                         ? "bg-purple-100 dark:bg-purple-500/20 text-purple-600 dark:text-purple-400 ring-2 ring-purple-200 dark:ring-purple-500/30"
@@ -269,4 +268,4 @@ function ChatView() {
   );
 }
 
-export default ChatView; 
+export default ChatView;  

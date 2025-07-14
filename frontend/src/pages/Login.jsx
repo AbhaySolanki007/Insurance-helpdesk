@@ -201,6 +201,7 @@ const Login = () => {
                             placeholder="Enter your email"
                             className="w-full pl-12 pr-4 py-3 bg-white/40 dark:bg-gray-900/40 border border-slate-200/50 dark:border-white/[0.12] focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 dark:focus:ring-blue-400/20 dark:focus:border-blue-400 rounded-xl text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500 transition-all duration-300 backdrop-blur-sm outline-none"
                             required
+                            autoComplete="email"
                           />
                           {/* Icon Glow Effect */}
                           <div className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full opacity-0 group-focus-within:opacity-100 transition-opacity duration-300 bg-blue-500/20 dark:bg-blue-400/20 blur-lg -z-10"></div>

@@ -8,6 +8,9 @@ function ChatLayout() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [showChat, setShowChat] = useState(true);
   const [showChatHistory, setShowChatHistory] = useState(false);
+  const [selectedChat, setSelectedChat] = useState(null);
+  const [isViewingHistoryDetail, setIsViewingHistoryDetail] = useState(false);
+  const [chatSession, setChatSession] = useState(0);
   const { toggle, setToggle, theme } = useContext(Context);
   const [isL2Panel, setIsL2Panel] = useState(false);
   
@@ -38,6 +41,9 @@ function ChatLayout() {
     const userId = localStorage.getItem("user_id");
     setShowChat(true);
     setShowChatHistory(false);
+    setSelectedChat(null);
+    setIsViewingHistoryDetail(false);
+    setChatSession(s => s + 1);
     navigate(`/chat/${userId}`, { replace: true });
   };
 
@@ -45,6 +51,7 @@ function ChatLayout() {
     const userId = localStorage.getItem("user_id");
     setShowChat(false);
     setShowChatHistory(false);
+    setIsViewingHistoryDetail(false);
     navigate(`/chat/${userId}/policy`, { replace: true });
   };
 
@@ -52,6 +59,8 @@ function ChatLayout() {
     const userId = localStorage.getItem("user_id");
     setShowChat(true);
     setShowChatHistory(false);
+    setSelectedChat(null);
+    setIsViewingHistoryDetail(false);
     navigate(`/chat/${userId}`, { replace: true });
   };
 
@@ -60,6 +69,15 @@ function ChatLayout() {
     setShowChatHistory(true);
     setShowChat(false);
     navigate(`/chat/${userId}/history`, { replace: true });
+  };
+
+  const handleSelectChat = (chat) => {
+    const userId = localStorage.getItem("user_id");
+    setSelectedChat(chat);
+    setShowChat(true);
+    setShowChatHistory(false); // We will control highlighting with isViewingHistoryDetail
+    setIsViewingHistoryDetail(true);
+    navigate(`/chat/${userId}`, { replace: true });
   };
 
   // Effect to sync URL with view state
@@ -73,6 +91,8 @@ function ChatLayout() {
     } else if (location.pathname.endsWith('/history')) {
       setShowChatHistory(true);
       setShowChat(false);
+      setIsViewingHistoryDetail(false);
+      setSelectedChat(null);
     } else if (location.pathname === `/chat/${userId}`) {
       setShowChat(true);
       setShowChatHistory(false);
@@ -100,6 +120,7 @@ function ChatLayout() {
         setIsLanguageDropdownOpen={setIsLanguageDropdownOpen}
         getCurrentLanguage={getCurrentLanguage}
         handleLanguageSelect={handleLanguageSelect}
+        isViewingHistoryDetail={isViewingHistoryDetail}
       />
 
       {/* Main Content Area */}
@@ -113,7 +134,10 @@ function ChatLayout() {
           showChat,
           showChatHistory,
           theme,
-          isSidebarOpen
+          isSidebarOpen,
+          selectedChat,
+          handleSelectChat,
+          chatSession,
         }} />
       </div>
     </div>

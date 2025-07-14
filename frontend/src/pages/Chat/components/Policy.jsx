@@ -32,7 +32,7 @@ const Policy = ({ isSidebarOpen }) => {
   const [hoveredCard, setHoveredCard] = useState(null);
   const [activeTab, setActiveTab] = useState('all');
 
-  const baseURL = "http://192.168.10.3:8001";
+  const baseURL = "http://localhost:8001";
 
   const getStatusColor = (status) => {
     switch (status?.toLowerCase()) {

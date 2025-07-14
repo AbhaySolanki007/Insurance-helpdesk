@@ -19,7 +19,8 @@ function Sidebar({
   isLanguageDropdownOpen,
   setIsLanguageDropdownOpen,
   getCurrentLanguage,
-  handleLanguageSelect
+  handleLanguageSelect,
+  isViewingHistoryDetail
 }) {
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -84,7 +85,7 @@ function Sidebar({
             className={`w-full flex items-center ${
               isSidebarOpen ? 'justify-start pl-6' : 'justify-center'
             } ${
-              showChat && !showChatHistory
+              showChat && !showChatHistory && !isViewingHistoryDetail
                 ? 'bg-gray-200 dark:bg-white/10 text-gray-900 dark:text-white'
                 : 'text-gray-600 hover:bg-gray-200 dark:text-gray-400 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white'
             } transition-colors p-3 rounded-full`}
@@ -130,7 +131,7 @@ function Sidebar({
             className={`w-full flex items-center ${
               isSidebarOpen ? 'justify-start pl-6' : 'justify-center'
             } ${
-              showChatHistory
+              showChatHistory || isViewingHistoryDetail
                 ? 'bg-gray-200 dark:bg-white/10 text-gray-900 dark:text-white'
                 : 'text-gray-600 hover:bg-gray-200 dark:text-gray-400 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white'
             } transition-colors p-3 rounded-full`}

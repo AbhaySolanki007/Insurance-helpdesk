@@ -37,7 +37,7 @@ const useChat = ({
 
         // Initial API call - thinking phase
         const response = await axios.post(
-          // `${baseURL}/predict/${isL2Panel ? "l2" : "l1"}`,
+          // ${baseURL}/predict/${isL2Panel ? "l2" : "l1"},
           `${baseURL}/api/chat`,
           {
             query: displayValue,
@@ -93,7 +93,7 @@ const useChat = ({
         //   setIsTyping(false);
 
         //   // Get L2 response
-        //   const l2Response = await axios.post(`${baseURL}/predict/l2`, {
+        //   const l2Response = await axios.post(${baseURL}/predict/l2, {
         //     query: displayValue,
         //     user_id,
         //     language: selectedLanguage
@@ -142,4 +142,4 @@ const useChat = ({
   return { handleSend };
 };
 
-export default useChat; 
+export default useChat;

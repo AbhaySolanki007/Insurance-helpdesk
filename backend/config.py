@@ -8,6 +8,8 @@ load_dotenv()
 
 # API Keys
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
 # Email Settings
 SENDER_EMAIL = os.getenv("SENDER_EMAIL")
@@ -24,7 +26,7 @@ PORT = int(os.getenv("PORT", "8001"))
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 FAQ_DB_PATH = os.getenv("FAQ_DB_PATH", os.path.join(BASE_DIR, "faq_database"))
 
-FAQ_COLLECTION_NAME = os.getenv("FAQ_COLLECTION_NAME", "FAQ_Article_Updated")
+FAQ_COLLECTION_NAME = os.getenv("FAQ_COLLECTION_NAME", "faq_collection")
 
 # Google API Scopes
 SCOPES = ["https://www.googleapis.com/auth/gmail.send"]

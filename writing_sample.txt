@@ -1,0 +1,106 @@
+# Technical Report: A Tiered, Agentic AI System for Insurance Customer Support
+
+**Version:** 1.0
+**Date:** October 2023
+**Author:** AI Assistant
+
+---
+
+### **Executive Summary**
+
+This document provides a technical overview of the AI-powered Insurance Helpdesk, a sophisticated, multi-agent system designed to enhance customer service efficiency and scalability. The system employs a tiered support architecture, featuring a Level 1 (L1) agent for handling initial queries and a Level 2 (L2) agent for managing complex, escalated issues. This tiered approach optimizes resource usage by resolving common questions swiftly with a lightweight AI, while reserving a more powerful, tool-equipped AI for tasks requiring specialized actions like ticket creation and external communication.
+
+The architecture is built on a modern Python stack, leveraging the LangChain framework for agent creation, Google's Gemini models for language understanding, and a Flask-based backend for API orchestration. Key features include a Retrieval-Augmented Generation (RAG) pipeline for FAQ lookups, robust conversation history management, and a suite of secure, well-defined tools for interacting with external services like Jira and email.
+
+This report details the design of each agent, the escalation workflow between tiers, the core backend services, and the key AI concepts that ensure the system is both intelligent and reliable. It serves as a blueprint for the current implementation and a guide for future enhancements.
+
+---
+
+### **1. Introduction**
+
+Traditional customer support models in the insurance industry face significant challenges, including long wait times, inconsistent responses, and high operational costs. The Insurance Helpdesk project was initiated to address these challenges by developing an autonomous AI-driven system capable of providing instant, accurate, and context-aware support to users.
+
+The primary goal of this system is to create a seamless customer experience by automating the resolution of support queries. It achieves this by intelligently distinguishing between simple informational requests and complex problems, routing them to the appropriate AI agent to ensure an efficient and satisfactory resolution.
+
+This document will explore the system's architecture, from the high-level multi-agent design down to the specific implementation details of its components.
+
+---
+
+### **2. System Architecture**
+
+The helpdesk operates on a tiered, microservice-oriented architecture. The design separates concerns between frontline interaction, specialist problem-solving, and backend services, ensuring scalability and maintainability.
+
+#### **2.1. Architectural Overview: The L1/L2 Escalation Model**
+
+The core of the system is its two-tiered agent structure:
+
+*   **L1 Agent (The Frontline Responder):** The first point of contact for all user queries. It is designed to be fast and cost-effective, with the primary goal of answering common questions and identifying issues that require deeper intervention.
+*   **L2 Agent (The Specialist):** A more powerful and trusted agent that handles complex cases escalated from L1. It has access to a broader set of tools, allowing it to perform actions with external systems.
+
+The escalation path is managed by the frontend application, which monitors the L1 agent's responses. When the L1 agent outputs a specific trigger phrase (`"...L2...."`), the frontend intelligently switches to a dedicated endpoint to engage the L2 agent, ensuring a seamless transition for the user.
+
+#### **2.2. Level 1 (L1) Agent - The Frontline Responder**
+
+As defined in `backend/ai/L1_agent.py`, the L1 agent is built to be a conversational, info-gathering entity.
+
+*   **Technology:** It utilizes LangChain's `create_react_agent` function with a `gemini-1.5-flash-latest` model from Google. The ReAct (Reason+Act) framework allows the agent to think step-by-step, choose a tool, and observe the outcome before proceeding.
+*   **Prompting:** The agent's system prompt strictly defines its persona as a "friendly and helpful insurance support assistant." It is instructed to use its tools intelligently and, most importantly, to escalate when it detects keywords like "complain," "frustrated," or if the problem's complexity exceeds its capabilities.
+*   **Scoped Tools:** The L1 agent's capabilities are intentionally limited to prevent unintended actions. It has access to three primary tools:
+    1.  `faq_search`: To answer general knowledge questions.
+    2.  `get_user_data`: To retrieve basic user profile information.
+    3.  `get_policy_data`: To fetch details about the user's insurance policies.
+
+#### **2.3. Level 2 (L2) Agent - The Specialist**
+
+When a case is escalated, the L2 agent takes over. Its design, found in `backend/ai/L2_agent.py`, is focused on action-oriented problem resolution.
+
+*   **Technology:** Like L1, it is a ReAct agent built with LangChain, but it is designed to operate with more complex instructions and a wider array of tools.
+*   **Prompting & Workflow:** The L2 prompt is highly structured. It expects an `{escalation_summary}` to get immediate context from the L1 interaction, preventing users from repeating themselves. Its workflow is explicit: first, converse to gather details for a ticket; second, confirm the details with the user; and third, use the `create_ticket` tool *only* after confirmation. This human-in-the-loop validation is a critical safety and quality guardrail.
+*   **Expanded Tools:** The L2 agent possesses all L1 tools plus several powerful additions:
+    1.  `create_ticket`: To create a support ticket in an external system (Jira).
+    2.  `search_ticket`: To find the status of existing tickets.
+    3.  `send_email`: To communicate with the user via email for follow-ups.
+
+#### **2.4. Orchestration and Backend Logic (`app.py`)**
+
+The Flask application in `backend/app.py` serves as the central orchestrator. It exposes two distinct API endpoints that map to the tiered architecture:
+
+*   **/predict/l1**: This endpoint receives the initial user query and routes it to the L1 agent. The response is sent back to the frontend, which is responsible for checking for the escalation trigger.
+*   **/predict/l2**: When the frontend detects the trigger, it calls this endpoint. The logic here is more sophisticated:
+    1.  It retrieves the full conversation history from the database.
+    2.  **Crucially, it generates a summary of the history.** This is achieved via a separate LLM call, and the resulting text is used to populate the `{escalation_summary}` variable required by the L2 agent's prompt.
+    3.  It then invokes the L2 agent, now fully equipped with the necessary context to resolve the complex issue.
+
+#### **2.5. Core Services and Integrations**
+
+The agents are supported by a set of robust backend services.
+
+*   **Unified Support Chain (RAG for FAQs):** As seen in `backend/ai/unified_chain.py`, this class provides the RAG-based search functionality for the `faq_search` tool. It uses a `Chroma` vector database to store embeddings of FAQ articles and Google's embedding models to find the most relevant articles for a given user query. This ensures that answers to common questions are consistent and drawn from a trusted source.
+*   **Agent Tools (`tools.py`):** This file acts as a factory for creating the toolsets for both agents. It demonstrates excellent software engineering practices:
+    *   **Pydantic Models:** Each tool's input is defined by a `Pydantic` model (e.g., `TicketCreateInput`). This ensures that the data passed from the LLM to the tool functions is structured and validated, preventing errors.
+    *   **Tool Wrapper:** A generic wrapper function handles input parsing, making the tools resilient to variations in the LLM's output format.
+*   **Service Integrations (`services/`):** The tools interface with dedicated service modules that encapsulate external API logic. For instance, `services/ticket_service.py` contains the code for interacting with the Jira API, abstracting these details away from the agent's logic.
+*   **Database and History Management (`database/models.py`):** The system persists the full conversation history for each user in a database. The `get_user_history` and `update_user_history` functions ensure that context is maintained across sessions and between agent escalations, which is fundamental to the system's coherence.
+
+---
+
+### **3. Key Technical Concepts & Design Patterns**
+
+The implementation demonstrates several key design patterns for building robust agentic systems.
+
+*   **ReAct Framework:** Both agents use the Reason-Act (ReAct) pattern. This forces the LLM to "show its work" by generating a `Thought` before every `Action`. This makes the agent's behavior transparent and debuggable, as its reasoning process is explicit in the execution trace.
+*   **Prompt Engineering as Configuration:** The system's behavior is primarily defined through carefully crafted system prompts rather than hard-coded logic. This makes the system flexible. For example, changing the L1 agent's escalation policy is a matter of updating its prompt, not rewriting code.
+*   **Human-in-the-Loop:** The L2 agent's workflow for ticket creation is a prime example of a Human-in-the-Loop (HITL) pattern. By requiring user confirmation before creating a ticket, the system mitigates the risk of the AI taking an incorrect or undesirable autonomous action, thereby building user trust.
+*   **Tiered Responsibility:** The L1/L2 split is a strategic design choice that reflects a principle of least privilege and optimized cost. The L1 agent is simple and cheap to run, handling the bulk of interactions. The more capable (and expensive) L2 agent is only engaged when necessary, ensuring that its powerful tools are used judiciously.
+
+---
+
+### **4. Conclusion and Future Work**
+
+The Insurance Helpdesk system represents a well-architected, production-ready AI agent solution. By combining a tiered agent design with robust backend services and modern AI development patterns, it effectively automates customer support while maintaining high standards of reliability and user trust.
+
+Potential avenues for future development include:
+
+*   **Advanced Orchestration:** Migrating from the frontend-driven escalation to a backend-driven orchestration framework like LangGraph. This would centralize the routing logic, making the system more robust and removing that responsibility from the client application.
+*   **Expanded Toolset:** Adding more tools to the L2 agent, such as the ability to process claims directly or update user information in the database.
+*   **Multi-Modal Support:** Integrating multi-modal capabilities, allowing users to interact via voice or by uploading documents/images for analysis, as described in recent advancements in AI customer service solutions. 

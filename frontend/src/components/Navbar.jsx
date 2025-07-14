@@ -48,7 +48,7 @@ const Navbar = ({ isSidebarOpen, currentTheme, toggleTheme }) => {
       
       // Then attempt server logout
       const response = await axios.post(
-        "http://localhost:8001/api/v1/users/logout",
+        "http://localhost:8001/api/logout/",
         {},
         {
           headers: {

@@ -72,7 +72,9 @@ def get_policy_data(user_id: str) -> str:
   - Type: {policies.get('policy_type', 'N/A')}
   - Status: {policies.get('policy_status', 'N/A')}
   - Coverage: ${policies.get('coverage_amount', 0):,.2f}
-  - Premium: ${policies.get('premium_amount', 0):,.2f}"""
+  - Premium: ${policies.get('premium_amount', 0):,.2f}
+  - Full Policy Details:
+{policies.get('markdown_format', 'No detailed information available.')}"""
                 )
 
             # Join all the policy strings into a single response for the agent.

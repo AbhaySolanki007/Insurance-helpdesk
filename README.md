@@ -166,7 +166,7 @@ You will need two separate terminals to run both the backend and frontend server
   # Make sure your virtual environment is activated
   python app.py
   ```
-  The backend will be available at `http://127.0.0.1:5000`.
+  The backend will be available at `http://127.0.0.1:8001`.
 
 - **Terminal 2: Start the Frontend**
   ```bash

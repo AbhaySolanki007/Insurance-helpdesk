@@ -30,6 +30,7 @@ insurance_support/
     ├── __init__.py
     └── helpers.py          # 15. Helper Utilities: Contains shared functions, such as formatting conversation history for agent prompts.
 """
+
 # change viewed on git
 
 # 1. app.py
@@ -42,14 +43,20 @@ import traceback
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from psycopg2.extras import RealDictCursor
+from langchain_core.messages import HumanMessage, AIMessage
+from typing import List, Dict, Any
+from google.api_core import exceptions
+import sqlite3
+from langgraph.checkpoint.sqlite import SqliteSaver
 
 import config
 from database.db_utils import DB_POOL
 from database.models import init_db, get_user_history, update_user_history
 from ai.unified_chain import UnifiedSupportChain
-from ai.L1_agent import create_l1_agent_executor, process_l1_query
-from ai.L2_agent import create_l2_agent_executor, process_l2_query
-from utils.helpers import format_history_for_prompt
+from ai.L1_agent import create_l1_agent_executor
+from ai.L2_agent import create_l2_agent_executor
+from ai.Langgraph_module.graph_compiler import compile_graph
+
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -67,51 +74,71 @@ CORS(
     },
 )
 
-# Initialize support chain
-support_chain = UnifiedSupportChain()
 
+support_chain = UnifiedSupportChain()
 l1_agent_executor = create_l1_agent_executor(support_chain)
 l2_agent_executor = create_l2_agent_executor(support_chain)
 
 
-@app.route("/predict/l1", methods=["POST"])
-def predict_l1():
-    """L1 support endpoint using the new ReAct agent."""
+# Manually create a persistent connection to the SQLite database Langgraph.
+sqlite_conn = sqlite3.connect("checkpoints.sqlite", check_same_thread=False)
+# Instantiate the checkpointer by passing the connection object to its constructor.
+memory = SqliteSaver(conn=sqlite_conn)
+
+# --- Assemble and Compile the Graph (Langgraph---
+app_graph = compile_graph(l1_agent_executor, l2_agent_executor, memory)
+
+
+@app.route("/api/chat", methods=["POST"])
+def chat():
     data = request.get_json()
     query = data.get("query")
-    user_id = data.get("user_id")
+    user_id = data.get(
+        "user_id"
+    )  # We will use user_id  as the conversation's unique ID for LangGraph
     language = data.get("language", "en")
 
     if not query or not user_id:
         return jsonify({"error": "Missing 'query' or 'user_id'."}), 400
 
-    # Call the new L1 processor, passing the L1 agent
-    result = process_l1_query(query, user_id, language, l1_agent_executor)
+    # 1. DEFINE the unique ID for the conversation thread in sqlite checkpoint.
+    #    This is the key that LangGraph will use to load and save the state.
+    config = {"configurable": {"thread_id": user_id}}
 
-    if "error" in result:
-        return jsonify(result), 500
-    return jsonify(result)
+    # 2. PREPARE only the new inputs for this turn.
+    #    The 'history' is now managed automatically by the checkpointer.
+    inputs = {
+        "query": query,
+        "user_id": user_id,
+        "language": language,
+    }
 
+    try:
+        # 3. INVOKE the stateful graph. LangGraph will automatically load the
+        #    previous state for this `thread_id` and resume where it left off.
+        final_state = app_graph.invoke(inputs, config=config)
 
-@app.route("/predict/l2", methods=["POST"])
-def predict_l2():
-    """L2 support endpoint"""
-    data = request.get_json()
-    user_id = data.get("user_id")
-    query = data.get("query")
-    language = data.get("language", "en")
+        # 4. EXTRACT the final response and L2 status from the result.
+        final_response = final_state["history"][-1]["output"]
+        is_l2_now = final_state.get("is_l2_session", False)
+        # This saves a complete copy of the conversation to your PostgreSQL DB
+        update_user_history(user_id, final_state["history"])
 
-    if not query or not user_id:
-        return jsonify({"error": "Missing 'query' or 'user_id'."}), 400
+        return jsonify(
+            {"response": final_response, "user_id": user_id, "is_l2": is_l2_now}
+        )
 
-    # Call the L2 processor, passing the L2 agent
-    result = process_l2_query(
-        query, user_id, language, support_chain, l2_agent_executor
-    )
-
-    if "error" in result:
-        return jsonify(result), 500
-    return jsonify(result)
+    except exceptions.ServiceUnavailable as e:
+        # This will now only be reached if all 3 retries fail
+        print(f"API is overloaded and all retries failed: {e}")
+        return (
+            jsonify(
+                {
+                    "response": "I apologize, but our AI services are currently experiencing high demand. Please try again in a few moments."
+                }
+            ),
+            503,
+        )
 
 
 @app.route("/api/login/", methods=["POST"])
@@ -147,11 +174,36 @@ def login():
 
         if password == stored_password:
             print("[SUCCESS] Login successful.")
-            # Reset history on successful login
+            user_id_to_clear = user["user_id"]
+
+            # 1. Reset PostgreSQL history on successful login
+            print(f"[INFO] Clearing PostgreSQL history for user_id: {user_id_to_clear}")
             cur.execute(
-                "UPDATE users SET history = '[]' WHERE user_id = %s", (user["user_id"],)
+                "UPDATE users SET history = '[]' WHERE user_id = %s",
+                (user_id_to_clear,),
             )
             conn.commit()
+
+            # 2. ADDED: Reset LangGraph checkpoint for the user to ensure a fresh start.
+            try:
+                print(
+                    f"[INFO] Clearing LangGraph checkpoint for thread_id: {user_id_to_clear}"
+                )
+                with sqlite_conn:
+                    sqlite_cursor = sqlite_conn.cursor()
+                    # The table is named 'checkpoints' and the key is 'thread_id'
+                    sqlite_cursor.execute(
+                        "DELETE FROM checkpoints WHERE thread_id = ?",
+                        (user_id_to_clear,),
+                    )
+                print(
+                    f"[SUCCESS] Cleared LangGraph checkpoint for thread_id: {user_id_to_clear}"
+                )
+            except sqlite3.Error as e:
+                # Log a warning but don't fail the login if the checkpoint can't be cleared
+                print(
+                    f"[WARNING] Could not clear LangGraph checkpoint for thread_id {user_id_to_clear}: {e}"
+                )
 
             return (
                 jsonify(

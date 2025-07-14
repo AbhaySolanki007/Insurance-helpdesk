@@ -1,5 +1,6 @@
 flask
 dotenv
+pandas
 langchain
 SpeechRecognition
 pyaudio
@@ -16,3 +17,5 @@ jira
 psycopg2
 langchain_groq
 langgraph
+langgraph-checkpoint-sqlite==2.0.10
+langsmith

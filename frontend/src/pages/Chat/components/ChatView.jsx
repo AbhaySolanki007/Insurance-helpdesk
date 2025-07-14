@@ -112,9 +112,9 @@ function ChatView() {
   }, []);
 
   useEffect(() => {
-    console.log('Current display value:', displayValue); // Debug log
-    console.log('Final transcript:', finalTranscript); // Debug log
-    console.log('Interim transcript:', interimTranscript); // Debug log
+    // console.log('Current display value:', displayValue); // Debug log
+    // console.log('Final transcript:', finalTranscript); // Debug log
+    // console.log('Interim transcript:', interimTranscript); // Debug log
     autoResizeTextarea();
   }, [displayValue, finalTranscript, interimTranscript]);
 
@@ -133,6 +133,7 @@ function ChatView() {
               key={index}
               className={`flex ${msg.sender === "user" ? "justify-end" : "justify-start"}`}
             >
+              {console.log("message in chatview:", msg)}
               {msg.isTransition ? (
                 <div className="w-full my-6 flex flex-col items-center gap-2">
                   <div className="w-full border-t-2 border-dashed border-red-300 dark:border-red-500/30"></div>

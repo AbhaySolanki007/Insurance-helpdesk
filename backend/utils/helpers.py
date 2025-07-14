@@ -1,23 +1,40 @@
 # 15. utils/helpers.py
 """Helper utilities for the application."""
-from typing import List, Dict
+from typing import List, Dict, Any
 
 
+# Define how many of the most recent conversation turns to include in the prompt.
+# A "turn" consists of one user input and one AI output.
+MAX_HISTORY_TURNS = 10
+
+
+# This function is now designed to work with a list of dictionaries from the database.
 def format_history_for_prompt(history: List[Dict[str, str]]) -> str:
     """
-    Formats a list of structured history turns into a single string for an LLM prompt.
-    Uses the last 5 turns to keep the context window manageable.
+    Formats a list of structured history turns from the database into a single
+    string for an LLM prompt, using only the most recent turns.
     """
     if not history:
         return "No previous conversation history."
 
-    # Use the last 5 interactions to avoid overly large prompts
+    # Get the last N turns of the conversation to keep the prompt concise.
+    recent_history = history[-MAX_HISTORY_TURNS:]
+
     entries = []
-    for turn in history[-5:]:
-        # Safely get 'input' and 'output', providing an empty string as a fallback
+    # We loop through the recent history only.
+    for turn in recent_history:
+        # Safely get 'input' and 'output' from each dictionary.
         user_message = turn.get("input", "")
         ai_message = turn.get("output", "")
-        entries.append(f"Human: {user_message}\nAI: {ai_message}")
+        is_l2_session = turn.get("is_l2_session", False)
+
+        # We only add non-empty messages to the prompt history.
+        if user_message:
+            entries.append(f"Human: {user_message}")
+
+        # We filter out the internal "L2...." escalation message from the prompt.
+        if ai_message and "L2...." not in ai_message:
+            entries.append(f"AI: {ai_message}")
 
     return "\n\n".join(entries)
 

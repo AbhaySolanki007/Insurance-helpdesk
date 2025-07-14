@@ -1,15 +1,14 @@
 # 12 ai/l1_agent.py
 """Agent configuration for L1 support.
 with L1 prompts and all funtionalities of L1"""
+import os
 import config
 import traceback
 from typing import Dict, Any
 from langchain.agents import AgentExecutor, create_react_agent
 from langchain.prompts import PromptTemplate
 from langchain_google_genai import GoogleGenerativeAI
-
-from database.models import update_user_history, get_user_history
-from utils.helpers import format_history_for_prompt
+from langchain_groq import ChatGroq
 from ai.tools import create_tools
 
 
@@ -25,6 +24,12 @@ def create_l1_agent_executor(support_chain):
         temperature=0.6,
         max_retries=3,
     )
+    # llm = ChatGroq(
+    #     model="llama3-70b-8192",
+    #     groq_api_key=os.getenv("GROQ_API_KEY"),
+    #     temperature=0.5,
+    #     max_retries=3,
+    # )
 
     l1_prompt_template = """
 You are a friendly and helpful insurance support assistant for user_id: {user_id}.
@@ -49,8 +54,9 @@ Final Answer: the final answer to the original input question
     *   For off-topic queries (e.g., "what is the weather today?"), provide a natural response such as "Today's weather is sunny and pleasant!" and then kindly add, "I'd be happy to help if you have any questions about your policy or coverage."
     *   For general questions ("how do I file a claim?"), use `faq_search` first.
     *   For user-specific questions ("what policies do I have?", "what is my address?"), use `get_user_data` or `get_policy_data`. The input for these tools is just the user_id, which is provided to you.
-3.  **Escalate When Necessary:** If the user uses words like "complain", "frustrated", "angry", "escalate", "supervisor", or if their problem is too complex for an FAQ (like filing a complex claim or disputing a charge), you MUST respond with the exact phrase: "I'll connect you with a specialized L2 agent who can better assist. One moment please... L2...."
-4.  **Be Conversational:** If you don't have enough information, ask the user clarifying questions.
+3.  **Synthesize and Respond:** After using `faq_search` and reviewing the `Observation`, do not simply copy the text. As a helpful insurance agent, you must rephrase the information in your own words. Be conversational, polite, and answer the user's question directly based on the context you've gathered.
+4.  **Escalate When Necessary:** If the user uses words like "complain", "frustrated", "angry", "escalate", "supervisor", or if their problem is too complex for an FAQ (like filing a complex claim or disputing a charge), you MUST respond with the exact phrase: "I'll connect you with a specialized L2 agent who can better assist. One moment please... L2...."
+5.  **Be Conversational:** If you don't have enough information, ask the user clarifying questions.
 
 Begin!
 
@@ -65,37 +71,6 @@ Thought:{agent_scratchpad}
     agent = create_react_agent(llm, tools, prompt)
     return AgentExecutor(
         agent=agent, tools=tools, verbose=True, handle_parsing_errors=True
-    )
-
-
-def process_l1_query(
-    query: str, user_id: str, language: str, agent_executor
-) -> Dict[str, Any]:
-    """Processes an L1 query using the agent, with centralized history management."""
-    try:
-        # 1. Load history from the database
-        user_history = get_user_history(user_id)
-        # 2. Format history using the central helper function
-        history_text_for_prompt = format_history_for_prompt(user_history)
-
-        # 3. Process the query
-        response = agent_executor.invoke(
-            {
-                "input": query,
-                "user_id": user_id,
-                "language": language,
-                "chat_history": history_text_for_prompt,
-            }
-        )
-        output = response.get("output", "I'm sorry, I couldn't process that request.")
-        # 4. Update the history list
-        user_history.append({"input": query, "output": output})
-        # 5. Save the updated history back to the database
-        update_user_history(user_id, user_history)
-
-        return {"response": output, "user_id": user_id}
-
-    except Exception as e:
-        error_details = traceback.format_exc()
-        print(f"Error in L1 processing: {error_details}")
-        return {"error": str(e), "details": error_details, "user_id": user_id}
+    ).with_config(
+        {"run_name": "L1 Agent"}
+    )  # Pass the stream to the agent executor

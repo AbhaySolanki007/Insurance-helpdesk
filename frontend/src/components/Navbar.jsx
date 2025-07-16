@@ -10,6 +10,7 @@ import {
   User,
   Sun,
   Moon,
+  Shield,
 } from "lucide-react";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -21,7 +22,11 @@ const Navbar = ({ isSidebarOpen, currentTheme, toggleTheme }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const userId = localStorage.getItem("user_id");
-
+  const userEmail = localStorage.getItem("user_email");
+  
+  // Check if user is owner (you can change this email to your desired owner email)
+  const isOwner = userEmail === "v.vashisht@gmail.com"; // Change this to your desired owner email
+  
   // Check if we're in the chats section or on home page
   const isChatsSection = location.pathname.includes('/chats');
   const isHomePage = location.pathname === '/';
@@ -143,6 +148,17 @@ const Navbar = ({ isSidebarOpen, currentTheme, toggleTheme }) => {
                       <Settings className="mr-3 h-4 w-4" />
                       Chat
                     </Link>
+                    {isOwner && (
+                      <Link
+                        to="/admin"
+                        className={`flex items-center px-4 py-2 text-sm ${
+                          isHomePage ? 'text-slate-300 hover:bg-slate-700' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700'
+                        }`}
+                      >
+                        <Shield className="mr-3 h-4 w-4" />
+                        Admin Panel
+                      </Link>
+                    )}
                     <button
                       onClick={logoutUser}
                       className={`w-full flex items-center px-4 py-2 text-sm ${
@@ -219,6 +235,17 @@ const Navbar = ({ isSidebarOpen, currentTheme, toggleTheme }) => {
               <Settings className="h-4 w-4 mr-3" />
               Chat
             </Link>
+            {isOwner && (
+              <Link
+                to="/admin"
+                className={`flex items-center px-3 py-2 rounded-lg ${
+                  isHomePage ? 'text-slate-300 hover:bg-slate-700' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700'
+                }`}
+              >
+                <Shield className="h-4 w-4 mr-3" />
+                Admin Panel
+              </Link>
+            )}
             <button
               onClick={logoutUser}
               className={`w-full flex items-center px-3 py-2 rounded-lg ${

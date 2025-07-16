@@ -6,7 +6,7 @@ from typing import TypedDict, Annotated, List, Dict
 from langchain_core.messages import BaseMessage, AIMessage, HumanMessage
 from langchain_google_genai import GoogleGenerativeAI
 from langchain_groq import ChatGroq
-from utils.helpers import format_history_for_prompt
+from utils.helpers import format_history_for_prompt, format_full_history_for_summary
 
 
 # 1. Define the state "clipboard" that moves through the graph.
@@ -61,7 +61,7 @@ def l1_node(state: AgentState, agent_executor):
 def summarize_for_l2_node(state: AgentState):
     """Summarizes the conversation for a clean handoff to L2."""
     print("---EXECUTING SUMMARY NODE---")
-    history_text = format_history_for_prompt(state["history"])
+    history_text = format_full_history_for_summary(state["history"])
     summary_prompt = f"""
     Concisely summarize the following support conversation for an L2 agent.
     Focus on the user's main problem and the reason for escalation.

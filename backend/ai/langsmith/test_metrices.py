@@ -1,4 +1,4 @@
-from ai.langsmith.langsmith_cache import fetch_and_cache_all_metrics, get_cached_metric
+from langsmith_cache import fetch_and_cache_all_metrics, get_cached_metric
 
 # Fetch and cache all metrics
 fetch_and_cache_all_metrics()

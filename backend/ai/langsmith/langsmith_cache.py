@@ -1,7 +1,7 @@
 import os
 import sqlite3
 import json
-from datetime import datetime
+from datetime import datetime, timedelta
 from langsmith.client import Client  # Corrected import for LangSmith SDK
 import config
 
@@ -60,11 +60,54 @@ def set_cached_metric(cache_key, data):
     conn.close()
 
 
+def get_last_7_days():
+    """Get the last 7 days as a list of date strings"""
+    today = datetime.now().date()
+    dates = []
+    for i in range(6, -1, -1):  # 6 to 0, so we get last 7 days including today
+        date = today - timedelta(days=i)
+        dates.append(date.isoformat())
+    return dates
+
+
+def fill_missing_dates(data_list, metric_type="count"):
+    """Fill in missing dates with zero/default values"""
+    expected_dates = get_last_7_days()
+    date_map = {item["date"]: item for item in data_list}
+
+    filled_data = []
+    for date in expected_dates:
+        if date in date_map:
+            filled_data.append(date_map[date])
+        else:
+            # Create default entry based on metric type
+            if metric_type == "count":
+                filled_data.append({"date": date, "success": 0, "error": 0})
+            elif metric_type == "latency":
+                filled_data.append({"date": date, "p50": 0.0, "p99": 0.0})
+            elif metric_type == "rate":
+                filled_data.append({"date": date, "rate": 0.0})
+            elif metric_type == "cost":
+                filled_data.append({"date": date, "cost": 0.0})
+            elif metric_type == "tokens":
+                filled_data.append({"date": date, "count": 0})
+            elif metric_type == "tokens_per_trace":
+                filled_data.append({"date": date, "p50": 0.0, "p99": 0.0})
+            elif metric_type == "tool_breakdown":
+                filled_data.append({"date": date})
+
+    return filled_data
+
+
 # --- Metric Fetching Logic ---
 def fetch_and_cache_all_metrics():
     """
     Fetch all required metrics from LangSmith and cache them.
+    Only fetches data from the last 7 days for consistent frontend graphing.
     """
+    # Calculate date range for last 7 days
+    start_date = datetime.now() - timedelta(days=7)
+
     # Initialize LangSmith client
     client = Client(
         api_key=os.getenv(
@@ -78,6 +121,7 @@ def fetch_and_cache_all_metrics():
             client.list_runs(
                 run_type="chain",
                 project_name=os.getenv("LANGSMITH_PROJECT", "insurance-helpdesk"),
+                start_time=start_date,
                 limit=1000,
             )
         )
@@ -94,6 +138,8 @@ def fetch_and_cache_all_metrics():
             {"date": d, "success": v["success"], "error": v["error"]}
             for d, v in sorted(trace_counts.items())
         ]
+        # Fill missing dates
+        trace_count_list = fill_missing_dates(trace_count_list, "count")
         set_cached_metric("trace_count", trace_count_list)
     except Exception as e:
         print(f"Error fetching trace_count: {e}")
@@ -117,6 +163,8 @@ def fetch_and_cache_all_metrics():
             else:
                 p50 = p99 = 0.0
             trace_latency_list.append({"date": date, "p50": p50, "p99": p99})
+        # Fill missing dates
+        trace_latency_list = fill_missing_dates(trace_latency_list, "latency")
         set_cached_metric("trace_latency", trace_latency_list)
     except Exception as e:
         print(f"Error fetching trace_latency: {e}")
@@ -138,6 +186,7 @@ def fetch_and_cache_all_metrics():
             client.list_runs(
                 run_type="llm",
                 project_name=os.getenv("LANGSMITH_PROJECT", "insurance-helpdesk"),
+                start_time=start_date,
                 limit=1000,
             )
         )
@@ -152,6 +201,8 @@ def fetch_and_cache_all_metrics():
             {"date": d, "success": v["success"], "error": v["error"]}
             for d, v in sorted(llm_counts.items())
         ]
+        # Fill missing dates
+        llm_count_list = fill_missing_dates(llm_count_list, "count")
         set_cached_metric("llm_count", llm_count_list)
     except Exception as e:
         print(f"Error fetching llm_count: {e}")
@@ -175,6 +226,8 @@ def fetch_and_cache_all_metrics():
             else:
                 p50 = p99 = 0.0
             llm_latency_list.append({"date": date, "p50": p50, "p99": p99})
+        # Fill missing dates
+        llm_latency_list = fill_missing_dates(llm_latency_list, "latency")
         set_cached_metric("llm_latency", llm_latency_list)
     except Exception as e:
         print(f"Error fetching llm_latency: {e}")
@@ -225,6 +278,7 @@ def fetch_and_cache_all_metrics():
             {"date": date, "cost": float(np.sum(costs))}
             for date, costs in sorted(cost_by_date.items())
         ]
+        total_cost_list = fill_missing_dates(total_cost_list, "cost")
         set_cached_metric("total_cost", total_cost_list)
         # --- Cost per Trace (P50, P99) ---
         cost_per_trace_list = []
@@ -235,12 +289,16 @@ def fetch_and_cache_all_metrics():
             else:
                 p50 = p99 = 0.0
             cost_per_trace_list.append({"date": date, "p50": p50, "p99": p99})
+        cost_per_trace_list = fill_missing_dates(
+            cost_per_trace_list, "tokens_per_trace"
+        )
         set_cached_metric("cost_per_trace", cost_per_trace_list)
         # --- Output Tokens (total) ---
         output_tokens_list = [
             {"date": date, "count": int(np.sum(tokens))}
             for date, tokens in sorted(output_tokens_by_date.items())
         ]
+        output_tokens_list = fill_missing_dates(output_tokens_list, "tokens")
         set_cached_metric("output_tokens", output_tokens_list)
         # --- Output Tokens per Trace (P50, P99) ---
         output_tokens_per_trace_list = []
@@ -251,12 +309,16 @@ def fetch_and_cache_all_metrics():
             else:
                 p50 = p99 = 0.0
             output_tokens_per_trace_list.append({"date": date, "p50": p50, "p99": p99})
+        output_tokens_per_trace_list = fill_missing_dates(
+            output_tokens_per_trace_list, "tokens_per_trace"
+        )
         set_cached_metric("output_tokens_per_trace", output_tokens_per_trace_list)
         # --- Input Tokens (total) ---
         input_tokens_list = [
             {"date": date, "count": int(np.sum(tokens))}
             for date, tokens in sorted(input_tokens_by_date.items())
         ]
+        input_tokens_list = fill_missing_dates(input_tokens_list, "tokens")
         set_cached_metric("input_tokens", input_tokens_list)
         # --- Input Tokens per Trace (P50, P99) ---
         input_tokens_per_trace_list = []
@@ -267,6 +329,9 @@ def fetch_and_cache_all_metrics():
             else:
                 p50 = p99 = 0.0
             input_tokens_per_trace_list.append({"date": date, "p50": p50, "p99": p99})
+        input_tokens_per_trace_list = fill_missing_dates(
+            input_tokens_per_trace_list, "tokens_per_trace"
+        )
         set_cached_metric("input_tokens_per_trace", input_tokens_per_trace_list)
     except Exception as e:
         print(f"Error fetching cost/tokens metrics: {e}")
@@ -280,6 +345,7 @@ def fetch_and_cache_all_metrics():
             client.list_runs(
                 run_type="tool",
                 project_name=os.getenv("LANGSMITH_PROJECT", "insurance-helpdesk"),
+                start_time=start_date,
                 limit=1000,
             )
         )
@@ -309,6 +375,8 @@ def fetch_and_cache_all_metrics():
             for tool, count in count_by_date_tool[date].items():
                 entry[tool] = count
             tool_run_count_list.append(entry)
+        # Fill missing dates with empty tool breakdowns
+        tool_run_count_list = fill_missing_dates(tool_run_count_list, "tool_breakdown")
         set_cached_metric("tool_run_count", tool_run_count_list)
         # --- Median Latency by Tool ---
         tool_median_latency_list = []
@@ -317,6 +385,9 @@ def fetch_and_cache_all_metrics():
             for tool, latencies in latency_by_date_tool[date].items():
                 entry[tool] = float(np.median(latencies)) if latencies else 0.0
             tool_median_latency_list.append(entry)
+        tool_median_latency_list = fill_missing_dates(
+            tool_median_latency_list, "tool_breakdown"
+        )
         set_cached_metric("tool_median_latency", tool_median_latency_list)
         # --- Error Rate by Tool ---
         tool_error_rate_list = []
@@ -326,6 +397,9 @@ def fetch_and_cache_all_metrics():
                 rate = (error_count / total_count) * 100 if total_count > 0 else 0.0
                 entry[tool] = rate
             tool_error_rate_list.append(entry)
+        tool_error_rate_list = fill_missing_dates(
+            tool_error_rate_list, "tool_breakdown"
+        )
         set_cached_metric("tool_error_rate", tool_error_rate_list)
     except Exception as e:
         print(f"Error fetching tool metrics: {e}")

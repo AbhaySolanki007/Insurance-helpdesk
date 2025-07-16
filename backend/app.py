@@ -1,37 +1,42 @@
 # Project Structure Overview
 """
-insurance_support/
+insurance_support_backend/
 │
-├── app.py                  # 1. Main Flask application: Initializes and orchestrates both L1/L2 agents and routes API requests.
-├── config.py               # 2. Centralized configuration: Manages all environment variables, API keys, and database settings.
-├── requirements.txt        # 3. Project dependencies: Lists all necessary Python packages for the application.
+├── app.py                  # 1. Main Flask App: Handles API routes, initializes the LangGraph, and orchestrates the agent workflow.
+├── config.py               # 2. Configuration: Manages environment variables, API keys, and database settings.
+├── requirements.txt        # 3. Dependencies: Lists all necessary Python packages for the backend.
+├── checkpoints.sqlite      # 4. LangGraph State: A SQLite database used by LangGraph to persist conversation state, enabling stateful multi-turn interactions.
 │
 ├── database/
-│   ├── __init__.py
-│   ├── models.py           # 4. Data Access Layer: Defines functions for all direct SQL interactions with the database (users, policies, history).
-│   └── db_utils.py         # 5. Database Utilities: Manages a high-performance connection pool to efficiently handle database connections.
+│   ├── db_utils.py         # 5. DB Connection Pool: Manages a high-performance PostgreSQL connection pool.
+│   └── models.py           # 6. Data Models & Operations: Defines functions for all database interactions (e.g., fetching user history, updating policies).
 │
-├── services/
-│   ├── __init__.py
-│   ├── auth_service.py     # 6. Authentication services: (Placeholder) for handling user authentication logic.
-│   ├── email_service.py    # 7. Email service: Encapsulates all logic for sending emails via the Gmail API, abstracting it from the agents.
-│   ├── policy_service.py   # 8. Policy management: (Placeholder) for business logic related to insurance policies.
-│   ├── ticket_service.py   # 9. Ticket management: Provides a simplified interface (facade) for creating and searching JIRA support tickets(in # 9.1 services/jira_service.py).
-│   └── audio_service.py    # 10. Audio processing: (Placeholder) for handling audio recording, transcription, and related tasks.
+├── faq_database/
+│   ├── chroma.sqlite3      # 7. Vector DB: The ChromaDB file storing vector embeddings of the FAQ articles for efficient semantic search.
+│   └── update_faq_db.py    # 8. DB Update Script: A script to process and load new articles into the ChromaDB.
 │
 ├── ai/
-│   ├── __init__.py
-│   ├── unified_chain.py    # 11. RAG PERFORMING like FAQ Retriever Service: Manages the ChromaDB vector store and provides a method for performing RAG-based FAQ searches.
-│   ├── l1_agent.py         # 12. L1 Agent Module: Defines the prompt, tools, and execution logic for the front-line, info-gathering ReAct agent.
-│   ├── l2_agent.py         # 13. L2 Agent Module: Defines the prompt, tools, and execution logic for the advanced, escalation-handling ReAct agent.
-│   └── tools.py            # 14. Agent Tool Factory: A central module that defines all possible agent tools and provides a function to create customized toolsets for L1 and L2.
+│   ├── L1_agent.py         # 9. L1 Agent: Defines the prompt, tools, and logic for the primary, first-response agent.
+│   ├── L2_agent.py         # 10. L2 Agent: Defines the prompt, tools, and logic for the escalation agent, handling complex queries.
+│   ├── tools.py            # 11. Agent Tools: A factory for creating and providing tools (e.g., FAQ search, ticket creation) to the agents.
+│   ├── unified_chain.py    # 12. FAQ Retriever: Manages the ChromaDB vector store for performing RAG-based FAQ searches.
+│   │
+│   ├── Langgraph_module/
+│   │   ├── Langgraph.py        # 13. Graph Nodes: Defines the core functions (nodes) that make up the graph's logic (e.g., l1_node, l2_node, summarize_node).
+│   │   └── graph_compiler.py   # 14. Graph Assembly: Constructs the StateGraph, connecting all the nodes and defining the conversational flow (edges).
+│   │
+│   └── langsmith/
+│       └── langsmith_cache.py  # 15. LangSmith Caching: Fetches and caches observability metrics from LangSmith to improve dashboard performance.
 │
-└── utils/
-    ├── __init__.py
-    └── helpers.py          # 15. Helper Utilities: Contains shared functions, such as formatting conversation history for agent prompts.
+├── utils/
+│   └── helpers.py          # 16. Helper Utilities: Contains shared functions, such as formatting conversation history for agent prompts and summarization.
+│
+└── services/
+    ├── jira_service.py     # 17. JIRA Service: Encapsulates the logic for interacting with the JIRA API (creating and searching tickets).
+    ├── email_service.py    # 18. Email Service: Handles the logic for sending emails via the Gmail API.
+    └── ticket_service.py   # 19. Ticket Facade: Provides a simplified interface that the agents use to interact with the underlying JIRA service.
 """
 
-# change viewed on git
 
 # 1. app.py
 """Main Flask application entry point(L1 and L2 intilizatiion)"""
@@ -56,6 +61,7 @@ from ai.unified_chain import UnifiedSupportChain
 from ai.L1_agent import create_l1_agent_executor
 from ai.L2_agent import create_l2_agent_executor
 from ai.Langgraph_module.graph_compiler import compile_graph
+from ai.langsmith.langsmith_cache import fetch_and_cache_all_metrics, get_cached_metric
 
 
 # Initialize Flask app
@@ -339,8 +345,52 @@ def get_user_policies(user_id):
             print("🔄 [DEBUG] Database connection returned to pool")
 
 
+@app.route("/api/metrics", methods=["GET"])
+def get_metrics():
+    """
+    API endpoint to serve all cached LangSmith metrics for the dashboard.
+    Returns all metrics in a single JSON response.
+    """
+    try:
+        # Get all cached metrics
+        metrics = {
+            "trace_count": get_cached_metric("trace_count")[0] or [],
+            "trace_latency": get_cached_metric("trace_latency")[0] or [],
+            "trace_error_rate": get_cached_metric("trace_error_rate")[0] or [],
+            "llm_count": get_cached_metric("llm_count")[0] or [],
+            "llm_latency": get_cached_metric("llm_latency")[0] or [],
+            "llm_error_rate": get_cached_metric("llm_error_rate")[0] or [],
+            "total_cost": get_cached_metric("total_cost")[0] or [],
+            "cost_per_trace": get_cached_metric("cost_per_trace")[0] or [],
+            "output_tokens": get_cached_metric("output_tokens")[0] or [],
+            "output_tokens_per_trace": get_cached_metric("output_tokens_per_trace")[0]
+            or [],
+            "input_tokens": get_cached_metric("input_tokens")[0] or [],
+            "input_tokens_per_trace": get_cached_metric("input_tokens_per_trace")[0]
+            or [],
+            "tool_run_count": get_cached_metric("tool_run_count")[0] or [],
+            "tool_median_latency": get_cached_metric("tool_median_latency")[0] or [],
+            "tool_error_rate": get_cached_metric("tool_error_rate")[0] or [],
+        }
+
+        return jsonify(metrics), 200
+
+    except Exception as e:
+        print(f"Error serving metrics: {e}")
+        return jsonify({"error": "Failed to fetch metrics"}), 500
+
+
 if __name__ == "__main__":
     # Initialize database
     init_db()
+
+    # Populate metrics cache on startup
+    print("🔄 [INFO] Populating LangSmith metrics cache...")
+    try:
+        fetch_and_cache_all_metrics()
+        print("✅ [SUCCESS] Metrics cache populated successfully")
+    except Exception as e:
+        print(f"⚠️ [WARNING] Failed to populate metrics cache: {e}")
+
     # Run Flask app
     app.run(debug=config.DEBUG, host="0.0.0.0", port=8001)

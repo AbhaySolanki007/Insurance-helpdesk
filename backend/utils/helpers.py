@@ -5,7 +5,7 @@ from typing import List, Dict, Any
 
 # Define how many of the most recent conversation turns to include in the prompt.
 # A "turn" consists of one user input and one AI output.
-MAX_HISTORY_TURNS = 10
+MAX_HISTORY_TURNS = 6
 
 
 # This function is now designed to work with a list of dictionaries from the database.
@@ -27,6 +27,32 @@ def format_history_for_prompt(history: List[Dict[str, str]]) -> str:
         user_message = turn.get("input", "")
         ai_message = turn.get("output", "")
         is_l2_session = turn.get("is_l2_session", False)
+
+        # We only add non-empty messages to the prompt history.
+        if user_message:
+            entries.append(f"Human: {user_message}")
+
+        # We filter out the internal "L2...." escalation message from the prompt.
+        if ai_message and "L2...." not in ai_message:
+            entries.append(f"AI: {ai_message}")
+
+    return "\n\n".join(entries)
+
+
+def format_full_history_for_summary(history: List[Dict[str, str]]) -> str:
+    """
+    Formats the entire list of structured history turns from the database into a
+    single string for the summarization prompt, without truncation.
+    """
+    if not history:
+        return "No previous conversation history."
+
+    entries = []
+    # Loop through the entire history.
+    for turn in history:
+        # Safely get 'input' and 'output' from each dictionary.
+        user_message = turn.get("input", "")
+        ai_message = turn.get("output", "")
 
         # We only add non-empty messages to the prompt history.
         if user_message:

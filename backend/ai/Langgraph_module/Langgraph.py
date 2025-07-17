@@ -16,6 +16,8 @@ class AgentState(TypedDict):
     language: str
     # History will be kept in the DB's dictionary format.
     history: Annotated[List[Dict[str, str]], operator.add]
+    # A list of all new responses to be sent to the user in this turn.
+    new_responses: Annotated[List[str], operator.add]
     # The summary is generated only on escalation.
     escalation_summary: str
     is_l2_session: bool
@@ -53,6 +55,7 @@ def l1_node(state: AgentState, agent_executor):
 
     return {
         "history": [turn_data],
+        "new_responses": [output],  # Add the response to the list
         "is_l2_session": False,
         "routing_decision": decision,
     }
@@ -64,7 +67,6 @@ def summarize_for_l2_node(state: AgentState):
     history_text = format_full_history_for_summary(state["history"])
     summary_prompt = f"""
     Concisely summarize the following support conversation for an L2 agent.
-    Focus on the user's main problem and the reason for escalation.
     The summary must be in this language: {state['language']}.
 
     Conversation History:
@@ -79,6 +81,9 @@ def summarize_for_l2_node(state: AgentState):
 def l2_node(state: AgentState, agent_executor):
     """Runs the L2 agent."""
     print("---EXECUTING L2 NODE---")
+    print(
+        f"---L2 NODE RECEIVED SUMMARY:\n{state.get('escalation_summary', 'No summary provided.')}\n---"
+    )
     history_text = format_history_for_prompt(state["history"])
     response = agent_executor.invoke(
         {
@@ -94,12 +99,14 @@ def l2_node(state: AgentState, agent_executor):
     )
     output = response.get("output", "")
 
-    # 👇 STEP 2: Create the full turn dictionary, explicitly flagging it as L2.
+    # Create the full turn dictionary, explicitly flagging it as L2.
     turn_data = {"input": state["query"], "output": output, "is_l2_session": True}
-
     return {
-        "history": [turn_data],  # This list gets appended to the main history
+        "new_responses": [output],  # Add the L2 response to the list
+        "history": [turn_data],
         "is_l2_session": True,  # This updates the root state for the current request
+        # Clear the summary after it has been used for this turn.
+        "escalation_summary": "",
     }
 
 

@@ -124,8 +124,8 @@ def chat():
         #    previous state for this `thread_id` and resume where it left off.
         final_state = app_graph.invoke(inputs, config=config)
 
-        # 4. EXTRACT the final response and L2 status from the result.
-        final_response = final_state["history"][-1]["output"]
+        # 4. EXTRACT the final response(s) and L2 status from the result.
+        new_responses = final_state.get("new_responses", [])
         is_l2_now = final_state.get("is_l2_session", False)
 
         # Filter out the is_l2_session field before saving to database
@@ -141,9 +141,18 @@ def chat():
         # This saves a complete copy of the conversation to your PostgreSQL DB
         update_user_history(user_id, filtered_history)
 
-        return jsonify(
-            {"response": final_response, "user_id": user_id, "is_l2": is_l2_now}
-        )
+        # 5. SEND the response to the frontend.
+        # If there are multiple new responses (e.g., L1 handoff + L2 reply),
+        # send them as an array. Otherwise, send a single response object.
+        if len(new_responses) > 1:
+            return jsonify(
+                {"responses": new_responses, "user_id": user_id, "is_l2": is_l2_now}
+            )
+        else:
+            final_response = new_responses[0] if new_responses else ""
+            return jsonify(
+                {"response": final_response, "user_id": user_id, "is_l2": is_l2_now}
+            )
 
     except exceptions.ServiceUnavailable as e:
         # This will now only be reached if all 3 retries fail

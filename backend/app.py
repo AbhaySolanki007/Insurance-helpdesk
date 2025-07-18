@@ -117,6 +117,7 @@ def chat():
         "query": query,
         "user_id": user_id,
         "language": language,
+        "new_responses": [],  # IMPORTANT: Reset the list for each new turn
     }
 
     try:
@@ -142,17 +143,10 @@ def chat():
         update_user_history(user_id, filtered_history)
 
         # 5. SEND the response to the frontend.
-        # If there are multiple new responses (e.g., L1 handoff + L2 reply),
-        # send them as an array. Otherwise, send a single response object.
-        if len(new_responses) > 1:
-            return jsonify(
-                {"responses": new_responses, "user_id": user_id, "is_l2": is_l2_now}
-            )
-        else:
-            final_response = new_responses[0] if new_responses else ""
-            return jsonify(
-                {"response": final_response, "user_id": user_id, "is_l2": is_l2_now}
-            )
+        # Always send the `responses` key for consistency on the frontend.
+        return jsonify(
+            {"responses": new_responses, "user_id": user_id, "is_l2": is_l2_now}
+        )
 
     except exceptions.ServiceUnavailable as e:
         # This will now only be reached if all 3 retries fail

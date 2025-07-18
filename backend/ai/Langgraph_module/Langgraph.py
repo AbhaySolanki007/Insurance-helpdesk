@@ -16,10 +16,10 @@ class AgentState(TypedDict):
     language: str
     # History will be kept in the DB's dictionary format.
     history: Annotated[List[Dict[str, str]], operator.add]
-    # A list of all new responses to be sent to the user in this turn.
-    new_responses: Annotated[List[str], operator.add]
     # The summary is generated only on escalation.
     escalation_summary: str
+    # A list of all new responses to be sent to the user in this turn.
+    new_responses: List[str]
     is_l2_session: bool
     routing_decision: str
 
@@ -55,7 +55,7 @@ def l1_node(state: AgentState, agent_executor):
 
     return {
         "history": [turn_data],
-        "new_responses": [output],  # Add the response to the list
+        "new_responses": [output],
         "is_l2_session": False,
         "routing_decision": decision,
     }
@@ -75,7 +75,10 @@ def summarize_for_l2_node(state: AgentState):
     Briefing Note:"""
     llm = ChatGroq(model="llama3-70b-8192", groq_api_key=config.GROQ_API_KEY)
     summary = llm.invoke(summary_prompt)
-    return {"escalation_summary": summary}
+    return {
+        "escalation_summary": summary,
+        "new_responses": state.get("new_responses", []),
+    }
 
 
 def l2_node(state: AgentState, agent_executor):
@@ -99,14 +102,24 @@ def l2_node(state: AgentState, agent_executor):
     )
     output = response.get("output", "")
 
-    # Create the full turn dictionary, explicitly flagging it as L2.
-    turn_data = {"input": state["query"], "output": output, "is_l2_session": True}
+    # Combine the L2 response with any previous messages from this turn.
+    current_responses = state.get("new_responses", [])
+    current_responses.append(output)
+
+    # The L2 node is responsible for the final history entry on escalation.
+    # We create a combined string for the history, but send the array to the frontend.
+    final_history_output = "\n\n".join(current_responses)
+    turn_data = {
+        "input": state["query"],
+        "output": final_history_output,
+        "is_l2_session": True,
+    }
+
     return {
-        "new_responses": [output],  # Add the L2 response to the list
         "history": [turn_data],
-        "is_l2_session": True,  # This updates the root state for the current request
-        # Clear the summary after it has been used for this turn.
-        "escalation_summary": "",
+        "new_responses": current_responses,
+        "is_l2_session": True,
+        "escalation_summary": "",  # Clear the summary
     }
 
 

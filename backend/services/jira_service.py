@@ -69,3 +69,41 @@ def search_jira_tickets(username: str, query: str = ""):
     except Exception as e:
         print(f"Error searching JIRA tickets: {e}")
         return []
+
+
+def get_all_jira_tickets():
+    """Fetches all tickets from the configured JIRA project."""
+    try:
+        jql_query = f'project = "{config.JIRA_PROJECT_KEY}" ORDER BY created DESC'
+        issues = jira_client.search_issues(jql_query, maxResults=False)
+
+        results = []
+        for issue in issues:
+            results.append(
+                {
+                    "id": issue.key,
+                    "summary": issue.fields.summary,
+                    "description": issue.fields.description,
+                    "status": issue.fields.status.name,
+                    "assignee": (
+                        issue.fields.assignee.displayName
+                        if issue.fields.assignee
+                        else "Unassigned"
+                    ),
+                    "reporter": (
+                        issue.fields.reporter.displayName
+                        if issue.fields.reporter
+                        else "N/A"
+                    ),
+                    "priority": (
+                        issue.fields.priority.name if issue.fields.priority else "N/A"
+                    ),
+                    "created_at": issue.fields.created,
+                    "updated_at": issue.fields.updated,
+                    "due_date": issue.fields.duedate,
+                }
+            )
+        return results
+    except Exception as e:
+        print(f"Error fetching all JIRA tickets: {e}")
+        return []

@@ -62,6 +62,7 @@ from ai.L1_agent import create_l1_agent_executor
 from ai.L2_agent import create_l2_agent_executor
 from ai.Langgraph_module.graph_compiler import compile_graph
 from ai.langsmith.langsmith_cache import fetch_and_cache_all_metrics, get_cached_metric
+from services import ticket_service
 
 
 # Initialize Flask app
@@ -346,6 +347,19 @@ def get_user_policies(user_id):
         if conn:
             DB_POOL.putconn(conn)
             print("🔄 [DEBUG] Database connection returned to pool")
+
+
+@app.route("/api/tickets/all", methods=["GET"])
+def get_all_tickets_api():
+    """
+    API endpoint to fetch all tickets from JIRA.
+    """
+    try:
+        tickets = ticket_service.get_all_tickets()
+        return jsonify({"tickets": tickets}), 200
+    except Exception as e:
+        print(f"Error fetching all tickets: {e}")
+        return jsonify({"error": "Failed to fetch tickets"}), 500
 
 
 @app.route("/api/metrics", methods=["GET"])

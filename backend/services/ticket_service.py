@@ -52,3 +52,16 @@ def search_tickets(input_data):
         )
 
     return "\n\n".join(formatted_results)
+
+
+def get_all_tickets():
+    """
+    Fetch all tickets from JIRA.
+
+    Returns:
+        list: A list of all tickets.
+    """
+    results = jira_service.get_all_jira_tickets()
+    if not results:
+        return []
+    return results

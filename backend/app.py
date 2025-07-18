@@ -117,6 +117,7 @@ def chat():
         "query": query,
         "user_id": user_id,
         "language": language,
+        "new_responses": [],  # IMPORTANT: Reset the list for each new turn
     }
 
     try:
@@ -124,8 +125,8 @@ def chat():
         #    previous state for this `thread_id` and resume where it left off.
         final_state = app_graph.invoke(inputs, config=config)
 
-        # 4. EXTRACT the final response and L2 status from the result.
-        final_response = final_state["history"][-1]["output"]
+        # 4. EXTRACT the final response(s) and L2 status from the result.
+        new_responses = final_state.get("new_responses", [])
         is_l2_now = final_state.get("is_l2_session", False)
 
         # Filter out the is_l2_session field before saving to database
@@ -141,8 +142,10 @@ def chat():
         # This saves a complete copy of the conversation to your PostgreSQL DB
         update_user_history(user_id, filtered_history)
 
+        # 5. SEND the response to the frontend.
+        # Always send the `responses` key for consistency on the frontend.
         return jsonify(
-            {"response": final_response, "user_id": user_id, "is_l2": is_l2_now}
+            {"responses": new_responses, "user_id": user_id, "is_l2": is_l2_now}
         )
 
     except exceptions.ServiceUnavailable as e:

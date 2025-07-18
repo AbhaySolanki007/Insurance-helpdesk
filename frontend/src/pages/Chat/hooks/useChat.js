@@ -10,7 +10,6 @@ const useChat = ({
   setIsChatStarted,
   selectedLanguage,
   isL2Panel,
-  setToggle,
   setIsL2Panel,
   isChatStarted,
   displayValue
@@ -49,84 +48,44 @@ const useChat = ({
         setIsL2Panel(response.data.is_l2)
 
         setManualInput("");
-        const botResponse = response.data.response || "No response generated.";
+        const responses = response.data.responses || ["No response generated."];
 
         // End thinking phase, start typing phase
         setIsThinking(false);
         setIsTyping(true);
 
-        // Add empty bot message that will be progressively filled
-        // setMessages((prev) => [...prev, { text: "", sender: "bot", isL2: isL2Panel }]);
-        setMessages((prev) => [...prev, { text: "", sender: "bot", isL2: response.data.is_l2 }]);
+        // Handle multiple responses from the array
+        for (let responseIndex = 0; responseIndex < responses.length; responseIndex++) {
+          const currentResponse = responses[responseIndex];
+          
+          // Add empty bot message that will be progressively filled
+          setMessages((prev) => [...prev, { 
+            text: "", 
+            sender: "bot", 
+            isL2: response.data.is_l2,
+            isTransition: responseIndex === 0 // First response is transition
+          }]);
 
-        // Progressive typing
-        let displayedText = "";
-        for (let i = 0; i <= botResponse.length; i++) {
-          await new Promise(resolve => setTimeout(resolve, 25));
-          displayedText = botResponse.substring(0, i);
-          setMessages((prev) => {
-            const newMessages = [...prev];
-            newMessages[newMessages.length - 1] = {
-              text: displayedText,
-              sender: "bot",
-              isL2: response.data.is_l2
-            };
-            return newMessages;
-          });
+          // Progressive typing for current response
+          let displayedText = "";
+          for (let i = 0; i <= currentResponse.length; i++) {
+            await new Promise(resolve => setTimeout(resolve, 25));
+            displayedText = currentResponse.substring(0, i);
+            setMessages((prev) => {
+              const newMessages = [...prev];
+              newMessages[newMessages.length - 1] = {
+                text: displayedText,
+                sender: "bot",
+                isL2: response.data.is_l2,
+                isTransition: responseIndex === 0 // First response is transition
+              };
+              return newMessages;
+            });
+          }
         }
 
         setIsTyping(false);
 
-        // if (botResponse.includes("L2....")) {
-        //   setToggle(true);
-        //   setIsL2Panel(true);
-          
-        //   // Add transition message
-        //   setMessages((prev) => [...prev, { 
-        //     text: "transition_to_l2",
-        //     sender: "system",
-        //     isTransition: true 
-        //   }]);
-
-        //   // L2 thinking phase
-        //   setIsThinking(true);
-        //   setIsTyping(false);
-
-        //   // Get L2 response
-        //   const l2Response = await axios.post(${baseURL}/predict/l2, {
-        //     query: displayValue,
-        //     user_id,
-        //     language: selectedLanguage
-        //   });
-
-        //   const newResponse = l2Response.data.response || "No response was generated";
-        //   const botResponse2 = "L2 Agent Here!\n\n" + newResponse;
-
-        //   // End L2 thinking phase, start L2 typing phase
-        //   setIsThinking(false);
-        //   setIsTyping(true);
-
-        //   // Add empty message for L2 response
-        //   setMessages((prev) => [...prev, { text: "", sender: "bot", isL2: true }]);
-
-        //   // Progressive typing for L2 response
-        //   displayedText = "";
-        //   for (let i = 0; i <= botResponse2.length; i++) {
-        //     await new Promise(resolve => setTimeout(resolve, 25));
-        //     displayedText = botResponse2.substring(0, i);
-        //     setMessages((prev) => {
-        //       const newMessages = [...prev];
-        //       newMessages[newMessages.length - 1] = {
-        //         text: displayedText,
-        //         sender: "bot",
-        //         isL2: true
-        //       };
-        //       return newMessages;
-        //     });
-        //   }
-          
-        //   setIsTyping(false);
-        // }
       } catch (error) {
         console.error("Error fetching response:", error);
         setIsThinking(false);

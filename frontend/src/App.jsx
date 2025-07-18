@@ -3,7 +3,6 @@ import { RouterProvider, createBrowserRouter, createRoutesFromElements, Route, O
 import Navbar from './components/Navbar';
 import { Context } from './context/ContextApi';
 import Login from './pages/Login';
-import Chats from './pages/Chats';
 import Hero from './pages/Hero';
 import Profile from './pages/Profile';
 import Video from './pages/Video';

@@ -31,6 +31,7 @@ const Login = () => {
       const user = response.data.user;
       localStorage.setItem("user_id", user.user_id);
       localStorage.setItem("name", user.name);
+      localStorage.setItem("user_email", user.email);
 
       navigate(`/chat/${user.user_id}`);
 

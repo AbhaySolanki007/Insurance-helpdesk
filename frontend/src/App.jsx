@@ -3,11 +3,10 @@ import { RouterProvider, createBrowserRouter, createRoutesFromElements, Route, O
 import Navbar from './components/Navbar';
 import { Context } from './context/ContextApi';
 import Login from './pages/Login';
-import Chats from './pages/Chats';
 import Hero from './pages/Hero';
 import Profile from './pages/Profile';
 import Video from './pages/Video';
-import Admin from './pages/Admin';
+import Admin from './pages/Admin/Admin';
 import Error from './components/Error';
 import bgVideo from './assets/bg-blocks.mp4';
 import ChatLayout from './pages/Chat/components/ChatLayout';

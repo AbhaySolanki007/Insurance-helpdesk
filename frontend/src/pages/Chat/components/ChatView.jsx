@@ -133,7 +133,7 @@ function ChatView() {
               key={index}
               className={`flex ${msg.sender === "user" ? "justify-end" : "justify-start"}`}
             >
-              {msg.isTransition ? (
+              {msg.isL2Panel ? (
                 <div className="w-full my-6 flex flex-col items-center gap-2">
                   <div className="w-full border-t-2 border-dashed border-red-300 dark:border-red-500/30"></div>
                   <div className="flex items-center gap-2 px-4 py-2 bg-red-50 dark:bg-red-500/10 rounded-full border border-red-200 dark:border-red-500/20">

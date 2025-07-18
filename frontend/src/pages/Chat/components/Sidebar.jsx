@@ -216,29 +216,6 @@ function Sidebar({
               >
                 {isL2Panel ? "L2" : "L1"}
               </div>
-              <div className="relative inline-block w-8 align-middle select-none">
-                <input
-                  type="checkbox"
-                  checked={isL2Panel}
-                  onChange={() => {
-                    setIsL2Panel(!isL2Panel);
-                    setToggle(!toggle);
-                  }}
-                  className={`absolute block w-4 h-4 rounded-full bg-white border-4 appearance-none cursor-pointer transition-transform duration-200 ease-in-out
-                    ${isL2Panel ? "transform translate-x-full border-rose-500" : "border-emerald-500"}`}
-                  style={{
-                    top: '2px',
-                    left: '2px',
-                  }}
-                />
-                <label
-                  className={`block h-5 overflow-hidden rounded-full cursor-pointer ${
-                    isL2Panel 
-                      ? "bg-rose-100 dark:bg-rose-500/20"
-                      : "bg-emerald-100 dark:bg-emerald-500/20"
-                  }`}
-                ></label>
-              </div>
             </div>
           </div>
         ) : (

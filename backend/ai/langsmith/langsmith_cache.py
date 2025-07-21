@@ -1,14 +1,19 @@
 import os
 import sqlite3
 import json
-from datetime import datetime, timedelta
-from langsmith.client import Client  # Corrected import for LangSmith SDK
+import time
+from datetime import datetime, timedelta, timezone
+from collections import defaultdict
+import pprint
+import numpy as np
+
+from langsmith.client import Client
 import config
 
-# Path to the cache DB (placed in the same directory as this file)
+# --- DB and Caching Infrastructure ---
+
 DB_PATH = os.path.join(os.path.dirname(__file__), "metrics_cache.sqlite")
 
-# Table schema
 CREATE_TABLE_SQL = """
 CREATE TABLE IF NOT EXISTS metrics_cache (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -31,11 +36,9 @@ def init_db():
     conn.close()
 
 
-# Call this on import to ensure table exists
 init_db()
 
 
-# --- Cache Access Functions ---
 def get_cached_metric(cache_key):
     conn = get_db_connection()
     cur = conn.cursor()
@@ -55,351 +58,359 @@ def set_cached_metric(cache_key, data):
     with conn:
         conn.execute(
             "INSERT OR REPLACE INTO metrics_cache (cache_key, data, created_at) VALUES (?, ?, ?)",
-            (cache_key, json.dumps(data), datetime.utcnow().isoformat()),
+            (cache_key, json.dumps(data), datetime.now(timezone.utc).isoformat()),
         )
     conn.close()
 
 
-def get_last_7_days():
-    """Get the last 7 days as a list of date strings"""
-    today = datetime.now().date()
-    dates = []
-    for i in range(6, -1, -1):  # 6 to 0, so we get last 7 days including today
-        date = today - timedelta(days=i)
-        dates.append(date.isoformat())
-    return dates
+# --- Time Window Logic ---
 
 
-def fill_missing_dates(data_list, metric_type="count"):
-    """Fill in missing dates with zero/default values"""
-    expected_dates = get_last_7_days()
-    date_map = {item["date"]: item for item in data_list}
+def get_last_7_days_dynamic_windows(now):
+    windows = []
+    latest_window_end = now
+    for _ in range(21):
+        window_start = latest_window_end - timedelta(hours=8)
+        windows.append(window_start)
+        latest_window_end = window_start
+    return sorted(windows)
 
+
+def _get_window_start_for_timestamp(ts, now):
+    ts_aware = ts.replace(tzinfo=timezone.utc)
+    delta = now - ts_aware
+    intervals_ago = delta.total_seconds() // (8 * 3600)
+    window_end = now - timedelta(hours=8 * intervals_ago)
+    window_start = window_end - timedelta(hours=8)
+    return window_start
+
+
+def fill_missing_windows(data_list, now, metric_type="count"):
+    expected_windows = [w.isoformat() for w in get_last_7_days_dynamic_windows(now)]
+    window_map = {item["date"]: item for item in data_list}
     filled_data = []
-    for date in expected_dates:
-        if date in date_map:
-            filled_data.append(date_map[date])
+    for ts in expected_windows:
+        if ts in window_map:
+            filled_data.append(window_map[ts])
         else:
             # Create default entry based on metric type
             if metric_type == "count":
-                filled_data.append({"date": date, "success": 0, "error": 0})
-            elif metric_type == "latency":
-                filled_data.append({"date": date, "p50": 0.0, "p99": 0.0})
+                filled_data.append({"date": ts, "success": 0, "error": 0})
+            elif metric_type == "latency" or metric_type == "tokens_per_trace":
+                filled_data.append({"date": ts, "p50": 0.0, "p99": 0.0})
             elif metric_type == "rate":
-                filled_data.append({"date": date, "rate": 0.0})
+                filled_data.append({"date": ts, "rate": 0.0})
             elif metric_type == "cost":
-                filled_data.append({"date": date, "cost": 0.0})
+                filled_data.append({"date": ts, "cost": 0.0})
             elif metric_type == "tokens":
-                filled_data.append({"date": date, "count": 0})
-            elif metric_type == "tokens_per_trace":
-                filled_data.append({"date": date, "p50": 0.0, "p99": 0.0})
+                filled_data.append({"date": ts, "count": 0})
             elif metric_type == "tool_breakdown":
-                filled_data.append({"date": date})
-
+                filled_data.append({"date": ts})
     return filled_data
 
 
-# --- Metric Fetching Logic ---
+# --- Data Fetching Logic ---
+
+
+def _fetch_paginated_runs(client, project_name, run_type):
+    all_runs_for_type = []
+    start_time_boundary = datetime.now(timezone.utc) - timedelta(days=8)
+    end_time_cursor = None
+    page_count = 0
+
+    print(f"Fetching '{run_type}' runs with exclusive cursor pagination...")
+    while True:
+        try:
+            runs_page = list(
+                client.list_runs(
+                    project_name=project_name,
+                    run_type=run_type,
+                    start_time=start_time_boundary,
+                    end_time=end_time_cursor,
+                    limit=100,
+                )
+            )
+            if not runs_page:
+                break
+            all_runs_for_type.extend(runs_page)
+            end_time_cursor = runs_page[-1].start_time - timedelta(microseconds=1)
+            page_count += 1
+            time.sleep(0.2)
+        except Exception as e:
+            print(f"Error during pagination for '{run_type}': {e}")
+            break
+
+    print(f"--> Fetched {len(all_runs_for_type)} total '{run_type}' runs.")
+    return all_runs_for_type
+
+
+# --- Metric Calculation Functions (Restored) ---
+
+
+def _calculate_trace_metrics(runs, now):
+    top_level_traces = [run for run in runs if run.parent_run_id is None]
+
+    trace_counts = {}
+    latency_by_window = defaultdict(list)
+    for run in top_level_traces:
+        window_start_ts = _get_window_start_for_timestamp(
+            run.start_time, now
+        ).isoformat()
+        status = "error" if run.error else "success"
+        if window_start_ts not in trace_counts:
+            trace_counts[window_start_ts] = {"success": 0, "error": 0}
+        trace_counts[window_start_ts][status] += 1
+        if run.end_time and run.start_time:
+            latency = (run.end_time - run.start_time).total_seconds()
+            latency_by_window[window_start_ts].append(latency)
+
+    trace_count_list = [
+        {"date": d, "success": v["success"], "error": v["error"]}
+        for d, v in sorted(trace_counts.items())
+    ]
+    filled_trace_count_list = fill_missing_windows(trace_count_list, now, "count")
+
+    trace_latency_list = []
+    for ts, latencies in sorted(latency_by_window.items()):
+        p50 = float(np.percentile(latencies, 50)) if latencies else 0.0
+        p99 = float(np.percentile(latencies, 99)) if latencies else 0.0
+        trace_latency_list.append({"date": ts, "p50": p50, "p99": p99})
+    filled_latency_list = fill_missing_windows(trace_latency_list, now, "latency")
+
+    error_rate_list = []
+    for item in filled_trace_count_list:
+        total = item["success"] + item["error"]
+        rate = (item["error"] / total) * 100 if total > 0 else 0.0
+        error_rate_list.append({"date": item["date"], "rate": rate})
+
+    return {
+        "trace_count": filled_trace_count_list,
+        "trace_latency": filled_latency_list,
+        "trace_error_rate": error_rate_list,
+    }
+
+
+def _calculate_llm_metrics(llm_runs, now):
+    llm_counts = {}
+    llm_latency_by_window = defaultdict(list)
+    for run in llm_runs:
+        window_start_ts = _get_window_start_for_timestamp(
+            run.start_time, now
+        ).isoformat()
+        status = "error" if run.error else "success"
+        if window_start_ts not in llm_counts:
+            llm_counts[window_start_ts] = {"success": 0, "error": 0}
+        llm_counts[window_start_ts][status] += 1
+        if run.end_time and run.start_time:
+            latency = (run.end_time - run.start_time).total_seconds()
+            llm_latency_by_window[window_start_ts].append(latency)
+
+    llm_count_list = [
+        {"date": d, "success": v["success"], "error": v["error"]}
+        for d, v in sorted(llm_counts.items())
+    ]
+    filled_llm_count_list = fill_missing_windows(llm_count_list, now, "count")
+
+    llm_latency_list = []
+    for ts, latencies in sorted(llm_latency_by_window.items()):
+        p50 = float(np.percentile(latencies, 50)) if latencies else 0.0
+        p99 = float(np.percentile(latencies, 99)) if latencies else 0.0
+        llm_latency_list.append({"date": ts, "p50": p50, "p99": p99})
+    filled_latency_list = fill_missing_windows(llm_latency_list, now, "latency")
+
+    llm_error_rate_list = []
+    for item in filled_llm_count_list:
+        total = item["success"] + item["error"]
+        rate = (item["error"] / total) * 100 if total > 0 else 0.0
+        llm_error_rate_list.append({"date": item["date"], "rate": rate})
+
+    return {
+        "llm_count": filled_llm_count_list,
+        "llm_latency": filled_latency_list,
+        "llm_error_rate": llm_error_rate_list,
+    }
+
+
+def _calculate_cost_and_token_metrics(llm_runs, now):
+    cost_by_window = defaultdict(list)
+    output_tokens_by_window = defaultdict(list)
+    input_tokens_by_window = defaultdict(list)
+
+    for run in llm_runs:
+        usage = None
+        if run.extra:
+            usage = run.extra.get("usage_metadata")
+            if not usage and "response_metadata" in run.extra:
+                usage = run.extra["response_metadata"].get("token_usage")
+        if usage:
+            ts = _get_window_start_for_timestamp(run.start_time, now).isoformat()
+            cost_by_window[ts].append(
+                usage.get("total_cost") or usage.get("cost") or 0.0
+            )
+            output_tokens_by_window[ts].append(
+                usage.get("output_tokens") or usage.get("completion_tokens") or 0
+            )
+            input_tokens_by_window[ts].append(
+                usage.get("input_tokens") or usage.get("prompt_tokens") or 0
+            )
+
+    total_cost_list = [
+        {"date": ts, "cost": float(np.sum(costs))}
+        for ts, costs in sorted(cost_by_window.items())
+    ]
+    filled_total_cost_list = fill_missing_windows(total_cost_list, now, "cost")
+
+    cost_per_trace_list = []
+    for ts, costs in sorted(cost_by_window.items()):
+        p50 = float(np.percentile(costs, 50)) if costs else 0.0
+        p99 = float(np.percentile(costs, 99)) if costs else 0.0
+        cost_per_trace_list.append({"date": ts, "p50": p50, "p99": p99})
+    filled_cost_per_trace_list = fill_missing_windows(
+        cost_per_trace_list, now, "tokens_per_trace"
+    )
+
+    output_tokens_list = [
+        {"date": ts, "count": int(np.sum(tokens))}
+        for ts, tokens in sorted(output_tokens_by_window.items())
+    ]
+    filled_output_tokens_list = fill_missing_windows(output_tokens_list, now, "tokens")
+
+    output_tokens_per_trace_list = []
+    for ts, tokens in sorted(output_tokens_by_window.items()):
+        p50 = float(np.percentile(tokens, 50)) if tokens else 0.0
+        p99 = float(np.percentile(tokens, 99)) if tokens else 0.0
+        output_tokens_per_trace_list.append({"date": ts, "p50": p50, "p99": p99})
+    filled_output_tokens_per_trace_list = fill_missing_windows(
+        output_tokens_per_trace_list, now, "tokens_per_trace"
+    )
+
+    input_tokens_list = [
+        {"date": ts, "count": int(np.sum(tokens))}
+        for ts, tokens in sorted(input_tokens_by_window.items())
+    ]
+    filled_input_tokens_list = fill_missing_windows(input_tokens_list, now, "tokens")
+
+    input_tokens_per_trace_list = []
+    for ts, tokens in sorted(input_tokens_by_window.items()):
+        p50 = float(np.percentile(tokens, 50)) if tokens else 0.0
+        p99 = float(np.percentile(tokens, 99)) if tokens else 0.0
+        input_tokens_per_trace_list.append({"date": ts, "p50": p50, "p99": p99})
+    filled_input_tokens_per_trace_list = fill_missing_windows(
+        input_tokens_per_trace_list, now, "tokens_per_trace"
+    )
+
+    return {
+        "total_cost": filled_total_cost_list,
+        "cost_per_trace": filled_cost_per_trace_list,
+        "output_tokens": filled_output_tokens_list,
+        "output_tokens_per_trace": filled_output_tokens_per_trace_list,
+        "input_tokens": filled_input_tokens_list,
+        "input_tokens_per_trace": filled_input_tokens_per_trace_list,
+    }
+
+
+def _calculate_tool_metrics(tool_runs, now):
+    count_by_window_tool = defaultdict(lambda: defaultdict(int))
+    latency_by_window_tool = defaultdict(lambda: defaultdict(list))
+    error_by_window_tool = defaultdict(lambda: defaultdict(lambda: [0, 0]))
+
+    for run in tool_runs:
+        ts = _get_window_start_for_timestamp(run.start_time, now).isoformat()
+        tool_name = run.name
+        count_by_window_tool[ts][tool_name] += 1
+        if run.end_time and run.start_time:
+            latency = (run.end_time - run.start_time).total_seconds()
+            latency_by_window_tool[ts][tool_name].append(latency)
+        if run.error:
+            error_by_window_tool[ts][tool_name][0] += 1
+        error_by_window_tool[ts][tool_name][1] += 1
+
+    tool_run_count_list = [
+        {"date": ts, **counts} for ts, counts in sorted(count_by_window_tool.items())
+    ]
+    filled_tool_run_count_list = fill_missing_windows(
+        tool_run_count_list, now, "tool_breakdown"
+    )
+
+    tool_median_latency_list = []
+    for ts in sorted(latency_by_window_tool.keys()):
+        entry = {"date": ts}
+        for tool, latencies in latency_by_window_tool[ts].items():
+            entry[tool] = float(np.median(latencies)) if latencies else 0.0
+        tool_median_latency_list.append(entry)
+    filled_tool_median_latency_list = fill_missing_windows(
+        tool_median_latency_list, now, "tool_breakdown"
+    )
+
+    tool_error_rate_list = []
+    for ts in sorted(error_by_window_tool.keys()):
+        entry = {"date": ts}
+        for tool, (err_count, total_count) in error_by_window_tool[ts].items():
+            entry[tool] = (err_count / total_count) * 100 if total_count > 0 else 0.0
+        tool_error_rate_list.append(entry)
+    filled_tool_error_rate_list = fill_missing_windows(
+        tool_error_rate_list, now, "tool_breakdown"
+    )
+
+    return {
+        "tool_run_count": filled_tool_run_count_list,
+        "tool_median_latency": filled_tool_median_latency_list,
+        "tool_error_rate": filled_tool_error_rate_list,
+    }
+
+
+# --- Main Orchestrator (Restored to Full Functionality) ---
+
+
 def fetch_and_cache_all_metrics():
     """
-    Fetch all required metrics from LangSmith and cache them.
-    Only fetches data from the last 7 days for consistent frontend graphing.
+    Orchestrator that fetches and processes data for each metric group separately
+    to optimize performance.
     """
-    # Calculate date range for last 7 days
-    start_date = datetime.now() - timedelta(days=7)
-
-    # Initialize LangSmith client
+    print("\n--- Starting Full Metrics Fetch ---")
+    now = datetime.now(timezone.utc)
     client = Client(
         api_key=os.getenv(
             "LANGSMITH_API_KEY", getattr(config, "LANGSMITH_API_KEY", None)
         )
     )
+    project_name = os.getenv("LANGSMITH_PROJECT", "insurance-helpdesk")
 
-    # --- TRACE COUNT ---
+    all_metrics = {}
+
     try:
-        runs = list(
-            client.list_runs(
-                run_type="chain",
-                project_name=os.getenv("LANGSMITH_PROJECT", "insurance-helpdesk"),
-                start_time=start_date,
-                limit=1000,
-            )
-        )
-        trace_counts = {}
-        for run in runs:
-            print(type(runs[0]))
-            print(runs[0])
-            date = run.start_time.date().isoformat()
-            status = "error" if run.error else "success"
-            if date not in trace_counts:
-                trace_counts[date] = {"success": 0, "error": 0}
-            trace_counts[date][status] += 1
-        trace_count_list = [
-            {"date": d, "success": v["success"], "error": v["error"]}
-            for d, v in sorted(trace_counts.items())
-        ]
-        # Fill missing dates
-        trace_count_list = fill_missing_dates(trace_count_list, "count")
-        set_cached_metric("trace_count", trace_count_list)
+        chain_runs = _fetch_paginated_runs(client, project_name, "chain")
+        if chain_runs:
+            trace_metrics = _calculate_trace_metrics(chain_runs, now)
+            all_metrics.update(trace_metrics)
+            for key, data in trace_metrics.items():
+                set_cached_metric(key, data)
     except Exception as e:
-        print(f"Error fetching trace_count: {e}")
+        print(f"Error processing trace metrics: {e}")
 
-    # --- TRACE LATENCY (P50, P99) ---
     try:
-        from collections import defaultdict
-        import numpy as np
+        llm_runs = _fetch_paginated_runs(client, project_name, "llm")
+        if llm_runs:
+            llm_metrics = _calculate_llm_metrics(llm_runs, now)
+            all_metrics.update(llm_metrics)
+            for key, data in llm_metrics.items():
+                set_cached_metric(key, data)
 
-        latency_by_date = defaultdict(list)
-        for run in runs:
-            if run.end_time and run.start_time:
-                latency = (run.end_time - run.start_time).total_seconds()
-                date = run.start_time.date().isoformat()
-                latency_by_date[date].append(latency)
-        trace_latency_list = []
-        for date, latencies in sorted(latency_by_date.items()):
-            if latencies:
-                p50 = float(np.percentile(latencies, 50))
-                p99 = float(np.percentile(latencies, 99))
-            else:
-                p50 = p99 = 0.0
-            trace_latency_list.append({"date": date, "p50": p50, "p99": p99})
-        # Fill missing dates
-        trace_latency_list = fill_missing_dates(trace_latency_list, "latency")
-        set_cached_metric("trace_latency", trace_latency_list)
+            cost_metrics = _calculate_cost_and_token_metrics(llm_runs, now)
+            all_metrics.update(cost_metrics)
+            for key, data in cost_metrics.items():
+                set_cached_metric(key, data)
     except Exception as e:
-        print(f"Error fetching trace_latency: {e}")
+        print(f"Error processing LLM/cost metrics: {e}")
 
-    # --- TRACE ERROR RATE ---
     try:
-        error_rate_list = []
-        for item in trace_count_list:
-            total = item["success"] + item["error"]
-            rate = (item["error"] / total) * 100 if total > 0 else 0.0
-            error_rate_list.append({"date": item["date"], "rate": rate})
-        set_cached_metric("trace_error_rate", error_rate_list)
+        tool_runs = _fetch_paginated_runs(client, project_name, "tool")
+        if tool_runs:
+            tool_metrics = _calculate_tool_metrics(tool_runs, now)
+            all_metrics.update(tool_metrics)
+            for key, data in tool_metrics.items():
+                set_cached_metric(key, data)
     except Exception as e:
-        print(f"Error fetching trace_error_rate: {e}")
+        print(f"Error processing tool metrics: {e}")
 
-    # --- LLM COUNT ---
-    try:
-        llm_runs = list(
-            client.list_runs(
-                run_type="llm",
-                project_name=os.getenv("LANGSMITH_PROJECT", "insurance-helpdesk"),
-                start_time=start_date,
-                limit=1000,
-            )
-        )
-        llm_counts = {}
-        for run in llm_runs:
-            date = run.start_time.date().isoformat()
-            status = "error" if run.error else "success"
-            if date not in llm_counts:
-                llm_counts[date] = {"success": 0, "error": 0}
-            llm_counts[date][status] += 1
-        llm_count_list = [
-            {"date": d, "success": v["success"], "error": v["error"]}
-            for d, v in sorted(llm_counts.items())
-        ]
-        # Fill missing dates
-        llm_count_list = fill_missing_dates(llm_count_list, "count")
-        set_cached_metric("llm_count", llm_count_list)
-    except Exception as e:
-        print(f"Error fetching llm_count: {e}")
-
-    # --- LLM LATENCY (P50, P99) ---
-    try:
-        from collections import defaultdict
-        import numpy as np
-
-        llm_latency_by_date = defaultdict(list)
-        for run in llm_runs:
-            if run.end_time and run.start_time:
-                latency = (run.end_time - run.start_time).total_seconds()
-                date = run.start_time.date().isoformat()
-                llm_latency_by_date[date].append(latency)
-        llm_latency_list = []
-        for date, latencies in sorted(llm_latency_by_date.items()):
-            if latencies:
-                p50 = float(np.percentile(latencies, 50))
-                p99 = float(np.percentile(latencies, 99))
-            else:
-                p50 = p99 = 0.0
-            llm_latency_list.append({"date": date, "p50": p50, "p99": p99})
-        # Fill missing dates
-        llm_latency_list = fill_missing_dates(llm_latency_list, "latency")
-        set_cached_metric("llm_latency", llm_latency_list)
-    except Exception as e:
-        print(f"Error fetching llm_latency: {e}")
-
-    # --- LLM ERROR RATE ---
-    try:
-        llm_error_rate_list = []
-        for item in llm_count_list:
-            total = item["success"] + item["error"]
-            rate = (item["error"] / total) * 100 if total > 0 else 0.0
-            llm_error_rate_list.append({"date": item["date"], "rate": rate})
-        set_cached_metric("llm_error_rate", llm_error_rate_list)
-    except Exception as e:
-        print(f"Error fetching llm_error_rate: {e}")
-
-    # --- COST & TOKENS METRICS ---
-    try:
-        from collections import defaultdict
-        import numpy as np
-
-        cost_by_date = defaultdict(list)
-        output_tokens_by_date = defaultdict(list)
-        input_tokens_by_date = defaultdict(list)
-        for run in llm_runs:
-            # Try to extract cost and token usage from extra['usage_metadata'] or response_metadata
-            usage = None
-            if run.extra:
-                usage = run.extra.get("usage_metadata")
-                if not usage and "response_metadata" in run.extra:
-                    usage = run.extra["response_metadata"].get("token_usage")
-            if usage:
-                date = run.start_time.date().isoformat()
-                # Cost
-                cost = usage.get("total_cost") or usage.get("cost") or 0.0
-                cost_by_date[date].append(cost)
-                # Output tokens
-                output_tokens = (
-                    usage.get("output_tokens") or usage.get("completion_tokens") or 0
-                )
-                output_tokens_by_date[date].append(output_tokens)
-                # Input tokens
-                input_tokens = (
-                    usage.get("input_tokens") or usage.get("prompt_tokens") or 0
-                )
-                input_tokens_by_date[date].append(input_tokens)
-        # --- Total Cost ---
-        total_cost_list = [
-            {"date": date, "cost": float(np.sum(costs))}
-            for date, costs in sorted(cost_by_date.items())
-        ]
-        total_cost_list = fill_missing_dates(total_cost_list, "cost")
-        set_cached_metric("total_cost", total_cost_list)
-        # --- Cost per Trace (P50, P99) ---
-        cost_per_trace_list = []
-        for date, costs in sorted(cost_by_date.items()):
-            if costs:
-                p50 = float(np.percentile(costs, 50))
-                p99 = float(np.percentile(costs, 99))
-            else:
-                p50 = p99 = 0.0
-            cost_per_trace_list.append({"date": date, "p50": p50, "p99": p99})
-        cost_per_trace_list = fill_missing_dates(
-            cost_per_trace_list, "tokens_per_trace"
-        )
-        set_cached_metric("cost_per_trace", cost_per_trace_list)
-        # --- Output Tokens (total) ---
-        output_tokens_list = [
-            {"date": date, "count": int(np.sum(tokens))}
-            for date, tokens in sorted(output_tokens_by_date.items())
-        ]
-        output_tokens_list = fill_missing_dates(output_tokens_list, "tokens")
-        set_cached_metric("output_tokens", output_tokens_list)
-        # --- Output Tokens per Trace (P50, P99) ---
-        output_tokens_per_trace_list = []
-        for date, tokens in sorted(output_tokens_by_date.items()):
-            if tokens:
-                p50 = float(np.percentile(tokens, 50))
-                p99 = float(np.percentile(tokens, 99))
-            else:
-                p50 = p99 = 0.0
-            output_tokens_per_trace_list.append({"date": date, "p50": p50, "p99": p99})
-        output_tokens_per_trace_list = fill_missing_dates(
-            output_tokens_per_trace_list, "tokens_per_trace"
-        )
-        set_cached_metric("output_tokens_per_trace", output_tokens_per_trace_list)
-        # --- Input Tokens (total) ---
-        input_tokens_list = [
-            {"date": date, "count": int(np.sum(tokens))}
-            for date, tokens in sorted(input_tokens_by_date.items())
-        ]
-        input_tokens_list = fill_missing_dates(input_tokens_list, "tokens")
-        set_cached_metric("input_tokens", input_tokens_list)
-        # --- Input Tokens per Trace (P50, P99) ---
-        input_tokens_per_trace_list = []
-        for date, tokens in sorted(input_tokens_by_date.items()):
-            if tokens:
-                p50 = float(np.percentile(tokens, 50))
-                p99 = float(np.percentile(tokens, 99))
-            else:
-                p50 = p99 = 0.0
-            input_tokens_per_trace_list.append({"date": date, "p50": p50, "p99": p99})
-        input_tokens_per_trace_list = fill_missing_dates(
-            input_tokens_per_trace_list, "tokens_per_trace"
-        )
-        set_cached_metric("input_tokens_per_trace", input_tokens_per_trace_list)
-    except Exception as e:
-        print(f"Error fetching cost/tokens metrics: {e}")
-
-    # --- TOOL METRICS ---
-    try:
-        from collections import defaultdict
-        import numpy as np
-
-        tool_runs = list(
-            client.list_runs(
-                run_type="tool",
-                project_name=os.getenv("LANGSMITH_PROJECT", "insurance-helpdesk"),
-                start_time=start_date,
-                limit=1000,
-            )
-        )
-        # Prepare nested dicts: {date: {tool_name: [values...]}}
-        count_by_date_tool = defaultdict(lambda: defaultdict(int))
-        latency_by_date_tool = defaultdict(lambda: defaultdict(list))
-        error_by_date_tool = defaultdict(
-            lambda: defaultdict(lambda: [0, 0])
-        )  # [error_count, total_count]
-        for run in tool_runs:
-            date = run.start_time.date().isoformat()
-            tool_name = run.name
-            # Count
-            count_by_date_tool[date][tool_name] += 1
-            # Latency
-            if run.end_time and run.start_time:
-                latency = (run.end_time - run.start_time).total_seconds()
-                latency_by_date_tool[date][tool_name].append(latency)
-            # Error rate
-            if run.error:
-                error_by_date_tool[date][tool_name][0] += 1  # error_count
-            error_by_date_tool[date][tool_name][1] += 1  # total_count
-        # --- Run Count by Tool ---
-        tool_run_count_list = []
-        for date in sorted(count_by_date_tool.keys()):
-            entry = {"date": date}
-            for tool, count in count_by_date_tool[date].items():
-                entry[tool] = count
-            tool_run_count_list.append(entry)
-        # Fill missing dates with empty tool breakdowns
-        tool_run_count_list = fill_missing_dates(tool_run_count_list, "tool_breakdown")
-        set_cached_metric("tool_run_count", tool_run_count_list)
-        # --- Median Latency by Tool ---
-        tool_median_latency_list = []
-        for date in sorted(latency_by_date_tool.keys()):
-            entry = {"date": date}
-            for tool, latencies in latency_by_date_tool[date].items():
-                entry[tool] = float(np.median(latencies)) if latencies else 0.0
-            tool_median_latency_list.append(entry)
-        tool_median_latency_list = fill_missing_dates(
-            tool_median_latency_list, "tool_breakdown"
-        )
-        set_cached_metric("tool_median_latency", tool_median_latency_list)
-        # --- Error Rate by Tool ---
-        tool_error_rate_list = []
-        for date in sorted(error_by_date_tool.keys()):
-            entry = {"date": date}
-            for tool, (error_count, total_count) in error_by_date_tool[date].items():
-                rate = (error_count / total_count) * 100 if total_count > 0 else 0.0
-                entry[tool] = rate
-            tool_error_rate_list.append(entry)
-        tool_error_rate_list = fill_missing_dates(
-            tool_error_rate_list, "tool_breakdown"
-        )
-        set_cached_metric("tool_error_rate", tool_error_rate_list)
-    except Exception as e:
-        print(f"Error fetching tool metrics: {e}")
+    print("\n--- [INFO] All metrics processed and cached successfully ---")

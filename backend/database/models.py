@@ -51,6 +51,27 @@ def get_user_data(user_id: str):
         db_utils.release_db_connection(conn)
 
 
+def get_all_users():
+    """Fetch all users from the database for admin portal."""
+    conn = db_utils.get_db_connection()
+    try:
+        with conn.cursor(cursor_factory=RealDictCursor) as cur:
+            cur.execute(
+                """
+                SELECT user_id, name, email, phone, address, location
+                FROM users
+                ORDER BY name
+            """
+            )
+            users = cur.fetchall()
+            return users
+    except Exception as e:
+        print(f"Error fetching all users: {e}")
+        return []
+    finally:
+        db_utils.release_db_connection(conn)
+
+
 def get_policy_data(user_id: str) -> str:
     """Fetches policy data, formatted for the LLM."""
     conn = db_utils.get_db_connection()

@@ -9,7 +9,7 @@ import {
 import axios from "axios";
 import UsersComponent from "./components/Users";
 import TicketsComponent from "./components/Tickets";
-import AnalyticsComponent from "./components/Analytics2";
+import AnalyticsComponent from "./components/Analytics";
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState("tickets");

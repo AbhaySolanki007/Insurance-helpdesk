@@ -39,29 +39,33 @@ insurance_support_backend/
 
 
 # 1. app.py
-"""Main Flask application entry point(L1 and L2 intilizatiion)"""
-# This file contains the main Flask application for the insurance helpdesk system.
-# It initializes the database, sets up routes for L1 and L2 support, and handles
+"""Main Flask application entry point(L1 and L2 intilizatiion)
+This file contains the main Flask application for the insurance helpdesk system.
+It initializes the database, sets up routes for L1 and L2 support, and handles
 
-import os
+This file contains the main Flask application for the insurance helpdesk system.
+It initializes the database, sets up routes for L1 and L2 support, and handles
+all API endpoints for the conversational AI system.
+"""
+
+import sqlite3
 import traceback
+from typing import Dict, Any
+
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from psycopg2.extras import RealDictCursor
-from langchain_core.messages import HumanMessage, AIMessage
-from typing import List, Dict, Any
 from google.api_core import exceptions
-import sqlite3
 from langgraph.checkpoint.sqlite import SqliteSaver
+from psycopg2.extras import RealDictCursor
 
 import config
-from database.db_utils import DB_POOL
-from database.models import init_db, get_user_history, update_user_history
-from ai.unified_chain import UnifiedSupportChain
 from ai.L1_agent import create_l1_agent_executor
 from ai.L2_agent import create_l2_agent_executor
 from ai.Langgraph_module.graph_compiler import compile_graph
 from ai.langsmith.langsmith_cache import fetch_and_cache_all_metrics, get_cached_metric
+from ai.unified_chain import UnifiedSupportChain
+from database.db_utils import DB_POOL
+from database.models import init_db, update_user_history, get_all_users
 from services import ticket_service
 
 
@@ -395,6 +399,19 @@ def get_metrics():
     except Exception as e:
         print(f"Error serving metrics: {e}")
         return jsonify({"error": "Failed to fetch metrics"}), 500
+
+
+@app.route("/api/admin/users", methods=["GET"])
+def get_all_users_api():
+    """
+    API endpoint to fetch all users for the admin portal.
+    """
+    try:
+        users = get_all_users()
+        return jsonify({"users": users}), 200
+    except Exception as e:
+        print(f"Error fetching all users: {e}")
+        return jsonify({"error": "Failed to fetch users"}), 500
 
 
 if __name__ == "__main__":

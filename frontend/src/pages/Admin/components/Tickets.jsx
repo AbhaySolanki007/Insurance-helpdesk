@@ -48,6 +48,8 @@ const Tickets = () => {
         return `${baseClasses} bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300`;
       case "In Progress":
         return `${baseClasses} bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300`;
+      case "In Review":
+        return `${baseClasses} bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300`;
       case "Done":
         return `${baseClasses} bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300`;
       default:
@@ -104,42 +106,61 @@ const Tickets = () => {
   });
 
   const getStatusColumns = () => {
-    const statuses = ["To Do", "In Progress", "Done"];
+    const statuses = ["To Do", "In Progress", "In Review", "Done"];
     return statuses.map(status => ({
       status,
       tickets: filteredTickets.filter(ticket => ticket.status === status)
-    }));
+    })).filter(column => column.tickets.length > 0); // Only show columns with tickets
   };
 
-  const TicketCard = ({ ticket }) => (
-    <div className={`bg-white dark:bg-gray-900 border-l-4 ${getPriorityColor(ticket.priority)} border rounded-lg shadow-sm hover:shadow-md transition-shadow p-4 mb-3 cursor-pointer`}>
-      <div className="flex justify-between items-start mb-2">
-        <div className="flex items-center gap-2">
-          <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
-            {ticket.id}
-          </span>
-          <div className="flex items-center gap-1">
-            {getPriorityIcon(ticket.priority)}
+  const TicketCard = ({ ticket, status }) => {
+    const getCardColor = (status) => {
+      switch (status) {
+        case "To Do":
+          return "bg-orange-100/80 dark:bg-[#493026]";
+        case "In Progress":
+          return "bg-blue-100/80 dark:bg-[#1f333e]";
+        case "In Review":
+          return "bg-yellow-100/80 dark:bg-[#3b3a1e]";
+        case "Done":
+          return "bg-green-100/80 dark:bg-[#1e3b2c]";
+        default:
+          return "bg-gray-100/80 dark:bg-gray-800/50 shadow-gray-200/50";
+      }
+    };
+
+    return (
+      <div className={`${getCardColor(status)} rounded-xl shadow-sm hover:shadow-md transition-shadow p-3 mb-2 cursor-pointer`}>
+        <div className="flex items-start justify-between mb-4 mt-1">
+          <div className="flex items-center gap-2">
+            <div className="w-5 h-5 bg-purple-100 dark:bg-purple-900/30 rounded flex items-center justify-center">
+              <svg className="w-3 h-3 text-purple-600 dark:text-purple-400" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" />
+              </svg>
+            </div>
+            <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+              {ticket.id}
+            </span>
+          </div>
+        </div>
+        
+        <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-2 line-clamp-2 mb-6">
+          {ticket.summary}
+        </h3>
+        
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="w-5 h-5 bg-gray-300 dark:bg-gray-900 rounded-full flex items-center justify-center">
+              <span className="text-xs font-medium text-gray-700 dark:text-gray-300">
+                {ticket.assignee.charAt(0).toUpperCase()}
+              </span>
+            </div>
+            <span className="text-xs text-gray-600 dark:text-gray-400">{ticket.assignee}</span>
           </div>
         </div>
       </div>
-      
-      <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-2 line-clamp-2">
-        {ticket.summary}
-      </h3>
-      
-      <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
-        <div className="flex items-center gap-1">
-          <User className="h-3 w-3" />
-          <span>{ticket.assignee}</span>
-        </div>
-        <div className="flex items-center gap-1">
-          <Calendar className="h-3 w-3" />
-          <span>{formatDate(ticket.created_at)}</span>
-        </div>
-      </div>
-    </div>
-  );
+    );
+  };
 
   const ListView = () => (
     <div className="overflow-x-auto">
@@ -153,7 +174,7 @@ const Tickets = () => {
             <th className="text-left py-4 px-4 text-sm font-medium text-gray-700 dark:text-gray-300 border-r border-gray-300 dark:border-gray-600" style={{ minWidth: '100px' }}>Status</th>
             <th className="text-left py-4 px-4 text-sm font-medium text-gray-700 dark:text-gray-300 border-r border-gray-300 dark:border-gray-600" style={{ minWidth: '120px' }}>Assignee</th>
             <th className="text-left py-4 px-4 text-sm font-medium text-gray-700 dark:text-gray-300" style={{ minWidth: '70px' }}>Created</th>
-          </tr>
+          </tr> 
         </thead>
         <tbody>
           {filteredTickets.map((ticket) => (
@@ -203,35 +224,50 @@ const Tickets = () => {
     </div>
   );
 
-  const BoardView = () => (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-      {getStatusColumns().map(({ status, tickets }) => (
-        <div key={status} className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-2">
-              {status === "To Do" && <Circle className="h-4 w-4 text-gray-400" />}
-              {status === "In Progress" && <Clock className="h-4 w-4 text-blue-500" />}
-              {status === "Done" && <CheckCircle className="h-4 w-4 text-green-500" />}
-              {status}
-              <span className="bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-xs px-2 py-1 rounded-full">
-                {tickets.length}
-              </span>
-            </h3>
+  const BoardView = () => {
+    const statusColumns = getStatusColumns();
+    
+    const getStatusColumnColor = (status) => {
+      switch (status) {
+        case "To Do":
+          return "bg-orange-50/80 dark:bg-orange-900/10";
+        case "In Progress":
+          return "bg-blue-50/80 dark:bg-blue-900/10";
+        case "In Review":
+          return "bg-yellow-50/80 dark:bg-yellow-900/10";
+        case "Done":
+          return "bg-green-50/80 dark:bg-green-900/10";
+        default:
+          return "bg-gray-50/50 dark:bg-gray-800/50";
+      }
+    };
+    
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-start">
+        {statusColumns.map(({ status, tickets }) => (
+          <div key={status} className={`${getStatusColumnColor(status)} rounded-xl p-4`}>
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-2">
+                {status === "To Do" && <div className="w-2 h-2 bg-orange-500 rounded-full"></div>}
+                {status === "In Progress" && <div className="w-2 h-2 bg-blue-500 rounded-full"></div>}
+                {status === "In Review" && <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>}
+                {status === "Done" && <div className="w-2 h-2 bg-green-500 rounded-full"></div>}
+                {status}
+                <span className="bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300 text-xs h-5 w-5 rounded-full ml-2 flex items-center justify-center">
+                  {tickets.length}  
+                </span>
+              </h3>
+            </div>  
+            <div className="space-y-3">
+              {tickets.map((ticket) => (
+                <TicketCard key={ticket.id} ticket={ticket} status={status} />
+              ))}
+            </div>
           </div>
-          <div className="space-y-3">
-            {tickets.map((ticket) => (
-              <TicketCard key={ticket.id} ticket={ticket} />
-            ))}
-            {tickets.length === 0 && (
-              <div className="text-center py-8 text-gray-500 dark:text-gray-400 text-sm">
-                No tickets in this status
-              </div>
-            )}
-          </div>
-        </div>
-      ))}
-    </div>
-  );
+        ))}
+      </div>
+    );
+  };
 
   if (loading) {
     return (
@@ -243,12 +279,10 @@ const Tickets = () => {
 
   if (error) {
     return (
-      <div className="bg-white dark:bg-gray-900/50 rounded-lg shadow border border-gray-200 dark:border-gray-700 p-6">
-        <div className="flex justify-center items-center h-32">
+        <div className="flex justify-center items-center h-[650px]">
           <div className="text-red-600 dark:text-red-400">
             Error: {error}
           </div>
-        </div>
       </div>
     );
   }
@@ -289,6 +323,7 @@ const Tickets = () => {
             <option value="all">All Status</option>
             <option value="To Do">To Do</option>
             <option value="In Progress">In Progress</option>
+            <option value="In Review">In Review</option>
             <option value="Done">Done</option>
           </select>
           

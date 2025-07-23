@@ -4,6 +4,8 @@ import { User, MessageSquare, Bell, Settings, Activity, ChevronRight } from "luc
 import { Context } from "../context/ContextApi";
 import axios from "axios";
 import "./Profile.css";
+import Loader from "../components/Loader";
+import ErrorBox from "../components/ErrorBox";
 
 const Profile = () => {
   const { id } = useParams();
@@ -63,29 +65,11 @@ const Profile = () => {
   };
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gray-100 dark:bg-gray-900 pt-20 px-4">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex items-center justify-center h-64">
-            <div className="shimmer w-32 h-32 rounded-full"></div>
-          </div>
-        </div>
-      </div>
-    );
+    return <Loader text="Loading profile data..." />;
   }
 
   if (error || !userData) {
-    return (
-      <div className="min-h-screen bg-gray-100 dark:bg-gray-900 pt-20 px-4">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center">
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-              {error || "User not found"}
-            </h2>
-          </div>
-        </div>
-      </div>
-    );
+    return <ErrorBox error={error || "User not found"} showRetry={false} />;
   }
 
   const stats = {

@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import MarkdownRenderer from "../../../components/MarkdownRenderer";
+import Loader from "../../../components/Loader";
+import ErrorBox from "../../../components/ErrorBox";
 import { 
   FileText, 
   Calendar, 
@@ -130,26 +132,11 @@ const Policy = ({ isSidebarOpen }) => {
   });
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="relative">
-          <div className="animate-spin rounded-full h-16 w-16 border-4 border-transparent border-t-indigo-500 border-r-purple-500"></div>
-          <div className="absolute inset-0 animate-pulse rounded-full h-16 w-16 border-4 border-transparent border-b-pink-500 border-l-blue-500"></div>
-          <Sparkles className="absolute inset-0 m-auto h-6 w-6 text-white animate-pulse" />
-        </div>
-      </div>
-    );
+    return <Loader text="Loading policies..." />;
   }
 
   if (error) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-center bg-red-500/10 border border-red-500/20 rounded-2xl p-8">
-          <XCircle className="h-12 w-12 mx-auto mb-4 text-red-400" />
-          <div className="text-red-400 text-lg font-semibold">{error}</div>
-        </div>
-      </div>
-    );
+    return <ErrorBox error={error} showRetry={false} />;
   }
 
   if (!policies.length) {
@@ -165,7 +152,7 @@ const Policy = ({ isSidebarOpen }) => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 from-slate-100 via-white to-slate-100 pt-6">
+    <div className="min-h-screen pt-6">
       <div className="max-w-[1400px] mx-auto space-y-8 px-6">
         {/* Header */}
         <div className="relative bg-gradient-to-br from-white/80 via-slate-50/80 to-gray-50/80 dark:from-[#2d1d4d]/90 dark:via-[#3d2869]/90 dark:to-[#4c3385]/90 border border-gray-200/50 dark:border-slate-700/50 p-8 rounded-3xl backdrop-blur-xl overflow-hidden">

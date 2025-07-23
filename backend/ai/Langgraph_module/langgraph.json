@@ -1,0 +1,7 @@
+{
+  "dependencies": ["."],
+  "graphs": {
+    "insurance-agent": "ai.Langgraph_module.studio_graph:app_graph"
+  },
+  "env": ".env"
+}

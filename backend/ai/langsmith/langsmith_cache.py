@@ -109,6 +109,49 @@ def fill_missing_windows(data_list, now, metric_type="count"):
     return filled_data
 
 
+def _median(data):
+    """Calculates the median of a list, returns 0 if empty."""
+    if not data:
+        return 0
+    return float(np.median(data))
+
+
+def _aggregate_by_hour(data_points: list, now: datetime, agg_func, metric_type: str):
+    """
+    Aggregates data points into 8-hour windows and fills missing windows.
+    """
+    if not data_points:
+        return []
+
+    # Group data by time window
+    by_window = defaultdict(list)
+    for point in data_points:
+        window_start = _get_window_start_for_timestamp(
+            datetime.fromisoformat(point["time"]), now
+        ).isoformat()
+        by_window[window_start].append(point["value"])
+
+    # Apply the aggregation function to each window
+    aggregated = {ts: agg_func(values) for ts, values in by_window.items()}
+
+    # Format for the frontend
+    if metric_type == "latency":
+        result_list = [
+            {
+                "date": ts,
+                "p50": val,
+                "p99": float(np.percentile(by_window[ts], 99) if by_window[ts] else 0),
+            }
+            for ts, val in sorted(aggregated.items())
+        ]
+    else:  # Handles cost and tokens
+        result_list = [
+            {"date": ts, metric_type: val} for ts, val in sorted(aggregated.items())
+        ]
+
+    return fill_missing_windows(result_list, now, metric_type)
+
+
 # --- Data Fetching Logic ---
 
 
@@ -231,81 +274,48 @@ def _calculate_llm_metrics(llm_runs, now):
     }
 
 
-def _calculate_cost_and_token_metrics(llm_runs, now):
-    cost_by_window = defaultdict(list)
-    output_tokens_by_window = defaultdict(list)
-    input_tokens_by_window = defaultdict(list)
+def _calculate_cost_and_token_metrics(llm_runs: list, now: datetime):
+    """
+    Calculates cost and token metrics from a list of LLM runs.
+    This version uses direct attributes from the run object for simplicity and robustness.
+    """
+    total_cost_data = []
+    cost_per_trace_data = []
+    output_tokens_data = []
+    output_tokens_per_trace_data = []
+    input_tokens_data = []
+    input_tokens_per_trace_data = []
 
     for run in llm_runs:
-        usage = None
-        if run.extra:
-            usage = run.extra.get("usage_metadata")
-            if not usage and "response_metadata" in run.extra:
-                usage = run.extra["response_metadata"].get("token_usage")
-        if usage:
-            ts = _get_window_start_for_timestamp(run.start_time, now).isoformat()
-            cost_by_window[ts].append(
-                usage.get("total_cost") or usage.get("cost") or 0.0
-            )
-            output_tokens_by_window[ts].append(
-                usage.get("output_tokens") or usage.get("completion_tokens") or 0
-            )
-            input_tokens_by_window[ts].append(
-                usage.get("input_tokens") or usage.get("prompt_tokens") or 0
-            )
+        # Use direct attributes, ensuring cost is converted to a float for numpy compatibility.
+        cost = float(getattr(run, "total_cost", 0.0) or 0.0)
+        input_tokens = int(getattr(run, "input_tokens", 0) or 0)
+        output_tokens = int(getattr(run, "output_tokens", 0) or 0)
 
-    total_cost_list = [
-        {"date": ts, "cost": float(np.sum(costs))}
-        for ts, costs in sorted(cost_by_window.items())
-    ]
-    filled_total_cost_list = fill_missing_windows(total_cost_list, now, "cost")
-
-    cost_per_trace_list = []
-    for ts, costs in sorted(cost_by_window.items()):
-        p50 = float(np.percentile(costs, 50)) if costs else 0.0
-        p99 = float(np.percentile(costs, 99)) if costs else 0.0
-        cost_per_trace_list.append({"date": ts, "p50": p50, "p99": p99})
-    filled_cost_per_trace_list = fill_missing_windows(
-        cost_per_trace_list, now, "tokens_per_trace"
-    )
-
-    output_tokens_list = [
-        {"date": ts, "count": int(np.sum(tokens))}
-        for ts, tokens in sorted(output_tokens_by_window.items())
-    ]
-    filled_output_tokens_list = fill_missing_windows(output_tokens_list, now, "tokens")
-
-    output_tokens_per_trace_list = []
-    for ts, tokens in sorted(output_tokens_by_window.items()):
-        p50 = float(np.percentile(tokens, 50)) if tokens else 0.0
-        p99 = float(np.percentile(tokens, 99)) if tokens else 0.0
-        output_tokens_per_trace_list.append({"date": ts, "p50": p50, "p99": p99})
-    filled_output_tokens_per_trace_list = fill_missing_windows(
-        output_tokens_per_trace_list, now, "tokens_per_trace"
-    )
-
-    input_tokens_list = [
-        {"date": ts, "count": int(np.sum(tokens))}
-        for ts, tokens in sorted(input_tokens_by_window.items())
-    ]
-    filled_input_tokens_list = fill_missing_windows(input_tokens_list, now, "tokens")
-
-    input_tokens_per_trace_list = []
-    for ts, tokens in sorted(input_tokens_by_window.items()):
-        p50 = float(np.percentile(tokens, 50)) if tokens else 0.0
-        p99 = float(np.percentile(tokens, 99)) if tokens else 0.0
-        input_tokens_per_trace_list.append({"date": ts, "p50": p50, "p99": p99})
-    filled_input_tokens_per_trace_list = fill_missing_windows(
-        input_tokens_per_trace_list, now, "tokens_per_trace"
-    )
+        # Append data points with timestamps
+        timestamp = run.start_time.isoformat()
+        total_cost_data.append({"time": timestamp, "value": cost})
+        cost_per_trace_data.append(
+            {"time": timestamp, "value": cost}
+        )  # Cost is per-run (trace)
+        output_tokens_data.append({"time": timestamp, "value": output_tokens})
+        output_tokens_per_trace_data.append({"time": timestamp, "value": output_tokens})
+        input_tokens_data.append({"time": timestamp, "value": input_tokens})
+        input_tokens_per_trace_data.append({"time": timestamp, "value": input_tokens})
 
     return {
-        "total_cost": filled_total_cost_list,
-        "cost_per_trace": filled_cost_per_trace_list,
-        "output_tokens": filled_output_tokens_list,
-        "output_tokens_per_trace": filled_output_tokens_per_trace_list,
-        "input_tokens": filled_input_tokens_list,
-        "input_tokens_per_trace": filled_input_tokens_per_trace_list,
+        "total_cost": _aggregate_by_hour(total_cost_data, now, sum, "cost"),
+        "cost_per_trace": _aggregate_by_hour(
+            cost_per_trace_data, now, _median, "latency"
+        ),
+        "output_tokens": _aggregate_by_hour(output_tokens_data, now, sum, "count"),
+        "output_tokens_per_trace": _aggregate_by_hour(
+            output_tokens_per_trace_data, now, _median, "latency"
+        ),
+        "input_tokens": _aggregate_by_hour(input_tokens_data, now, sum, "count"),
+        "input_tokens_per_trace": _aggregate_by_hour(
+            input_tokens_per_trace_data, now, _median, "latency"
+        ),
     }
 
 

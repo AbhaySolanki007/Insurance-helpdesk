@@ -1,218 +1,364 @@
-# Insurance Helpdesk - Backend
+# Insurance Helpdesk Backend 🏥
 
-## Overview
+A sophisticated conversational AI backend system designed to provide multi-tiered insurance support through intelligent agent orchestration.
 
-This is the backend for the Insurance Helpdesk application, a conversational AI system designed to provide multi-level support to users. It features a tiered agent architecture (L1 and L2) that can answer frequently asked questions, retrieve user-specific information, and escalate complex issues by creating support tickets in Jira.
+## 🌟 Overview
 
-The system is built with Flask and leverages the LangChain framework to create and manage the AI agents. It uses a PostgreSQL database for data persistence and integrates with external services like Jira and Gmail.
+The Insurance Helpdesk Backend is a Flask-based conversational AI system that leverages LangGraph for stateful agent orchestration. It implements a tiered support model with L1 (primary) and L2 (escalation) agents, providing contextual, personalized assistance for insurance-related queries.
 
-## System Architecture
+### Key Features
 
-The backend follows a modular architecture orchestrated by the main Flask application. An incoming user query is first handled by a lightweight **L1 Agent**. If the query is complex or requires special permissions (like creating a ticket), it is escalated to a more powerful **L2 Agent**. Both agents leverage a set of tools to perform their tasks.
+- **🤖 Dual-Agent Architecture**: Intelligent routing between L1 and L2 agents based on query complexity
+- **💾 Stateful Conversations**: Persistent conversation state using LangGraph checkpointing
+- **🔍 RAG-Powered FAQ Search**: Semantic search through insurance documentation using ChromaDB
+- **🎫 JIRA Integration**: Automated ticket creation and management for complex issues
+- **📧 Email Automation**: Gmail API integration for sending confirmations and updates
+- **📊 Observability**: LangSmith integration for monitoring agent performance and metrics
+- **🌐 Multi-language Support**: Agents can respond in the user's preferred language
 
+## 🏗️ System Architecture
 
+### Agent Workflow Visualization
 
-    subgraph "Backend Application"
-        direction TB
-        UI -- HTTP API Request --> App[Flask App: app.py]
-
-        App -- Reroutes to --> L1[L1 Agent: Gemini]
-        App -- Reroutes to --> L2[L2 Agent: Llama3]
-
-        L1 -- Escalates to --> L2
-
-        subgraph "Agent Tools"
-            L1 -- Uses --> ToolFAQ[FAQ Search]
-            L1 -- Uses --> ToolUser[User Data Lookup]
-
-            L2 -- Uses --> ToolFAQ
-            L2 -- Uses --> ToolUser
-            L2 -- Uses --> ToolTicket[Jira Ticket Tool]
-            L2 -- Uses --> ToolEmail[Gmail Tool]
-        end
-
-        subgraph "Data & Services"
-            ToolFAQ -- Accesses --> VDB[(ChromaDB)]
-            ToolUser -- Accesses --> DB[(PostgreSQL)]
-            ToolTicket -- Accesses --> Jira[Jira API]
-            ToolEmail -- Accesses --> Gmail[Gmail API]
-        end
-    end
+```mermaid
+graph TD
+    Start(["🚀 User Query"]) --> Dispatcher{{"🔀 Dispatcher<br/>Routes based on<br/>conversation state"}}
+    
+    Dispatcher -->|"New conversation or<br/>previous L1 interaction"| L1["🤖 L1 Agent<br/>Handles common queries<br/>and information gathering"]
+    
+    Dispatcher -->|"Ongoing L2 session<br/>(sticky routing)"| L2["🧠 L2 Agent<br/>Handles complex issues<br/>and ticket creation"]
+    
+    L1 --> Router{{"🚦 Router<br/>Evaluates if escalation<br/>is needed"}}
+    
+    Router -->|"Query resolved"| End1(["✅ Response to User"])
+    Router -->|"Escalation needed<br/>(L2.... triggered)"| Summarizer["📝 Summarizer<br/>Creates comprehensive<br/>handoff summary"]
+    
+    Summarizer --> L2
+    L2 --> End2(["✅ Response to User"])
+    
+    style Start fill:#e1f5e1
+    style End1 fill:#e1f5e1
+    style End2 fill:#e1f5e1
+    style L1 fill:#e3f2fd
+    style L2 fill:#fce4ec
+    style Summarizer fill:#fff3e0
+    style Dispatcher fill:#f3e5f5
+    style Router fill:#f3e5f5
 ```
 
-## Technology Stack
+### Workflow Explanation
 
-- **Framework:** Flask
-- **AI / LLMs:** LangChain, Google Gemini, Groq (Llama3)
-- **Vector Database:** ChromaDB for RAG
-- **Database:** PostgreSQL
-- **Primary Dependencies:**
-    - `flask`, `flask_cors`: Web server and request handling.
-    - `psycopg2-binary`: PostgreSQL database driver.
-    - `langchain`, `langgraph`, `langchain_google_genai`, `langchain_groq`: Core AI agent and LLM orchestration.
-    - `chromadb`, `sentence-transformers`: Vector store and embeddings for RAG.
-    - `jira`: For creating and managing support tickets.
-    - `google-api-python-client`, `google-auth-oauthlib`: For sending emails via Gmail API.
-    - `python-dotenv`: For managing environment variables.
+1. **🚀 User Query**: Every interaction begins with a user's question or request
+2. **🔀 Dispatcher**: Intelligently routes queries based on conversation history - maintaining session continuity
+3. **🤖 L1 Agent**: First-line support using Gemini, handles FAQs and basic information retrieval
+4. **🚦 Router**: Analyzes L1's response to determine if escalation is necessary
+5. **📝 Summarizer**: When escalation occurs, creates a comprehensive summary of the entire conversation
+6. **🧠 L2 Agent**: Advanced support using Llama3-70B, handles complex queries and has ticket creation privileges
+7. **✅ Response**: Final answer delivered to the user with appropriate actions taken
 
-## Prerequisites
+## 🛠️ Technology Stack
+
+### Core Technologies
+- **Framework**: Flask with CORS support
+- **State Management**: LangGraph with SQLite checkpointing
+- **LLM Providers**: 
+  - Google Gemini 2.0 Flash (L1 Agent)
+  - Groq Llama3-70B (L2 Agent)
+- **Vector Database**: ChromaDB with sentence-transformers
+- **Relational Database**: PostgreSQL with connection pooling
+- **External Services**: JIRA API, Gmail API
+
+### Key Dependencies
+```
+flask                       # Web framework
+langchain                   # LLM orchestration
+langgraph                   # Stateful agent workflows
+langchain_google_genai      # Google AI integration
+langchain_groq              # Groq integration
+chromadb                    # Vector database
+psycopg2                    # PostgreSQL adapter
+jira                        # JIRA integration
+google-api-python-client    # Gmail integration
+langsmith                   # Observability
+sentence-transformers       # Embeddings
+```
+
+## 📋 Prerequisites
 
 - Python 3.9+
-- PostgreSQL Server
-- Access to Google AI, Groq, and Jira APIs.
+- PostgreSQL 12+
+- API Keys:
+  - Google AI API key
+  - Groq API key
+  - JIRA credentials
+  - Gmail API credentials
+  - LangSmith API key (optional)
 
-## Setup and Installation
+## 🚀 Setup Instructions
 
-1.  **Clone the repository:**
-    ```bash
-    git clone <repository-url>
-    cd Insurance-Helpdesk-Internal/backend
-    ```
-
-2.  **Create and activate a virtual environment:**
-    ```bash
-    python -m venv venv
-    .\venv\Scripts\activate  # On Windows
-    # source venv/bin/activate # On macOS/Linux
-    ```
-
-3.  **Install dependencies:**
-    ```bash
-    pip install -r requirements.txt
-    ```
-
-4.  **Set up environment variables:**
-    Create a file named `.env` in the `backend` directory and add the following variables.
-
-    ```env
-    # Flask
-    FLASK_SECRET_KEY='your-very-secret-key'
-
-    # Database (PostgreSQL)
-    DB_NAME='your_db_name'
-    DB_USER='your_db_user'
-    DB_PASSWORD='your_db_password'
-    DB_HOST='localhost'
-    DB_PORT='5432'
-
-    # Google AI
-    GOOGLE_API_KEY='your-google-api-key'
-
-    # Groq AI
-    GROQ_API_KEY='your-groq-api-key'
-
-    # Jira
-    JIRA_SERVER='https://your-domain.atlassian.net'
-    JIRA_USERNAME='your-jira-email'
-    JIRA_API_TOKEN='your-jira-api-token'
-    JIRA_PROJECT_KEY='YOUR_PROJECT_KEY'
-
-    # Gmail API
-    SENDER_EMAIL='your-sending-email@gmail.com'
-    # Note: SENDER_PASSWORD is not used if using OAuth 2.0 with secret.json
-
-    # ChromaDB (Defaults are usually fine)
-    FAQ_DB_PATH='./faq_database/'
-    FAQ_COLLECTION_NAME='insurance_faqs'
-    ```
-
-5.  **Gmail API Credentials:**
-    - Download your OAuth 2.0 credentials from the Google Cloud Console.
-    - Rename the file to `secret.json` and place it in the `backend` directory.
-    - The first time you run the app and an email is sent, you will be prompted to authorize the application. This will create a `token.pickle` file to store credentials for future sessions.
-
-6.  **Initialize the Database:**
-    Ensure your PostgreSQL server is running and the credentials in `.env` are correct. The application uses functions in `database/models.py` to interact with the tables. You will need to create the `users` and `policies` tables manually.
-
-    **`users` table schema:**
-    ```sql
-    CREATE TABLE users (
-        user_id UUID PRIMARY KEY,
-        name VARCHAR(255),
-        email VARCHAR(255) UNIQUE,
-        passwords VARCHAR(255),
-        phone VARCHAR(50),
-        address TEXT,
-        location VARCHAR(255),
-        history JSONB
-    );
-    ```
-
-    **`policies` table schema:**
-    ```sql
-    CREATE TABLE policies (
-        policy_id VARCHAR(255) PRIMARY KEY,
-        user_id UUID REFERENCES users(user_id),
-        policy_type VARCHAR(255),
-        policy_status VARCHAR(100),
-        issue_date DATE,
-        expiry_date DATE,
-        premium_amount NUMERIC,
-        coverage_amount NUMERIC,
-        markdown_format TEXT
-    );
-    ```
-
-7.  **Populate the FAQ Vector Store:**
-    The project uses a Streamlit application to load FAQ data from a CSV into ChromaDB.
-    - Place your FAQ data in a file named `FAQ_Article_Updated.csv` in the `backend/faq_database/` directory.
-    - Run the Streamlit app:
-    ```bash
-    streamlit run ./faq_database/CsvToChroma.py
-    ```
-    - Use the web interface to upload the CSV and populate the database.
-
-## Running the Application
-
-Once the setup is complete, you can run the Flask development server:
-
+### 1. Clone and Navigate
 ```bash
-flask run
+git clone <repository-url>
+cd Insurance-Helpdesk_new/backend
 ```
 
-The backend will be available at `http://127.0.0.1:5000`.
+### 2. Virtual Environment
+```bash
+# Windows
+python -m venv venv
+.\venv\Scripts\activate
 
-## API Endpoints
+# macOS/Linux
+python -m venv venv
+source venv/bin/activate
+```
 
-- `POST /predict/l1`: Submits a query to the L1 agent.
-  - **Body:** `{ "query": "...", "user_id": "...", "language": "en" }`
-- `POST /predict/l2`: Submits a query to the L2 agent (for escalated issues).
-  - **Body:** `{ "query": "...", "user_id": "...", "language": "en" }`
-- `POST /api/login`: Authenticates a user and retrieves a token.
-  - **Body:** `{ "email": "...", "password": "..." }`
-- `POST /api/logout`: Logs out the user.
-- `GET /api/chat/history/<user_id>`: Retrieves the chat history for a user.
-- `GET /api/user/policies/<user_id>`: Retrieves the insurance policies for a user.
+### 3. Install Dependencies
+```bash
+pip install -r requirements.txt
+```
 
-# Project Structure Overview
-"""
-insurance_support/
+### 4. Environment Configuration
+Create a `.env` file in the backend directory:
+
+```env
+# Flask Configuration
+FLASK_SECRET_KEY='your-secret-key-here'
+DEBUG=True
+HOST=0.0.0.0
+PORT=8001
+
+# Database Configuration
+DB_NAME='insurance_helpdesk'
+DB_USER='your_db_user'
+DB_PASSWORD='your_db_password'
+DB_HOST='localhost'
+DB_PORT='5432'
+
+# AI Services
+GOOGLE_API_KEY='your-google-api-key'
+GROQ_API_KEY='your-groq-api-key'
+
+# JIRA Configuration
+JIRA_SERVER='https://your-domain.atlassian.net'
+JIRA_USERNAME='your-email@example.com'
+JIRA_API_TOKEN='your-jira-api-token'
+JIRA_PROJECT_KEY='YOUR_PROJECT'
+
+# Email Configuration
+SENDER_EMAIL='your-email@gmail.com'
+
+# ChromaDB Configuration
+FAQ_DB_PATH='./faq_database/'
+FAQ_COLLECTION_NAME='insurance_faqs'
+
+# LangSmith (Optional)
+LANGCHAIN_TRACING_V2=true
+LANGCHAIN_API_KEY='your-langsmith-api-key'
+LANGCHAIN_PROJECT='insurance-helpdesk'
+```
+
+### 5. Database Setup
+
+#### PostgreSQL Tables
+```sql
+-- Users table
+CREATE TABLE users (
+    user_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    passwords VARCHAR(255),
+    phone VARCHAR(50),
+    address TEXT,
+    location VARCHAR(255),
+    history JSONB DEFAULT '[]'::jsonb
+);
+
+-- Policies table
+CREATE TABLE policies (
+    policy_id VARCHAR(255) PRIMARY KEY,
+    user_id UUID REFERENCES users(user_id) ON DELETE CASCADE,
+    policy_type VARCHAR(255),
+    policy_status VARCHAR(100),
+    issue_date DATE,
+    expiry_date DATE,
+    premium_amount NUMERIC(10, 2),
+    coverage_amount NUMERIC(12, 2),
+    markdown_format TEXT
+);
+```
+
+### 6. Gmail API Setup
+1. Download OAuth 2.0 credentials from Google Cloud Console
+2. Save as `secret.json` in the backend directory
+3. First run will prompt for authorization
+
+### 7. FAQ Database Population
+```bash
+# Place your FAQ CSV in backend/faq_database/
+python faq_database/update_faq_db.py
+```
+
+## 📡 API Endpoints
+
+### Chat Endpoints
+```
+POST /api/chat
+Body: {
+    "query": "User's question",
+    "user_id": "uuid",
+    "language": "en"
+}
+Response: {
+    "responses": ["Agent response"],
+    "user_id": "uuid",
+    "is_l2": boolean
+}
+```
+
+### Authentication
+```
+POST /api/login
+Body: {
+    "email": "user@example.com",
+    "password": "password"
+}
+
+POST /api/logout
+```
+
+### User Data
+```
+GET /api/chat/history/<user_id>
+GET /api/user/policies/<user_id>
+```
+
+### Admin Endpoints
+```
+GET /api/admin/users
+GET /api/tickets/all
+GET /api/metrics
+```
+
+## 🏃‍♂️ Running the Application
+
+```bash
+# Development mode
+python app.py
+
+# Production mode
+gunicorn -w 4 -b 0.0.0.0:8001 app:app
+```
+
+The backend will be available at `http://localhost:8001`
+
+## 📁 Project Structure
+
+```
+backend/
 │
-├── app.py                  # 1. Main Flask application: Initializes and orchestrates both L1/L2 agents and routes API requests.
-├── config.py               # 2. Centralized configuration: Manages all environment variables, API keys, and database settings.
-├── requirements.txt        # 3. Project dependencies: Lists all necessary Python packages for the application.
+├── app.py                  # Main Flask application
+├── config.py               # Configuration management
+├── requirements.txt        # Python dependencies
+├── checkpoints.sqlite      # LangGraph conversation state
 │
 ├── database/
-│   ├── __init__.py
-│   ├── models.py           # 4. Data Access Layer: Defines functions for all direct SQL interactions with the database (users, policies, history).
-│   └── db_utils.py         # 5. Database Utilities: Manages a high-performance connection pool to efficiently handle database connections.
+│   ├── db_utils.py         # Connection pool management
+│   └── models.py           # Database operations
 │
-├── services/
-│   ├── __init__.py
-│   ├── auth_service.py     # 6. Authentication services: (Placeholder) for handling user authentication logic.
-│   ├── email_service.py    # 7. Email service: Encapsulates all logic for sending emails via the Gmail API, abstracting it from the agents.
-│   ├── policy_service.py   # 8. Policy management: (Placeholder) for business logic related to insurance policies.
-│   ├── ticket_service.py   # 9. Ticket management: Provides a simplified interface (facade) for creating and searching JIRA support tickets(in # 9.1 services/jira_service.py).
-│   └── audio_service.py    # 10. Audio processing: (Placeholder) for handling audio recording, transcription, and related tasks.
+├── faq_database/
+│   ├── chroma.sqlite3      # Vector embeddings
+│   └── update_faq_db.py    # FAQ loader script
 │
 ├── ai/
-│   ├── __init__.py
-│   ├── unified_chain.py    # 11. RAG PERFORMING like FAQ Retriever Service: Manages the ChromaDB vector store and provides a method for performing RAG-based FAQ searches.
-│   ├── l1_agent.py         # 12. L1 Agent Module: Defines the prompt, tools, and execution logic for the front-line, info-gathering ReAct agent.
-│   ├── l2_agent.py         # 13. L2 Agent Module: Defines the prompt, tools, and execution logic for the advanced, escalation-handling ReAct agent.
-│   └── tools.py            # 14. Agent Tool Factory: A central module that defines all possible agent tools and provides a function to create customized toolsets for L1 and L2.
+│   ├── L1_agent.py         # Primary agent logic
+│   ├── L2_agent.py         # Escalation agent logic
+│   ├── tools.py            # Agent tools factory
+│   ├── unified_chain.py    # RAG implementation
+│   │
+│   ├── Langgraph_module/
+│   │   ├── Langgraph.py    # Graph nodes definition
+│   │   └── graph_compiler.py # Graph assembly
+│   │
+│   └── langsmith/
+│       └── langsmith_cache.py # Metrics caching
 │
-└── utils/
-    ├── __init__.py
-    └── helpers.py          # 15. Helper Utilities: Contains shared functions, such as formatting conversation history for agent prompts.
-"""
+├── utils/
+│   └── helpers.py          # Utility functions
+│
+└── services/
+    ├── jira_service.py     # JIRA integration
+    ├── email_service.py    # Gmail integration
+    └── ticket_service.py   # Ticket facade
+```
+
+## 🧪 Development Guide
+
+### Adding New Tools
+1. Define the tool function in `ai/tools.py`
+2. Add tool name to appropriate agent's tool list
+3. Update agent prompts if necessary
+
+### Modifying Agent Behavior
+- L1 Agent prompt: `ai/L1_agent.py`
+- L2 Agent prompt: `ai/L2_agent.py`
+- Graph flow: `ai/Langgraph_module/graph_compiler.py`
+
+### Database Migrations
+- Add new models in `database/models.py`
+- Update schema documentation
+- Create migration scripts as needed
+
+## 🔍 Monitoring & Debugging
+
+### LangSmith Integration
+- View traces at [smith.langchain.com](https://smith.langchain.com)
+- Metrics cached locally in `ai/langsmith/metrics_cache.sqlite`
+- Access metrics via `/api/metrics` endpoint
+
+### Logging
+- Flask logs to console by default
+- Agent execution logs visible with `verbose=True`
+- Database queries logged with connection pool
+
+### LangGraph Studio
+
+For interactive development, visualization, and debugging of the agent graph, you can use LangGraph Studio. This provides a web-based IDE that connects to your local code.
+
+1.  **Install the CLI:**
+    If you haven't already, install the LangGraph command-line interface:
+    ```bash
+    pip install "langgraph-cli[inmem]"
+    ```
+
+2.  **Run the Development Server:**
+    From the `backend` directory, run the following command to start the local development server:
+    ```bash
+    langgraph dev --config ai/Langgraph_module/langgraph.json
+    ```
+
+3.  **Access the Studio:**
+    The command will output a URL for the Studio UI (e.g., `https://smith.langchain.com/studio/?baseUrl=...`). Open this URL in your browser to start interacting with your agent.
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit changes (`git commit -m 'Add AmazingFeature'`)
+4. Push to branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## 📄 License
+
+This project is proprietary software. All rights reserved.
+
+## 🆘 Support
+
+For issues and questions:
+- Check existing issues on GitHub
+- Contact the development team
+- Review agent logs for debugging
+
+---
+
+Built with ❤️ by the Insurance Helpdesk Team

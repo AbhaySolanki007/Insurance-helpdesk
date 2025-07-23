@@ -6,10 +6,9 @@ import {
   Users,
   BarChart2,
 } from "lucide-react";
-import axios from "axios";
 import UsersComponent from "./components/Users";
 import TicketsComponent from "./components/Tickets";
-import AnalyticsComponent from "./components/Analytics";
+import AnalyticsComponent from "./components/Analytics/Analytics";
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState("tickets");
@@ -17,24 +16,6 @@ export default function AdminDashboard() {
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
-  };
-
-  const [usersData2, setUsersData2] = useState([]);
-  const userTabHandle = async () => {
-    setActiveTab("users");
-    setSidebarOpen(false);
-    try {
-      const response = await axios.get(
-        `http://localhost:8000/api/v1/users/getAllUsersData`,
-        { withCredentials: true }
-      );
-      console.log("response:", response);
-      setUsersData2(response.data.data);
-      //   usersData2 = response.data.data;
-      console.log("UsersData2:", usersData2);
-    } catch (error) {
-      console.error(error);
-    }
   };
 
   return (
@@ -80,7 +61,11 @@ export default function AdminDashboard() {
           </button>
 
           <button
-            onClick={userTabHandle}
+            onClick={() => {
+              setActiveTab("users");
+              setSidebarOpen(false);
+              return;
+            }}
             className={`flex items-center w-full ${sidebarOpen ? 'px-4' : 'px-2'} py-3 ${activeTab === "users" ? "bg-blue-600 dark:bg-blue-600 text-white" : "hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300"
               }`}
           >
@@ -113,7 +98,7 @@ export default function AdminDashboard() {
         {/* Content Area */}
         <main className="flex-1 overflow-y-auto p-6 bg-white dark:bg-[#1e1e1e]">
           {activeTab === "tickets" && <TicketsComponent />}
-          {activeTab === "users" && <UsersComponent usersData={usersData2} />}
+          {activeTab === "users" && <UsersComponent />}
           {activeTab === "analytics" && <AnalyticsComponent />}
         </main>
       </div>

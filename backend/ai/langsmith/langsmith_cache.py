@@ -85,7 +85,9 @@ def _get_window_start_for_timestamp(ts, now):
     return window_start
 
 
-def fill_missing_windows(data_list, now, metric_type="count"):
+def fill_missing_windows(
+    data_list, now, metric_type="count", all_tool_names: set = None
+):
     expected_windows = [w.isoformat() for w in get_last_7_days_dynamic_windows(now)]
     window_map = {item["date"]: item for item in data_list}
     filled_data = []
@@ -105,7 +107,11 @@ def fill_missing_windows(data_list, now, metric_type="count"):
             elif metric_type == "tokens":
                 filled_data.append({"date": ts, "count": 0})
             elif metric_type == "tool_breakdown":
-                filled_data.append({"date": ts})
+                default_entry = {"date": ts}
+                if all_tool_names:
+                    for tool_name in all_tool_names:
+                        default_entry[tool_name] = 0.0
+                filled_data.append(default_entry)
     return filled_data
 
 
@@ -319,53 +325,96 @@ def _calculate_cost_and_token_metrics(llm_runs: list, now: datetime):
     }
 
 
-def _calculate_tool_metrics(tool_runs, now):
-    count_by_window_tool = defaultdict(lambda: defaultdict(int))
-    latency_by_window_tool = defaultdict(lambda: defaultdict(list))
-    error_by_window_tool = defaultdict(lambda: defaultdict(lambda: [0, 0]))
+def _aggregate_tool_data(tool_data_points: list, now: datetime, all_tool_names: set):
+    """
+    Aggregates a list of tool run data points into final metrics structures
+    for run counts, median latencies, and error rates.
+    """
+    # 1. Group raw data points by time window and then by tool name.
+    by_window_tool = defaultdict(
+        lambda: defaultdict(lambda: {"latencies": [], "errors": 0, "runs": 0})
+    )
 
+    for point in tool_data_points:
+        window_start = _get_window_start_for_timestamp(
+            datetime.fromisoformat(point["timestamp"]), now
+        ).isoformat()
+        tool_name = point["name"]
+
+        by_window_tool[window_start][tool_name]["latencies"].append(point["latency"])
+        by_window_tool[window_start][tool_name]["runs"] += 1
+        if point["error"]:
+            by_window_tool[window_start][tool_name]["errors"] += 1
+
+    # 2. Process the aggregated data into final list format for each metric.
+    run_counts, median_latencies, error_rates = [], [], []
+    sorted_windows = sorted(by_window_tool.keys())
+
+    for ts in sorted_windows:
+        # Initialize entries with all known tool names set to 0.
+        counts_entry = {tool: 0 for tool in all_tool_names}
+        latencies_entry = {tool: 0.0 for tool in all_tool_names}
+        errors_entry = {tool: 0.0 for tool in all_tool_names}
+
+        counts_entry["date"] = ts
+        latencies_entry["date"] = ts
+        errors_entry["date"] = ts
+
+        sorted_tools = sorted(by_window_tool[ts].keys())
+
+        for tool_name in sorted_tools:
+            data = by_window_tool[ts][tool_name]
+            counts_entry[tool_name] = data["runs"]
+            latencies_entry[tool_name] = _median(data["latencies"])
+            errors_entry[tool_name] = (
+                (data["errors"] / data["runs"]) * 100 if data["runs"] > 0 else 0.0
+            )
+
+        run_counts.append(counts_entry)
+        median_latencies.append(latencies_entry)
+        error_rates.append(errors_entry)
+
+    # 3. Fill in any missing time windows with default empty values.
+    return (
+        fill_missing_windows(run_counts, now, "tool_breakdown", all_tool_names),
+        fill_missing_windows(median_latencies, now, "tool_breakdown", all_tool_names),
+        fill_missing_windows(error_rates, now, "tool_breakdown", all_tool_names),
+    )
+
+
+def _calculate_tool_metrics(tool_runs: list, now: datetime):
+    """
+    Calculates all tool-related metrics by first extracting a simple list of
+    data points, then passing them to a dedicated aggregation function.
+    """
+    # 1. Create a simple, flat list of data points and gather all unique tool names.
+    tool_data_points = []
+    all_tool_names = set()
     for run in tool_runs:
-        ts = _get_window_start_for_timestamp(run.start_time, now).isoformat()
-        tool_name = run.name
-        count_by_window_tool[ts][tool_name] += 1
-        if run.end_time and run.start_time:
-            latency = (run.end_time - run.start_time).total_seconds()
-            latency_by_window_tool[ts][tool_name].append(latency)
-        if run.error:
-            error_by_window_tool[ts][tool_name][0] += 1
-        error_by_window_tool[ts][tool_name][1] += 1
+        latency = (
+            (run.end_time - run.start_time).total_seconds()
+            if run.end_time and run.start_time
+            else 0.0
+        )
+        all_tool_names.add(run.name)
+        tool_data_points.append(
+            {
+                "name": run.name,
+                "timestamp": run.start_time.isoformat(),
+                "latency": latency,
+                "error": bool(run.error),
+            }
+        )
 
-    tool_run_count_list = [
-        {"date": ts, **counts} for ts, counts in sorted(count_by_window_tool.items())
-    ]
-    filled_tool_run_count_list = fill_missing_windows(
-        tool_run_count_list, now, "tool_breakdown"
-    )
-
-    tool_median_latency_list = []
-    for ts in sorted(latency_by_window_tool.keys()):
-        entry = {"date": ts}
-        for tool, latencies in latency_by_window_tool[ts].items():
-            entry[tool] = float(np.median(latencies)) if latencies else 0.0
-        tool_median_latency_list.append(entry)
-    filled_tool_median_latency_list = fill_missing_windows(
-        tool_median_latency_list, now, "tool_breakdown"
-    )
-
-    tool_error_rate_list = []
-    for ts in sorted(error_by_window_tool.keys()):
-        entry = {"date": ts}
-        for tool, (err_count, total_count) in error_by_window_tool[ts].items():
-            entry[tool] = (err_count / total_count) * 100 if total_count > 0 else 0.0
-        tool_error_rate_list.append(entry)
-    filled_tool_error_rate_list = fill_missing_windows(
-        tool_error_rate_list, now, "tool_breakdown"
+    # 2. Pass the unified data list and all tool names to the aggregator.
+    run_counts, median_latencies, error_rates = _aggregate_tool_data(
+        tool_data_points, now, all_tool_names
     )
 
     return {
-        "tool_run_count": filled_tool_run_count_list,
-        "tool_median_latency": filled_tool_median_latency_list,
-        "tool_error_rate": filled_tool_error_rate_list,
+        "tool_run_count": run_counts,
+        "tool_median_latency": median_latencies,
+        "tool_error_rate": error_rates,
     }
 
 
@@ -417,6 +466,7 @@ def fetch_and_cache_all_metrics():
         tool_runs = _fetch_paginated_runs(client, project_name, "tool")
         if tool_runs:
             tool_metrics = _calculate_tool_metrics(tool_runs, now)
+
             all_metrics.update(tool_metrics)
             for key, data in tool_metrics.items():
                 set_cached_metric(key, data)

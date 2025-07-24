@@ -100,7 +100,7 @@ function ChatLayout() {
   }, [location.pathname]);
 
   return (
-    <div className="flex h-[calc(100vh-64px)] bg-white dark:bg-[#1e1e1e]">
+    <div className="flex h-[calc(100vh-64px)] bg-[#f8f7ff] dark:bg-[#1e1e1e]">
       <Sidebar 
         isSidebarOpen={isSidebarOpen}
         setIsSidebarOpen={setIsSidebarOpen}

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import axios from "axios";
 import { 
   Search, 
@@ -12,6 +12,8 @@ import {
   Minus,
   Calendar,
 } from "lucide-react";
+import Loader from "../../../components/Loader";
+import ErrorBox from "../../../components/ErrorBox";
 
 const Tickets = () => {
   const [ticketsData, setTicketsData] = useState([]);
@@ -39,6 +41,59 @@ const Tickets = () => {
       setLoading(false);
     }
   };
+
+  const formatDate = (dateString) => {
+    if (!dateString) return 'N/A';
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffTime = Math.abs(now - date);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    
+    if (diffDays === 1) return '1 day ago';
+    if (diffDays < 7) return `${diffDays} days ago`;
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  };
+
+  // Memoized processed data
+  const processedTicketsData = useMemo(() => {
+    if (!ticketsData || ticketsData.length === 0) return [];
+
+    return ticketsData.map(ticket => ({
+      ...ticket,
+      formattedDate: formatDate(ticket.created_at),
+      displaySummary: ticket.summary || 'No summary',
+      displayAssignee: ticket.assignee || 'Unassigned',
+      displayStatus: ticket.status || 'To Do',
+      displayPriority: ticket.priority || 'Medium'
+    }));
+  }, [ticketsData]);
+
+  // Memoized filtered tickets
+  const filteredTickets = useMemo(() => {
+    return processedTicketsData.filter(ticket => {
+      const matchesSearch = ticket.displaySummary.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           ticket.id?.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesStatus = statusFilter === "all" || ticket.displayStatus === statusFilter;
+      const matchesPriority = priorityFilter === "all" || ticket.displayPriority === priorityFilter;
+      const matchesAssignee = assigneeFilter === "all" || ticket.displayAssignee === assigneeFilter;
+      
+      return matchesSearch && matchesStatus && matchesPriority && matchesAssignee;
+    });
+  }, [processedTicketsData, searchTerm, statusFilter, priorityFilter, assigneeFilter]);
+
+  // Memoized status columns for board view
+  const statusColumns = useMemo(() => {
+    const statuses = ["To Do", "In Progress", "In Review", "Done"];
+    return statuses.map(status => ({
+      status,
+      tickets: filteredTickets.filter(ticket => ticket.displayStatus === status)
+    })).filter(column => column.tickets.length > 0); // Only show columns with tickets
+  }, [filteredTickets]);
+
+  // Memoized unique assignees for filter dropdown
+  const uniqueAssignees = useMemo(() => {
+    return Array.from(new Set(processedTicketsData.map(t => t.displayAssignee)));
+  }, [processedTicketsData]);
 
   const getStatusBadge = (status) => {
     const baseClasses = "px-2 py-1 rounded-full text-xs font-medium";
@@ -83,36 +138,6 @@ const Tickets = () => {
     }
   };
 
-  const formatDate = (dateString) => {
-    if (!dateString) return 'N/A';
-    const date = new Date(dateString);
-    const now = new Date();
-    const diffTime = Math.abs(now - date);
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    
-    if (diffDays === 1) return '1 day ago';
-    if (diffDays < 7) return `${diffDays} days ago`;
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-  };
-
-  const filteredTickets = ticketsData.filter(ticket => {
-    const matchesSearch = ticket.summary?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         ticket.id?.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = statusFilter === "all" || ticket.status === statusFilter;
-    const matchesPriority = priorityFilter === "all" || ticket.priority === priorityFilter;
-    const matchesAssignee = assigneeFilter === "all" || ticket.assignee === assigneeFilter;
-    
-    return matchesSearch && matchesStatus && matchesPriority && matchesAssignee;
-  });
-
-  const getStatusColumns = () => {
-    const statuses = ["To Do", "In Progress", "In Review", "Done"];
-    return statuses.map(status => ({
-      status,
-      tickets: filteredTickets.filter(ticket => ticket.status === status)
-    })).filter(column => column.tickets.length > 0); // Only show columns with tickets
-  };
-
   const TicketCard = ({ ticket, status }) => {
     const getCardColor = (status) => {
       switch (status) {
@@ -145,17 +170,17 @@ const Tickets = () => {
         </div>
         
         <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-2 line-clamp-2 mb-6">
-          {ticket.summary}
+          {ticket.displaySummary}
         </h3>
         
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="w-5 h-5 bg-gray-300 dark:bg-gray-900 rounded-full flex items-center justify-center">
               <span className="text-xs font-medium text-gray-700 dark:text-gray-300">
-                {ticket.assignee.charAt(0).toUpperCase()}
+                {ticket.displayAssignee.charAt(0).toUpperCase()}
               </span>
             </div>
-            <span className="text-xs text-gray-600 dark:text-gray-400">{ticket.assignee}</span>
+            <span className="text-xs text-gray-600 dark:text-gray-400">{ticket.displayAssignee}</span>
           </div>
         </div>
       </div>
@@ -182,12 +207,12 @@ const Tickets = () => {
               <td className="py-4 px-4 whitespace-nowrap border-r border-gray-200 dark:border-gray-700">
                 <div className="flex items-center gap-2">
                   <span className="text-sm font-medium text-gray-900 dark:text-gray-100">{ticket.id}</span>
-                  {getPriorityIcon(ticket.priority)}
+                  {getPriorityIcon(ticket.displayPriority)}
                 </div>
               </td>
               <td className="py-4 px-4 border-r border-gray-200 dark:border-gray-700">
                 <div className="text-sm text-gray-900 dark:text-gray-100 truncate">
-                  {ticket.summary}
+                  {ticket.displaySummary}
                 </div>
               </td>
               <td className="py-4 px-4 whitespace-nowrap border-r border-gray-200 dark:border-gray-700">
@@ -197,13 +222,13 @@ const Tickets = () => {
               </td>
               <td className="py-4 px-4 whitespace-nowrap border-r border-gray-200 dark:border-gray-700">
                 <div className="flex items-center gap-1">
-                  {getPriorityIcon(ticket.priority)}
-                  <span className="text-sm text-gray-700 dark:text-gray-300">{ticket.priority}</span>
+                  {getPriorityIcon(ticket.displayPriority)}
+                  <span className="text-sm text-gray-700 dark:text-gray-300">{ticket.displayPriority}</span>
                 </div>
               </td>
               <td className="py-4 px-4 whitespace-nowrap border-r border-gray-200 dark:border-gray-700">
-                <span className={getStatusBadge(ticket.status)}>
-                  {ticket.status}
+                <span className={getStatusBadge(ticket.displayStatus)}>
+                  {ticket.displayStatus}
                 </span>
               </td>
               <td className="py-4 px-4 whitespace-nowrap border-r border-gray-200 dark:border-gray-700">
@@ -211,11 +236,11 @@ const Tickets = () => {
                   <div className="w-6 h-6 bg-gray-300 dark:bg-gray-600 rounded-full flex items-center justify-center">
                     <User className="h-3 w-3 text-gray-600 dark:text-gray-400" />
                   </div>
-                  <span className="text-sm text-gray-700 dark:text-gray-300">{ticket.assignee}</span>
+                  <span className="text-sm text-gray-700 dark:text-gray-300">{ticket.displayAssignee}</span>
                 </div>
               </td>
               <td className="py-4 px-4 whitespace-nowrap">
-                <span className="text-sm text-gray-500 dark:text-gray-400">{formatDate(ticket.created_at)}</span>
+                <span className="text-sm text-gray-500 dark:text-gray-400">{ticket.formattedDate}</span>
               </td>
             </tr>
           ))}
@@ -225,8 +250,6 @@ const Tickets = () => {
   );
 
   const BoardView = () => {
-    const statusColumns = getStatusColumns();
-    
     const getStatusColumnColor = (status) => {
       switch (status) {
         case "To Do":
@@ -270,21 +293,11 @@ const Tickets = () => {
   };
 
   if (loading) {
-    return (
-      <div className="flex justify-center items-center h-[650px]">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-      </div>
-    );
+    return <Loader text="Loading tickets data..." />;
   }
 
   if (error) {
-    return (
-        <div className="flex justify-center items-center h-[650px]">
-          <div className="text-red-600 dark:text-red-400">
-            Error: {error}
-          </div>
-      </div>
-    );
+    return <ErrorBox error={error} onRetry={fetchTickets} />;
   }
 
   return (
@@ -300,7 +313,7 @@ const Tickets = () => {
           Refresh Data
         </button>
       </div>
-
+      
       {/* Search and Filters */}
       <div className="flex flex-col lg:flex-row gap-4">
         <div className="flex-1 relative">
@@ -344,7 +357,7 @@ const Tickets = () => {
             className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           >
             <option value="all">All Assignees</option>
-            {Array.from(new Set(ticketsData.map(t => t.assignee))).map(assignee => (
+            {uniqueAssignees.map(assignee => (
               <option key={assignee} value={assignee}>{assignee}</option>
             ))}
           </select>

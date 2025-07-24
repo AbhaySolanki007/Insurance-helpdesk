@@ -19,8 +19,10 @@ function ChatHistory() {
       }
 
       const historyResponse = await axios.get(`${baseURL}/api/chat/history/${userId}`);
+      console.log("History Response: ", historyResponse);
       
       const rawHistory = historyResponse.data.history || [];
+      console.log("Raw History: ", rawHistory);
       const parsedHistory = rawHistory.map(item => {
         if (typeof item === 'string') {
           try {
@@ -33,12 +35,58 @@ function ChatHistory() {
         return item;
       }).filter(Boolean);
 
-      setChatHistory(parsedHistory);
+      console.log("Parsed History: ", parsedHistory);
+      
+      // Group messages into conversations based on timestamp proximity
+      const conversations = groupMessagesIntoConversations(parsedHistory);
+      setChatHistory(conversations);
       
     } catch (error) {
       console.error("Error fetching chat history:", error);
       setChatHistory([]);
     }
+  };
+
+  // Function to group individual messages into conversations
+  const groupMessagesIntoConversations = (messages) => {
+    if (!messages || messages.length === 0) return [];
+    
+    const conversations = [];
+    let currentConversation = [];
+    let lastTimestamp = null;
+    
+    messages.forEach((message, index) => {
+      const currentTimestamp = message.timestamp ? new Date(message.timestamp).getTime() : Date.now();
+      
+      // If this is the first message or if there's a significant time gap (> 30 minutes), start a new conversation
+      if (lastTimestamp === null || (currentTimestamp - lastTimestamp) > 30 * 60 * 1000) {
+        if (currentConversation.length > 0) {
+          conversations.push({
+            id: conversations.length,
+            messages: currentConversation,
+            timestamp: currentConversation[0].timestamp,
+            firstMessage: currentConversation[0].input || 'Conversation'
+          });
+        }
+        currentConversation = [message];
+      } else {
+        currentConversation.push(message);
+      }
+      
+      lastTimestamp = currentTimestamp;
+    });
+    
+    // Add the last conversation
+    if (currentConversation.length > 0) {
+      conversations.push({
+        id: conversations.length,
+        messages: currentConversation,
+        timestamp: currentConversation[0].timestamp,
+        firstMessage: currentConversation[0].input || 'Conversation'
+      });
+    }
+    
+    return conversations;
   };
 
   useEffect(() => {
@@ -47,8 +95,8 @@ function ChatHistory() {
     }
   }, [showChatHistory]);
   
-  const handleConversationClick = (chat) => {
-    setSelectedChat(chat);
+  const handleConversationClick = (conversation) => {
+    setSelectedChat(conversation);
   };
 
   const handleBackToList = () => {
@@ -56,7 +104,7 @@ function ChatHistory() {
   };
 
   const renderDetailView = () => {
-    const messages = Array.isArray(selectedChat) ? selectedChat : [selectedChat];
+    const messages = selectedChat.messages || [];
     return (
       <div>
         <button 
@@ -128,12 +176,13 @@ function ChatHistory() {
         </div>
       ) : (
         <div className="grid gap-4">
-          {chatHistory.map((chat, index) => {
-            const query = chat.input || `Conversation ${index + 1}`;
+          {chatHistory.map((conversation, index) => {
+            const firstMessage = conversation.firstMessage || `Conversation ${index + 1}`;
+            const messageCount = conversation.messages.length;
             return (
               <button
-                key={index}
-                onClick={() => handleConversationClick(chat)}
+                key={conversation.id || index}
+                onClick={() => handleConversationClick(conversation)}
                 className="group relative w-full text-left p-6 rounded-xl transition-all duration-200 bg-gray-100 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-white/10 border border-gray-200 dark:border-white/10 hover:border-gray-300 dark:hover:border-white/20"
               >
                 <div className="flex items-start gap-4">
@@ -142,13 +191,13 @@ function ChatHistory() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between mb-1">
-                      <h3 className="font-medium text-gray-900 dark:text-white truncate pr-4">{query}</h3>
+                      <h3 className="font-medium text-gray-900 dark:text-white truncate pr-4">{firstMessage}</h3>
                       <span className="text-sm text-gray-500 dark:text-gray-400">
-                        {chat.timestamp ? new Date(chat.timestamp).toLocaleDateString() : 'Today'}
+                        {conversation.timestamp ? new Date(conversation.timestamp).toLocaleDateString() : 'Today'}
                       </span>
                     </div>
                     <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-2">
-                      Click to view conversation
+                      {messageCount} message{messageCount !== 1 ? 's' : ''} • Click to view conversation
                     </p>
                   </div>
                 </div>

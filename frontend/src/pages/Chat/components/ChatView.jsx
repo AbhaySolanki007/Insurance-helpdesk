@@ -112,9 +112,6 @@ function ChatView() {
   }, []);
 
   useEffect(() => {
-    // console.log('Current display value:', displayValue); // Debug log
-    // console.log('Final transcript:', finalTranscript); // Debug log
-    // console.log('Interim transcript:', interimTranscript); // Debug log
     autoResizeTextarea();
   }, [displayValue, finalTranscript, interimTranscript]);
 
@@ -123,7 +120,7 @@ function ChatView() {
   }, [messages]);
 
   return (
-    <div className="h-full flex flex-col">
+    <div className="h-full flex flex-col bg-white dark:bg-[#1e1e1e]">
       <div className={`flex-1 ${messages.length === 0 && !isThinking ? 'overflow-hidden' : 'overflow-y-auto scrollbar-hide'}`}>
         <div className="max-w-5xl mx-auto px-4 py-6">
           {messages.length === 0 && !isThinking && <WelcomeScreen setManualInput={setManualInput} textareaRef={textareaRef} />}

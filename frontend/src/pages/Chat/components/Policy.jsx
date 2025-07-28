@@ -152,7 +152,7 @@ const Policy = ({ isSidebarOpen }) => {
   }
 
   return (
-    <div className="min-h-screen pt-6">
+    <div className="min-h-screen pt-6 bg-white dark:bg-[#1e1e1e] pb-10">
       <div className="max-w-[1400px] mx-auto space-y-8 px-6">
         {/* Header */}
         <div className="relative bg-gradient-to-br from-white/80 via-slate-50/80 to-gray-50/80 dark:from-[#2d1d4d]/90 dark:via-[#3d2869]/90 dark:to-[#4c3385]/90 border border-gray-200/50 dark:border-slate-700/50 p-8 rounded-3xl backdrop-blur-xl overflow-hidden">

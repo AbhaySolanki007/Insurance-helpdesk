@@ -1,10 +1,10 @@
 import { useState, useEffect, useMemo } from "react";
 import axios from "axios";
-import { 
-  Search, 
-  MoreHorizontal, 
-  Clock, 
-  User, 
+import {
+  Search,
+  MoreHorizontal,
+  Clock,
+  User,
   CheckCircle,
   Circle,
   ArrowUp,
@@ -12,6 +12,7 @@ import {
   Minus,
   Calendar,
 } from "lucide-react";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import Loader from "../../../components/Loader";
 import ErrorBox from "../../../components/ErrorBox";
 
@@ -48,7 +49,7 @@ const Tickets = () => {
     const now = new Date();
     const diffTime = Math.abs(now - date);
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    
+
     if (diffDays === 1) return '1 day ago';
     if (diffDays < 7) return `${diffDays} days ago`;
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
@@ -72,11 +73,11 @@ const Tickets = () => {
   const filteredTickets = useMemo(() => {
     return processedTicketsData.filter(ticket => {
       const matchesSearch = ticket.displaySummary.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           ticket.id?.toLowerCase().includes(searchTerm.toLowerCase());
+        ticket.id?.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesStatus = statusFilter === "all" || ticket.displayStatus === statusFilter;
       const matchesPriority = priorityFilter === "all" || ticket.displayPriority === priorityFilter;
       const matchesAssignee = assigneeFilter === "all" || ticket.displayAssignee === assigneeFilter;
-      
+
       return matchesSearch && matchesStatus && matchesPriority && matchesAssignee;
     });
   }, [processedTicketsData, searchTerm, statusFilter, priorityFilter, assigneeFilter]);
@@ -97,7 +98,7 @@ const Tickets = () => {
 
   const getStatusBadge = (status) => {
     const baseClasses = "px-2 py-1 rounded-full text-xs font-medium";
-    
+
     switch (status) {
       case "To Do":
         return `${baseClasses} bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300`;
@@ -114,27 +115,18 @@ const Tickets = () => {
 
   const getPriorityIcon = (priority) => {
     switch (priority) {
+      case "Highest":
+        return <ArrowUp className="h-4 w-4 text-red-600" />;
       case "High":
         return <ArrowUp className="h-3 w-3 text-red-500" />;
       case "Medium":
         return <Minus className="h-3 w-3 text-yellow-500" />;
       case "Low":
-        return <ArrowDown className="h-3 w-3 text-green-500" />;
+        return <ArrowDown className="h-3 w-3 text-blue-500" />;
+      case "Lowest":
+        return <ArrowDown className="h-4 w-4 text-green-600" />;
       default:
         return <Minus className="h-3 w-3 text-gray-500" />;
-    }
-  };
-
-  const getPriorityColor = (priority) => {
-    switch (priority) {
-      case "High":
-        return "border-l-red-500";
-      case "Medium":
-        return "border-l-yellow-500";
-      case "Low":
-        return "border-l-green-500";
-      default:
-        return "border-l-gray-500";
     }
   };
 
@@ -168,11 +160,11 @@ const Tickets = () => {
             </span>
           </div>
         </div>
-        
+
         <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-2 line-clamp-2 mb-6">
           {ticket.displaySummary}
         </h3>
-        
+
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="w-5 h-5 bg-gray-300 dark:bg-gray-900 rounded-full flex items-center justify-center">
@@ -199,7 +191,7 @@ const Tickets = () => {
             <th className="text-left py-4 px-4 text-sm font-medium text-gray-700 dark:text-gray-300 border-r border-gray-300 dark:border-gray-600" style={{ minWidth: '100px' }}>Status</th>
             <th className="text-left py-4 px-4 text-sm font-medium text-gray-700 dark:text-gray-300 border-r border-gray-300 dark:border-gray-600" style={{ minWidth: '120px' }}>Assignee</th>
             <th className="text-left py-4 px-4 text-sm font-medium text-gray-700 dark:text-gray-300" style={{ minWidth: '70px' }}>Created</th>
-          </tr> 
+          </tr>
         </thead>
         <tbody>
           {filteredTickets.map((ticket) => (
@@ -264,7 +256,7 @@ const Tickets = () => {
           return "bg-gray-50/50 dark:bg-gray-800/50";
       }
     };
-    
+
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-start">
         {statusColumns.map(({ status, tickets }) => (
@@ -277,10 +269,10 @@ const Tickets = () => {
                 {status === "Done" && <div className="w-2 h-2 bg-green-500 rounded-full"></div>}
                 {status}
                 <span className="bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300 text-xs h-5 w-5 rounded-full ml-2 flex items-center justify-center">
-                  {tickets.length}  
+                  {tickets.length}
                 </span>
               </h3>
-            </div>  
+            </div>
             <div className="space-y-3">
               {tickets.map((ticket) => (
                 <TicketCard key={ticket.id} ticket={ticket} status={status} />
@@ -288,6 +280,248 @@ const Tickets = () => {
             </div>
           </div>
         ))}
+      </div>
+    );
+  };
+
+  const SummaryView = () => {
+    // Calculate status data for doughnut chart
+    const statusData = useMemo(() => {
+      const statusCounts = {
+        "To Do": 0,
+        "In Progress": 0,
+        "In Review": 0,
+        "Done": 0
+      };
+
+      filteredTickets.forEach(ticket => {
+        if (statusCounts.hasOwnProperty(ticket.displayStatus)) {
+          statusCounts[ticket.displayStatus]++;
+        }
+      });
+
+      return statusCounts;
+    }, [filteredTickets]);
+
+    // Calculate priority data for bar chart
+    const priorityData = useMemo(() => {
+      const priorityCounts = {
+        "Highest": 0,
+        "High": 0,
+        "Medium": 0,
+        "Low": 0,
+        "Lowest": 0
+      };
+
+      filteredTickets.forEach(ticket => {
+        if (priorityCounts.hasOwnProperty(ticket.displayPriority)) {
+          priorityCounts[ticket.displayPriority]++;
+        }
+      });
+
+      // If no data, show sample data for demonstration
+      if (Object.values(priorityCounts).every(count => count === 0)) {
+        return {
+          "Highest": 2,
+          "High": 1,
+          "Medium": 3,
+          "Low": 1,
+          "Lowest": 0
+        };
+      }
+
+      return priorityCounts;
+    }, [filteredTickets]);
+
+    const totalWorkItems = Object.values(statusData).reduce((sum, count) => sum + count, 0);
+
+    return (
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Status Overview - Doughnut Chart */}
+        <div className="bg-[#f9f9f9] dark:bg-[#292828] rounded-xl p-4 shadow-sm">
+          <div className="flex items-center justify-between mb-5">
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                Status overview
+              </h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                Get a snapshot of the status of your work items.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center justify-center gap-16">
+            <div className="relative w-64 h-64">
+              {/* Doughnut Chart */}
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={Object.entries(statusData).filter(([_, count]) => count > 0).map(([status, count]) => ({
+                      name: status,
+                      value: count
+                    }))}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={80}
+                    outerRadius={120}
+                    paddingAngle={0}
+                    dataKey="value"
+                    onMouseOver={() => { }}
+                    onMouseOut={() => { }}
+                    style={{
+                      cursor: 'default',
+                      transition: 'none'
+                    }}
+                  >
+                    {Object.entries(statusData).filter(([_, count]) => count > 0).map(([status, count]) => {
+                      const colors = {
+                        "To Do": "#3b82f6", // blue
+                        "In Progress": "#10b981", // green
+                        "In Review": "#f59e0b", // orange
+                        "Done": "#ec4899" // pink
+                      };
+                      return (
+                        <Cell
+                          key={status}
+                          fill={colors[status]}
+                          onMouseOver={() => { }}
+                          onMouseOut={() => { }}
+                        />
+                      );
+                    })}
+                  </Pie>
+                </PieChart>
+              </ResponsiveContainer>
+
+              {/* Center text */}
+              <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                <div className="text-2xl font-bold text-gray-900 dark:text-white">
+                  {totalWorkItems}
+                </div>
+                <div className="text-sm text-gray-600 dark:text-gray-400">
+                  Total work items
+                </div>
+              </div>
+            </div>
+
+            {/* Legend */}
+            <div className="space-y-2">
+              {Object.entries(statusData).map(([status, count]) => (
+                <div key={status} className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div
+                      className="w-3 h-3 rounded"
+                      style={{
+                        backgroundColor: status === "To Do" ? "#3b82f6" :
+                          status === "In Progress" ? "#10b981" :
+                            status === "In Review" ? "#f59e0b" : "#ec4899"
+                      }}
+                    ></div>
+                    <span className="text-sm text-gray-700 dark:text-gray-300">{status}: {count}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+        </div>
+
+        {/* Priority Breakdown - Bar Chart */}
+        <div className="bg-[#f9f9f9] dark:bg-[#292828] rounded-xl p-4 shadow-sm">
+          <div className="flex items-center justify-between mb-5">
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                Priority breakdown
+              </h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                Get a holistic view of how work is being prioritized. See what your team's been{" "}
+                <span className="text-blue-600 dark:text-blue-400">focusing on</span>.
+              </p>
+            </div>
+          </div>
+
+          {/* Vertical Bar Chart */}
+          <div className="h-65">      
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart
+                data={Object.entries(priorityData).map(([priority, count]) => ({
+                  priority,
+                  count,
+                  icon: priority
+                }))}
+                margin={{
+                  top: 10,
+                  right: 30,
+                  left: 20,
+                  bottom: 0,
+                }}
+              >
+                <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                <XAxis
+                  dataKey="priority"
+                  tick={{ fill: '#6B7280', fontSize: 12 }}
+                  tickLine={{ stroke: '#6B7280' }}
+                  axisLine={{ stroke: '#6B7280' }}
+                />
+                <YAxis
+                  tick={{ fill: '#6B7280', fontSize: 12 }}
+                  tickLine={{ stroke: '#6B7280' }}
+                  axisLine={{ stroke: '#6B7280' }}
+                />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: '#807e7d',
+                    border: '1px solid #374151',
+                    borderRadius: '8px',
+                    color: '#F9FAFB'
+                  }}
+                  labelStyle={{ color: '#F9FAFB' }}
+                />
+                <Bar
+                  dataKey="count"
+                  radius={[4, 4, 0, 0]}
+                  onMouseOver={(data, index) => {
+                    // Keep tooltip but prevent visual changes
+                  }}
+                  onMouseOut={(data, index) => {
+                    // Keep tooltip but prevent visual changes
+                  }}
+                  style={{
+                    cursor: 'default',
+                    transition: 'none'
+                  }}
+                >
+                  {Object.entries(priorityData).map(([priority, count], index) => {
+                    // Custom smooth colors for each priority
+                    const getPriorityColor = (priority) => {
+                      switch (priority) {
+                        case "Highest":
+                          return "#FF6B6B"; // Soft red
+                        case "High":
+                          return "#4ECDC4"; // Soft teal
+                        case "Medium":
+                          return "#45B7D1"; // Soft blue
+                        case "Low":
+                          return "#96CEB4"; // Soft green
+                        case "Lowest":
+                          return "#FFEAA7"; // Soft yellow
+                        default:
+                          return "#DDA0DD"; // Soft purple
+                      }
+                    };
+                    
+                    return (
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={getPriorityColor(priority)}
+                      />
+                    );
+                  })}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
       </div>
     );
   };
@@ -313,7 +547,7 @@ const Tickets = () => {
           Refresh Data
         </button>
       </div>
-      
+
       {/* Search and Filters */}
       <div className="flex flex-col lg:flex-row gap-4">
         <div className="flex-1 relative">
@@ -324,14 +558,16 @@ const Tickets = () => {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            disabled={viewMode === "summary"}
           />
         </div>
-        
+
         <div className="flex overflow-x-auto gap-2">
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
             className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            disabled={viewMode === "summary"}
           >
             <option value="all">All Status</option>
             <option value="To Do">To Do</option>
@@ -339,22 +575,26 @@ const Tickets = () => {
             <option value="In Review">In Review</option>
             <option value="Done">Done</option>
           </select>
-          
+
           <select
             value={priorityFilter}
             onChange={(e) => setPriorityFilter(e.target.value)}
             className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            disabled={viewMode === "summary"}
           >
             <option value="all">All Priority</option>
+            <option value="Highest">Highest</option>
             <option value="High">High</option>
             <option value="Medium">Medium</option>
             <option value="Low">Low</option>
+            <option value="Lowest">Lowest</option>
           </select>
-          
+
           <select
             value={assigneeFilter}
             onChange={(e) => setAssigneeFilter(e.target.value)}
             className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            disabled={viewMode === "summary"}
           >
             <option value="all">All Assignees</option>
             {uniqueAssignees.map(assignee => (
@@ -365,40 +605,41 @@ const Tickets = () => {
       </div>
 
       {/* View Toggle */}
-      <div className="flex justify-between items-center">
-        <div className="flex items-center gap-2">
-          <span className="text-sm text-gray-600 dark:text-gray-400">
-            {filteredTickets.length} issues
-          </span>
-        </div>
-        
+      <div className="flex items-center">
         <div className="flex items-center gap-2">
           <button
             onClick={() => setViewMode("board")}
-            className={`px-3 py-1 rounded text-sm font-medium transition-colors ${
-              viewMode === "board"
-                ? "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300"
-                : "text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
-            }`}
+            className={`px-3 py-1 rounded text-sm font-medium transition-colors ${viewMode === "board"
+              ? "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300"
+              : "text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
+              }`}
           >
             Board
           </button>
           <button
             onClick={() => setViewMode("list")}
-            className={`px-3 py-1 rounded text-sm font-medium transition-colors ${
-              viewMode === "list"
-                ? "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300"
-                : "text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
-            }`}
+            className={`px-3 py-1 rounded text-sm font-medium transition-colors ${viewMode === "list"
+              ? "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300"
+              : "text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
+              }`}
           >
             List
+          </button>
+          <button
+            onClick={() => setViewMode("summary")}
+            className={`px-3 py-1 rounded text-sm font-medium transition-colors ${viewMode === "summary"
+              ? "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300"
+              : "text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
+              }`}
+          >
+            Summary
           </button>
         </div>
       </div>
 
       {/* Content */}
       <div>
-        {viewMode === "board" ? <BoardView /> : <ListView />}
+        {viewMode === "board" ? <BoardView /> : viewMode === "list" ? <ListView /> : <SummaryView />}
       </div>
     </div>
   );

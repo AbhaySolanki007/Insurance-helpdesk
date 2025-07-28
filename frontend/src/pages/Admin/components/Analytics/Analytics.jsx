@@ -4,6 +4,11 @@ import { useChartDataProcessor } from "./useChartDataProcessor";
 import {
   TimeSeriesLineChart,
   UsageTrendChart,
+  AreaChartComponent,
+  BarChartComponent,
+  PieChartComponent,
+  DoughnutChartComponent,
+  RadarChartComponent,
 } from "./ChartComponents";
 import Loader from "../../../../components/Loader";
 import ErrorBox from "../../../../components/ErrorBox";
@@ -23,16 +28,16 @@ const SECTION_CONFIG = {
         totalKey: "total"
       },
       {
-        type: "timeSeries",
-        title: "Trace Latency",
-        subtitle: "Trace latency percentiles over time.",
+        type: "areaChart",
+        title: "Trace Latency Trends",
+        subtitle: "Trace latency percentiles over time with area visualization.",
         dataKey: "latencyChartData",
         dataKeys: ["p50", "p99"],
         colors: ["#3B82F6", "#8B5CF6"],
         yAxisLabel: "Seconds"
       },
       {
-        type: "timeSeries",
+        type: "barChart",
         title: "Trace Error Rate",
         subtitle: "Percent of traces that errored over time.",
         dataKey: "errorRateChartData",
@@ -56,16 +61,16 @@ const SECTION_CONFIG = {
         totalKey: "total"
       },
       {
-        type: "timeSeries",
-        title: "LLM Latency",
-        subtitle: "LLM call latency percentiles over time.",
+        type: "areaChart",
+        title: "LLM Latency Trends",
+        subtitle: "LLM call latency percentiles over time with area visualization.",
         dataKey: "llmLatencyChartData",
         dataKeys: ["p50", "p99"],
         colors: ["#3B82F6", "#8B5CF6"],
         yAxisLabel: "Seconds"
       },
       {
-        type: "timeSeries",
+        type: "barChart",
         title: "LLM Error Rate",
         subtitle: "Percent of LLM calls that errored over time.",
         dataKey: "llmErrorRateChartData",
@@ -80,9 +85,9 @@ const SECTION_CONFIG = {
     title: "Cost & Tokens",
     charts: [
       {
-        type: "timeSeries",
-        title: "Total Cost",
-        subtitle: "Total cost over time.",
+        type: "areaChart",
+        title: "Total Cost Trends",
+        subtitle: "Total cost over time with cumulative visualization.",
         dataKey: "costChartData",
         dataKeys: ["cost"],
         colors: ["#10B981"],
@@ -90,9 +95,9 @@ const SECTION_CONFIG = {
         yAxisFormatter: "cost"
       },
       {
-        type: "timeSeries",
+        type: "lineChart",
         title: "Cost per Trace",
-        subtitle: "Median cost per trace.",
+        subtitle: "Median cost per trace over time.",
         dataKey: "costPerTraceChartData",
         dataKeys: ["p50", "p99"],
         colors: ["#3B82F6", "#8B5CF6"],
@@ -100,29 +105,9 @@ const SECTION_CONFIG = {
         yAxisFormatter: "cost"
       },
       {
-        type: "timeSeries",
-        title: "Output Tokens",
-        subtitle: "Total output tokens over time.",
-        dataKey: "outputTokensChartData",
-        dataKeys: ["count"],
-        colors: ["#8B5CF6"],
-        yAxisLabel: "Token Count",
-        yAxisFormatter: "tokensK"
-      },
-      {
-        type: "timeSeries",
-        title: "Output Tokens per Trace",
-        subtitle: "Output tokens used per trace over time.",
-        dataKey: "outputTokensPerTraceChartData",
-        dataKeys: ["p50", "p99"],
-        colors: ["#3B82F6", "#8B5CF6"],
-        yAxisLabel: "Token Count",
-        yAxisFormatter: "tokensHundreds"
-      },
-      {
-        type: "timeSeries",
+        type: "barChart",
         title: "Input Tokens",
-        subtitle: "Total input tokens over time.",
+        subtitle: "Input tokens used over time.",
         dataKey: "inputTokensChartData",
         dataKeys: ["count"],
         colors: ["#F59E0B"],
@@ -130,7 +115,17 @@ const SECTION_CONFIG = {
         yAxisFormatter: "tokensThousands"
       },
       {
-        type: "timeSeries",
+        type: "areaChart",
+        title: "Output Tokens",
+        subtitle: "Output tokens generated over time.",
+        dataKey: "outputTokensChartData",
+        dataKeys: ["count"],
+        colors: ["#8B5CF6"],
+        yAxisLabel: "Token Count",
+        yAxisFormatter: "tokensK"
+      },
+      {
+        type: "barChart",
         title: "Input Tokens per Trace",
         subtitle: "Input tokens used per trace over time.",
         dataKey: "inputTokensPerTraceChartData",
@@ -138,6 +133,16 @@ const SECTION_CONFIG = {
         colors: ["#3B82F6", "#8B5CF6"],
         yAxisLabel: "Token Count",
         yAxisFormatter: "tokensThousands"
+      },
+      {
+        type: "lineChart",
+        title: "Output Tokens per Trace",
+        subtitle: "Output tokens generated per trace over time.",
+        dataKey: "outputTokensPerTraceChartData",
+        dataKeys: ["p50", "p99"],
+        colors: ["#10B981", "#EF4444"],
+        yAxisLabel: "Token Count",
+        yAxisFormatter: "tokensHundreds"
       }
     ]
   },
@@ -145,19 +150,19 @@ const SECTION_CONFIG = {
     title: "Tools",
     charts: [
       {
-        type: "timeSeries",
-        title: "Run Count by Tool",
+        type: "barChart",
+        title: "Tool Run Count",
         subtitle: "Tool run counts over time",
         dataKey: "toolRunCountData",
-        dataKeys: ["create_ticket", "faq_search", "get_policy_data", "get_user_data", "invalid_tool"],
-        colors: ["#F59E0B", "#10B981", "#8B5CF6", "#A0522D", "#87CEEB"],
+        dataKeys: ["create_ticket", "faq_search", "get_policy_data", "get_user_data"],
+        colors: ["#F59E0B", "#10B981", "#8B5CF6", "#A0522D"],
         yAxisLabel: "Number of runs",
         yAxisFormatter: "toolCount"
       },
       {
-        type: "timeSeries",
-        title: "Median Latency by Tool",
-        subtitle: "Median tool latency over time",
+        type: "areaChart",
+        title: "Tool Latency Trends",
+        subtitle: "Tool latency over time with area visualization",
         dataKey: "toolLatencyData",
         dataKeys: ["faq_search", "get_policy_data", "get_user_data"],
         colors: ["#10B981", "#8B5CF6", "#A0522D"],
@@ -165,12 +170,12 @@ const SECTION_CONFIG = {
         yAxisFormatter: "toolLatency"
       },
       {
-        type: "timeSeries",
-        title: "Error Rate by Tool",
+        type: "lineChart",
+        title: "Tool Error Rate",
         subtitle: "Tool error rate over time",
         dataKey: "toolErrorRateData",
         dataKeys: ["faq_search", "get_policy_data", "get_user_data"],
-        colors: ["#10B981", "#8B5CF6", "#A0522D"],
+        colors: ["#EF4444", "#F59E0B", "#8B5CF6"],
         yAxisLabel: "Rate %",
         yAxisFormatter: "toolErrorRate"
       }
@@ -211,6 +216,78 @@ const ChartRenderer = ({ chart, data }) => {
             colors={chart.colors}
             yAxisLabel={chart.yAxisLabel}
             yAxisFormatter={chart.yAxisFormatter}
+          />
+        );
+      
+      case "lineChart":
+        return (
+          <TimeSeriesLineChart
+            data={chartData}
+            title={chart.title}
+            subtitle={chart.subtitle}
+            dataKeys={chart.dataKeys}
+            colors={chart.colors}
+            yAxisLabel={chart.yAxisLabel}
+            yAxisFormatter={chart.yAxisFormatter}
+          />
+        );
+      
+      case "areaChart":
+        return (
+          <AreaChartComponent
+            data={chartData}
+            title={chart.title}
+            subtitle={chart.subtitle}
+            dataKeys={chart.dataKeys}
+            colors={chart.colors}
+            yAxisLabel={chart.yAxisLabel}
+            yAxisFormatter={chart.yAxisFormatter}
+          />
+        );
+      
+      case "barChart":
+        return (
+          <BarChartComponent
+            data={chartData}
+            title={chart.title}
+            subtitle={chart.subtitle}
+            dataKeys={chart.dataKeys}
+            colors={chart.colors}
+            yAxisLabel={chart.yAxisLabel}
+            yAxisFormatter={chart.yAxisFormatter}
+          />
+        );
+      
+      case "pieChart":
+        return (
+          <PieChartComponent
+            data={chartData}
+            title={chart.title}
+            subtitle={chart.subtitle}
+            dataKey={chart.dataKeys?.[0] || "value"}
+            nameKey={chart.nameKey || "name"}
+          />
+        );
+      
+      case "doughnutChart":
+        return (
+          <DoughnutChartComponent
+            data={chartData}
+            title={chart.title}
+            subtitle={chart.subtitle}
+            dataKey={chart.dataKeys?.[0] || "value"}
+            nameKey={chart.nameKey || "name"}
+          />
+        );
+      
+      case "radarChart":
+        return (
+          <RadarChartComponent
+            data={chartData}
+            title={chart.title}
+            subtitle={chart.subtitle}
+            dataKeys={chart.dataKeys}
+            colors={chart.colors}
           />
         );
       

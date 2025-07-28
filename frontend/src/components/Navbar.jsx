@@ -1,4 +1,4 @@
-import { useContext, useState, useEffect } from "react";
+import { useContext, useState, useEffect, useRef } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Context } from "../context/ContextApi";
 import {
@@ -19,6 +19,8 @@ const Navbar = ({ isSidebarOpen, currentTheme, toggleTheme }) => {
   const { onChat } = useContext(Context);
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const userMenuRef = useRef(null);
   const navigate = useNavigate();
   const location = useLocation();
   const userId = localStorage.getItem("user_id");
@@ -44,10 +46,36 @@ const Navbar = ({ isSidebarOpen, currentTheme, toggleTheme }) => {
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
+  }, []);
+
+  // Handle click outside to close user menu
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
+        setUserMenuOpen(false);
+        const userMenu = document.getElementById('user-menu');
+        if (userMenu) {
+          userMenu.classList.add('hidden');
+        }
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
   }, []); 
+
+  // Function to close user menu
+  const closeUserMenu = () => {
+    setUserMenuOpen(false);
+  };
 
   const logoutUser = async () => {
     try {
+      // Close menu first
+      closeUserMenu();
+      
       // First clear local storage and state
       localStorage.clear();
       
@@ -110,20 +138,26 @@ const Navbar = ({ isSidebarOpen, currentTheme, toggleTheme }) => {
 
           {/* User Menu - Desktop */}
           {userId && (
-            <div className="hidden md:block">
+            <div className="hidden md:block" ref={userMenuRef}>
               <div className="relative inline-block text-left">
                 <button
                   className={`inline-flex items-center justify-center p-2 rounded-full ${
                     isHomePage ? 'text-slate-400 hover:bg-slate-800' : 'text-slate-700 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800'
                   }`}
-                  onClick={() => document.getElementById('user-menu').classList.toggle('hidden')}
+                  onClick={() => {
+                    setUserMenuOpen(!userMenuOpen);
+                    const userMenu = document.getElementById('user-menu');
+                    if (userMenu) {
+                      userMenu.classList.toggle('hidden');
+                    }
+                  }}
                 >
                   <UserRoundCog className="w-5 h-5" />
                 </button>
                 
                 <div
                   id="user-menu"
-                  className={`hidden absolute right-0 mt-2 w-48 rounded-lg ${
+                  className={`${userMenuOpen ? '' : 'hidden'} absolute right-0 mt-2 w-48 rounded-lg ${
                     isHomePage ? 'bg-slate-800' : 'bg-white dark:bg-slate-800'
                   } shadow-lg ring-1 ring-black ring-opacity-5 divide-y ${
                     isHomePage ? 'divide-slate-700' : 'divide-slate-200 dark:divide-slate-700'
@@ -132,6 +166,7 @@ const Navbar = ({ isSidebarOpen, currentTheme, toggleTheme }) => {
                   <div className="py-1">
                     <Link
                       to={`/profile/${userId}`}
+                      onClick={closeUserMenu}
                       className={`flex items-center px-4 py-2 text-sm ${
                         isHomePage ? 'text-slate-300 hover:bg-slate-700' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700'
                       }`}
@@ -141,6 +176,7 @@ const Navbar = ({ isSidebarOpen, currentTheme, toggleTheme }) => {
                     </Link>
                     <Link
                       to={`/chat/${userId}`}
+                      onClick={closeUserMenu}
                       className={`flex items-center px-4 py-2 text-sm ${
                         isHomePage ? 'text-slate-300 hover:bg-slate-700' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700'
                       }`}
@@ -151,6 +187,7 @@ const Navbar = ({ isSidebarOpen, currentTheme, toggleTheme }) => {
                     {isOwner && (
                       <Link
                         to="/admin"
+                        onClick={closeUserMenu}
                         className={`flex items-center px-4 py-2 text-sm ${
                           isHomePage ? 'text-slate-300 hover:bg-slate-700' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700'
                         }`}
@@ -219,6 +256,7 @@ const Navbar = ({ isSidebarOpen, currentTheme, toggleTheme }) => {
 
             <Link
               to={`/profile/${userId}`}
+              onClick={() => setMobileMenuOpen(false)}
               className={`flex items-center px-3 py-2 rounded-lg ${
                 isHomePage ? 'text-slate-300 hover:bg-slate-700' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700'
               }`}
@@ -228,6 +266,7 @@ const Navbar = ({ isSidebarOpen, currentTheme, toggleTheme }) => {
             </Link>
             <Link
               to={`/chat/${userId}`}
+              onClick={() => setMobileMenuOpen(false)}
               className={`flex items-center px-3 py-2 rounded-lg ${
                 isHomePage ? 'text-slate-300 hover:bg-slate-700' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700'
               }`}
@@ -238,6 +277,7 @@ const Navbar = ({ isSidebarOpen, currentTheme, toggleTheme }) => {
             {isOwner && (
               <Link
                 to="/admin"
+                onClick={() => setMobileMenuOpen(false)}
                 className={`flex items-center px-3 py-2 rounded-lg ${
                   isHomePage ? 'text-slate-300 hover:bg-slate-700' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700'
                 }`}

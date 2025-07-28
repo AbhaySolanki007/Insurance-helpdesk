@@ -30,20 +30,19 @@ graph TD
     
     L1 --> Router{{"🚦 Router<br/>Evaluates if escalation<br/>is needed"}}
     
-    Router -->|"Query resolved"| End1(["✅ Response to User"])
+    Router -->|"Resolved by L1"| End(["✅ Response to User"])
     Router -->|"Escalation needed<br/>(L2.... triggered)"| Summarizer["📝 Summarizer<br/>Creates comprehensive<br/>handoff summary"]
     
     Summarizer --> L2
-    L2 --> End2(["✅ Response to User"])
+    L2 -->|"Resolved by L2"| End
     
-    style Start fill:#e1f5e1
-    style End1 fill:#e1f5e1
-    style End2 fill:#e1f5e1
-    style L1 fill:#e3f2fd
-    style L2 fill:#fce4ec
-    style Summarizer fill:#fff3e0
-    style Dispatcher fill:#f3e5f5
-    style Router fill:#f3e5f5
+    style Start fill:#e1f5e1,stroke:#388e3c
+    style End fill:#e1f5e1,stroke:#388e3c
+    style L1 fill:#e3f2fd,stroke:#1976d2
+    style L2 fill:#fce4ec,stroke:#d81b60
+    style Summarizer fill:#fff3e0,stroke:#f57c00
+    style Dispatcher fill:#f3e5f5,stroke:#7b1fa2
+    style Router fill:#f3e5f5,stroke:#7b1fa2
 ```
 
 ### Workflow Explanation
@@ -321,24 +320,40 @@ backend/
 - Agent execution logs visible with `verbose=True`
 - Database queries logged with connection pool
 
-### LangGraph Studio
+---
 
-For interactive development, visualization, and debugging of the agent graph, you can use LangGraph Studio. This provides a web-based IDE that connects to your local code.
+## ⚙️ Core Mechanics Explained
 
-1.  **Install the CLI:**
-    If you haven't already, install the LangGraph command-line interface:
-    ```bash
-    pip install "langgraph-cli[inmem]"
-    ```
+### State Management: The `is_l2_session` Flag
 
-2.  **Run the Development Server:**
-    From the `backend` directory, run the following command to start the local development server:
-    ```bash
-    langgraph dev --config ai/Langgraph_module/langgraph.json
-    ```
+A critical part of the agent's logic is determining whether to use the L1 or L2 agent for an incoming query. This is controlled by the `is_l2_session` boolean flag within the LangGraph state.
 
-3.  **Access the Studio:**
-    The command will output a URL for the Studio UI (e.g., `https://smith.langchain.com/studio/?baseUrl=...`). Open this URL in your browser to start interacting with your agent.
+1.  **State Definition**: The `AgentState` class in `ai/Langgraph_module/Langgraph.py` defines the "clipboard" or state object for the graph. It includes the `is_l2_session: bool` field, which tracks the current support level.
+
+2.  **State Persistence**: The application's graph is initialized with a `SqliteSaver` checkpointer. This automatically saves the entire `AgentState` object, including the `is_l2_session` flag, to the `checkpoints.sqlite` database after every turn. When a new query for an existing `user_id` comes in, the checkpointer loads the most recent state from this database.
+
+3.  **Updating the Flag**:
+    - When the **L1 agent** handles a query, its corresponding node (`l1_node`) always returns the state with `is_l2_session: False`.
+    - When the L1 agent determines an escalation is needed (by returning "L2...."), the graph transitions to the `summarize_node` and then to the **L2 agent**.
+    - The **L2 agent's** node (`l2_node`) sets the state to `is_l2_session: True`.
+
+4.  **Routing Logic**: The `dispatcher` node, which is the entry point for every turn, reads this `is_l2_session` flag from the loaded state.
+    - If `True`, it routes the query directly to the `l2_node`, creating a "sticky" L2 session.
+    - If `False`, it routes to the `l1_node`.
+
+This mechanism ensures that once a conversation is escalated to L2, it remains with the L2 agent for all subsequent turns for that user.
+
+### Analytics: LangSmith Metrics Caching
+
+To provide fast analytics on the frontend dashboard without constantly hitting the LangSmith API, the system uses a local caching mechanism.
+
+1.  **Cache Database**: The `ai/langsmith/langsmith_cache.py` script initializes a local SQLite database at `ai/langsmith/metrics_cache.sqlite`. This database has a single table, `metrics_cache`, designed to store fetched data as key-value pairs (`cache_key`, `data`).
+
+2.  **Fetching & Caching**: The core function, `fetch_and_cache_all_metrics`, connects to the LangSmith client, fetches raw run data for traces, LLM performance, and tool usage over the last 7 days.
+
+3.  **Data Aggregation**: After fetching, the script processes this raw data. It aggregates metrics into 8-hour windows, calculating statistics like success/error counts, latency percentiles (p50, p95, p99), cost, and token usage.
+
+4.  **Persistent Storage**: The aggregated, processed data is then stored as a JSON object in the `metrics_cache` table. The `cache_key` is a descriptive string (e.g., `"trace_metrics"`, `"llm_metrics"`), and the data is the JSON payload. This allows the `/api/metrics` endpoint to quickly retrieve pre-computed analytics directly from the local SQLite database, providing a fast and responsive dashboard experience.
 
 ## 🤝 Contributing
 

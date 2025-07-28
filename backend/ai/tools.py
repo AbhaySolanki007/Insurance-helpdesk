@@ -7,7 +7,7 @@ from pydantic import BaseModel, Field
 from langchain.tools import Tool
 from typing import Dict, Any, List
 
-from database.models import get_policy_data, get_user_data
+from database.models import get_policy_data, get_user_data, update_user_data
 from services.email_service import send_email
 from services.ticket_service import create_ticket, search_tickets
 
@@ -39,6 +39,15 @@ class PolicyDataInput(BaseModel):
     user_id: str = Field(description="The user_id to fetch policy data for")
 
 
+class UserUpdateInput(BaseModel):
+    user_id: str = Field(description="The user_id to update")
+    name: Optional[str] = Field(default=None, description="User's full name")
+    phone: Optional[str] = Field(default=None, description="User's phone number")
+    address: Optional[str] = Field(default=None, description="User's address")
+    location: Optional[str] = Field(default=None, description="User's location")
+    passwords: Optional[str] = Field(default=None, description="User's password")
+
+
 # Type variable for generic function typing
 T = TypeVar("T", bound=BaseModel)
 
@@ -49,7 +58,7 @@ def create_tool_wrapper(
     """
     Create a wrapper function that handles input parsing, validation,
     and calls the underlying function with the validated Pydantic model.
-    
+
     Args:
         func: The function to wrap
         schema_class: The Pydantic model class to validate input against
@@ -89,7 +98,7 @@ def create_tool_wrapper(
 def create_tools(support_chain, tool_names: List[str]):
     """
     Create a list of tools for an agent based on a list of tool names.
-    
+
     Args:
         support_chain: An instance of UnifiedSupportChain to access the FAQ retriever.
         tool_names: A list of strings with the names of the tools to create.
@@ -107,8 +116,25 @@ def create_tools(support_chain, tool_names: List[str]):
         ),
         "get_policy_data": Tool(
             name="get_policy_data",
-            func=create_tool_wrapper(lambda x: get_policy_data(x.user_id), PolicyDataInput),
+            func=create_tool_wrapper(
+                lambda x: get_policy_data(x.user_id), PolicyDataInput
+            ),
             description="Use this to get details about the user's insurance policies. Input must be a user_id.",
+        ),
+        "update_user_data": Tool(
+            name="update_user_data",
+            func=create_tool_wrapper(
+                lambda x: update_user_data(
+                    x.user_id,
+                    {
+                        k: v
+                        for k, v in x.model_dump().items()
+                        if k != "user_id" and v is not None
+                    },
+                ),
+                UserUpdateInput,
+            ),
+            description="Use this ONLY for L2 escalation. Update user's personal information like name, phone, address, location, or password.",
         ),
         "create_ticket": Tool(
             name="create_ticket",

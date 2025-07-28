@@ -20,7 +20,7 @@ class AgentState(TypedDict):
     escalation_summary: str
     # A list of all new responses to be sent to the user in this turn.
     new_responses: List[str]
-    is_l2_session: bool
+    is_level2_session: bool
     routing_decision: str
 
 
@@ -41,14 +41,14 @@ def l1_node(state: AgentState, agent_executor):
     )
     output = response.get("output", "")
 
-    # Create the full turn dictionary, including the L2 status.
+    # Create the full turn dictionary, including the Level2 status.
     # We now explicitly save that this turn was handled by L1.
-    turn_data = {"input": state["query"], "output": output, "is_l2_session": False}
+    turn_data = {"input": state["query"], "output": output, "is_level2_session": False}
 
     #  The node now makes the decision itself.
-    if "L2...." in output:
+    if "Level2...." in output:
         decision = "summarize_node"
-        print("---L1 DECISION: ESCALATE TO L2---")
+        print("---L1 DECISION: ESCALATE TO Level2---")
     else:
         decision = "END"
         print("---L1 DECISION: END---")
@@ -56,18 +56,23 @@ def l1_node(state: AgentState, agent_executor):
     return {
         "history": [turn_data],
         "new_responses": [output],
-        "is_l2_session": False,
+        "is_level2_session": False,
         "routing_decision": decision,
     }
 
 
-def summarize_for_l2_node(state: AgentState):
-    """Summarizes the conversation for a clean handoff to L2."""
+def summarize_for_level2_node(state: AgentState):
+    """Summarizes the conversation for a clean handoff to Level2."""
     print("---EXECUTING SUMMARY NODE---")
     history_text = format_full_history_for_summary(state["history"])
     summary_prompt = f"""
-    Concisely summarize the following support conversation for an L2 agent.
+    Concisely summarize the following support conversation for a Level2 agent.
     The summary must be in this language: {state['language']}.
+    
+    IMPORTANT: 
+    - Do not use terms like "L2" or "level2" in the summary
+    - Use "supervisor", "specialist", or "expert" instead
+    - Focus on what the user needs help with, not the escalation process
 
     Conversation History:
     {history_text}
@@ -81,11 +86,11 @@ def summarize_for_l2_node(state: AgentState):
     }
 
 
-def l2_node(state: AgentState, agent_executor):
-    """Runs the L2 agent."""
-    print("---EXECUTING L2 NODE---")
+def level2_node(state: AgentState, agent_executor):
+    """Runs the Level2 agent."""
+    print("---EXECUTING Level2 NODE---")
     print(
-        f"---L2 NODE RECEIVED SUMMARY:\n{state.get('escalation_summary', 'No summary provided.')}\n---"
+        f"---Level2 NODE RECEIVED SUMMARY:\n{state.get('escalation_summary', 'No summary provided.')}\n---"
     )
     history_text = format_history_for_prompt(state["history"])
     response = agent_executor.invoke(
@@ -106,19 +111,19 @@ def l2_node(state: AgentState, agent_executor):
     current_responses = state.get("new_responses", [])
     current_responses.append(output)
 
-    # The L2 node is responsible for the final history entry on escalation.
+    # The Level2 node is responsible for the final history entry on escalation.
     # We create a combined string for the history, but send the array to the frontend.
     final_history_output = "\n\n".join(current_responses)
     turn_data = {
         "input": state["query"],
         "output": final_history_output,
-        "is_l2_session": True,
+        "is_level2_session": True,
     }
 
     return {
         "history": [turn_data],
         "new_responses": current_responses,
-        "is_l2_session": True,
+        "is_level2_session": True,
         "escalation_summary": "",  # Clear the summary
     }
 
@@ -132,16 +137,16 @@ def dispatcher(state: AgentState) -> str:
     # The checkpointer has already loaded the history.
     history = state.get("history", [])
 
-    if not history or not history[-1].get("is_l2_session", False):
+    if not history or not history[-1].get("is_level2_session", False):
         # If there's no history OR the last turn was handled by L1,
         # then the query should go to the L1 agent.
         print("---DECISION: ROUTE TO L1---")
         return "l1_agent"
     else:
-        # If the last turn was handled by L2, the session is "sticky"
-        # and all subsequent queries should go directly to the L2 agent.
-        print("---DECISION: ROUTE DIRECTLY TO L2---")
-        return "l2_agent"
+        # If the last turn was handled by Level2, the session is "sticky"
+        # and all subsequent queries should go directly to the Level2 agent.
+        print("---DECISION: ROUTE DIRECTLY TO Level2---")
+        return "level2_agent"
 
 
 # 3. Define the routing logic (the edge).

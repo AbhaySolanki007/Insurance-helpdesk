@@ -1,6 +1,6 @@
-# 13. ai/L2_agent.py
-"""Agent configuration for L2 support.
-with L2 prompt"""
+# 13. ai/Level2_agent.py
+"""Agent configuration for Level2 support.
+with Level2 prompt"""
 
 import os
 import config
@@ -14,17 +14,18 @@ from langchain.prompts import PromptTemplate
 from ai.tools import create_tools
 
 
-def create_l2_agent_executor(support_chain):
-    """Create the L2 agent executor with its specific tools."""
-    l2_tool_names = [
+def create_level2_agent_executor(support_chain):
+    """Create the Level2 agent executor with its specific tools."""
+    level2_tool_names = [
         "faq_search",
         "create_ticket",
         "search_ticket",
         "send_email",
         "get_user_data",
         "get_policy_data",
+        "update_user_data",
     ]
-    tools = create_tools(support_chain, l2_tool_names)
+    tools = create_tools(support_chain, level2_tool_names)
 
     # llm = GoogleGenerativeAI(
     #     model="gemini-2.0-flash",
@@ -40,7 +41,7 @@ def create_l2_agent_executor(support_chain):
         max_retries=3,
     )
 
-    l2_prompt_string = """
+    level2_prompt_string = """
 You are a specialized insurance support agent for user: {user_id}.
 You MUST generate your final answer exclusively in the following language code: {language}.
 
@@ -51,8 +52,19 @@ Your goal is to handle complex issues by gathering detailed information and crea
 {escalation_summary}
 -----------------------------------------
 
+**FIRST PRIORITY RULE:** ALWAYS respond to the user's immediate question FIRST, regardless of any escalation context. If the user asks "how are you", respond to that greeting first, then optionally follow up on escalation context.
+
+**EXAMPLE:** 
+- User: "how are you" 
+- CORRECT: "Hello! I'm doing well, thank you for asking! How can I help you with your insurance today?"
+- WRONG: "I see you requested to speak with a supervisor earlier - what specific issue are you dealing with?"
+
 **Your Expert Problem-Solving Workflow:**
 **Crucial Rule:** Your primary task is to answer the user's most recent `Question`. The `L1 AGENT BRIEFING` and `Previous Conversation History` are for context, but your immediate task is to respond to what the user just asked.
+
+**IMPORTANT:** Always respond to the user's immediate question first. If the user sends a simple greeting (like "hello", "hi", "how are you"), respond naturally to the greeting. Then, if there's relevant escalation context, you can follow up with a question about their specific issue.
+
+**CRITICAL:** When the user asks a simple question or greeting, respond to that FIRST before mentioning any escalation context.
 
 1.  **Understand the Full Picture:** Start by carefully reviewing the 'Previous Conversation History' and the L1 agent's summary. Your goal is to understand not just the user's question, but the *reason* for their escalation. What did the L1 agent fail to resolve?
 
@@ -69,6 +81,12 @@ Your goal is to handle complex issues by gathering detailed information and crea
 4.  **Synthesize and Guide:** Do not just give the user raw data. Combine the general process with their specific information to provide a clear, actionable, step-by-step guide. Your goal is to resolve their issue, not just answer a question.
 
 5.  **Confirm Before Acting:** For critical actions like creating a ticket (`create_ticket`), always confirm the details (summary, description) with the user before executing the tool.
+
+6.  **Handle Greetings and Simple Questions:** 
+    *   If the user sends a greeting (like "hello", "hi", "how are you"), respond naturally to the greeting first.
+    *   Then, if there's escalation context from the L1 agent briefing, you can follow up with: "I see you requested to speak with a supervisor earlier - what specific issue are you dealing with?"
+    *   Be conversational and natural, not stuck in "escalation mode".
+    *   **EXAMPLE:** If user says "hi", respond with "Hello! How can I help you with your insurance today?" first, then mention the escalation context if relevant.
 
 You have access to the following tools:
 {tools}
@@ -94,12 +112,12 @@ Question: {input}
 Thought:{agent_scratchpad}
 """
 
-    prompt = PromptTemplate.from_template(l2_prompt_string)
+    prompt = PromptTemplate.from_template(level2_prompt_string)
 
     agent = create_react_agent(llm, tools, prompt)
     return AgentExecutor(
         agent=agent, tools=tools, verbose=True, handle_parsing_errors=True
     ).with_config(
-        {"run_name": "L2 Agent"}
-    )  # The L2 agent might sometimes not receive a summary (on direct L2 calls),
+        {"run_name": "Level2 Agent"}
+    )  # The Level2 agent might sometimes not receive a summary (on direct Level2 calls),
     # so we provide a default empty string for the summary.

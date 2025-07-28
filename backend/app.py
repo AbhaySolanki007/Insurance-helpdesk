@@ -17,7 +17,7 @@ insurance_support_backend/
 │
 ├── ai/
 │   ├── L1_agent.py         # 9. L1 Agent: Defines the prompt, tools, and logic for the primary, first-response agent.
-│   ├── L2_agent.py         # 10. L2 Agent: Defines the prompt, tools, and logic for the escalation agent, handling complex queries.
+│   ├── Level2_agent.py     # 10. Level2 Agent: Defines the prompt, tools, and logic for the escalation agent, handling complex queries.
 │   ├── tools.py            # 11. Agent Tools: A factory for creating and providing tools (e.g., FAQ search, ticket creation) to the agents.
 │   ├── unified_chain.py    # 12. FAQ Retriever: Manages the ChromaDB vector store for performing RAG-based FAQ searches.
 │   │
@@ -60,7 +60,7 @@ from psycopg2.extras import RealDictCursor
 
 import config
 from ai.L1_agent import create_l1_agent_executor
-from ai.L2_agent import create_l2_agent_executor
+from ai.Level2_agent import create_level2_agent_executor
 from ai.Langgraph_module.graph_compiler import compile_graph
 from ai.langsmith.langsmith_cache import fetch_and_cache_all_metrics, get_cached_metric
 from ai.unified_chain import UnifiedSupportChain
@@ -88,7 +88,7 @@ CORS(
 
 support_chain = UnifiedSupportChain()
 l1_agent_executor = create_l1_agent_executor(support_chain)
-l2_agent_executor = create_l2_agent_executor(support_chain)
+level2_agent_executor = create_level2_agent_executor(support_chain)
 
 
 # Manually create a persistent connection to the SQLite database Langgraph.
@@ -97,7 +97,7 @@ sqlite_conn = sqlite3.connect("checkpoints.sqlite", check_same_thread=False)
 memory = SqliteSaver(conn=sqlite_conn)
 
 # --- Assemble and Compile the Graph (Langgraph---
-app_graph = compile_graph(l1_agent_executor, l2_agent_executor, memory)
+app_graph = compile_graph(l1_agent_executor, level2_agent_executor, memory)
 
 
 @app.route("/api/chat", methods=["POST"])
@@ -130,11 +130,11 @@ def chat():
         #    previous state for this `thread_id` and resume where it left off.
         final_state = app_graph.invoke(inputs, config=config)
 
-        # 4. EXTRACT the final response(s) and L2 status from the result.
+        # 4. EXTRACT the final response(s) and Level2 status from the result.
         new_responses = final_state.get("new_responses", [])
-        is_l2_now = final_state.get("is_l2_session", False)
+        is_level2_now = final_state.get("is_level2_session", False)
 
-        # Filter out the is_l2_session field before saving to database
+        # Filter out the is_level2_session field before saving to database
         # This field is only for internal backend use, not for frontend display
         filtered_history = []
         for turn in final_state["history"]:
@@ -150,7 +150,7 @@ def chat():
         # 5. SEND the response to the frontend.
         # Always send the `responses` key for consistency on the frontend.
         return jsonify(
-            {"responses": new_responses, "user_id": user_id, "is_l2": is_l2_now}
+            {"responses": new_responses, "user_id": user_id, "is_l2": is_level2_now}
         )
 
     except exceptions.ServiceUnavailable as e:

@@ -1,160 +1,120 @@
 # Insurance Helpdesk - Internal Platform
 
-This is a full-stack, AI-powered internal helpdesk application designed for insurance companies. It combines a modern React frontend with a powerful Python backend, featuring a multi-level conversational AI to provide comprehensive support.
+A full-stack, AI-powered internal helpdesk application designed for insurance companies. This platform combines a modern React frontend with a sophisticated Python backend, featuring a multi-level conversational AI to provide comprehensive, contextual, and efficient user support.
+
+## Key Features
+
+- **Dual-Agent Architecture**: A tiered system with L1 and L2 agents, orchestrated by LangGraph, to handle queries of varying complexity.
+- **Stateful Conversations**: LangGraph's SQLite checkpointing enables persistent, multi-turn conversations, allowing agents to remember context.
+- **RAG-Powered Search**: A powerful Retrieval-Augmented Generation (RAG) pipeline using ChromaDB provides agents with instant access to a knowledge base of FAQ articles.
+- **Automated Ticketing**: Seamless integration with the JIRA API allows the L2 agent to create, search, and manage support tickets automatically.
+- **Email Notifications**: The system can send automated email updates and notifications to users via the Gmail API.
+- **Performance Observability**: Integrated with LangSmith for real-time monitoring, tracing, and debugging of agent performance.
+- **Modern UI**: A responsive and intuitive user interface built with React, Vite, and Tailwind CSS.
+
+---
 
 ## System Architecture
 
-The application is composed of two main parts: a **React Frontend** and a **Flask Backend**. The frontend provides the user interface for interacting with the helpdesk, while the backend orchestrates the AI agents, handles business logic, and manages data.
+### Agent Workflow Visualization
 
-```
-+------------------+      +---------------------+      +----------------+
-|                  |      |                     |      |                |
-|  React Frontend  |----->|    Flask Backend    |----->|   PostgreSQL   |
-| (Vite, Tailwind) |      | (Python, LangChain) |      |    Database    |
-|                  |      |                     |      |                |
-+------------------+      +----------+----------+      +----------------+
-                                     |
-                                     |
-                         +-----------v-----------+
-                         |                       |
-                         |  Conversational AI    |
-                         | (L1/L2 Agents, RAG)   |
-                         |                       |
-                         +-----------+-----------+
-                                     |
-           +-------------------------+-------------------------+
-           |                         |                         |
-+----------v----------+   +----------v----------+   +----------v----------+
-|                     |   |                     |   |                     |
-|    ChromaDB         |   |     Jira API        |   |     Gmail API       |
-| (Vector Store)      |   |   (Ticketing)       |   |   (Notifications)   |
-|                     |   |                     |   |                     |
-+---------------------+   +---------------------+   +---------------------+
+The core of the backend is a stateful graph that manages the flow of conversation between different components. This ensures a logical and efficient handling of user requests.
 
+```mermaid
+graph TD
+    Start(["User Query"]) --> Dispatcher{{"Dispatcher<br/>Routes based on<br/>conversation state"}}
+    
+    Dispatcher -->|"New conversation or<br/>previous L1 interaction"| L1["L1 Agent<br/>Handles common queries<br/>and information gathering"]
+    
+    Dispatcher -->|"Ongoing L2 session<br/>(sticky routing)"| L2["L2 Agent<br/>Handles complex issues<br/>and ticket creation"]
+    
+    L1 --> Router{{"Router<br/>Evaluates if escalation<br/>is needed"}}
+    
+    Router -->|"Resolved by L1"| End(["Response to User"])
+    Router -->|"Escalation needed<br/>(L2.... triggered)"| Summarizer["Summarizer<br/>Creates comprehensive<br/>handoff summary"]
+    
+    Summarizer --> L2
+    L2 -->|"Resolved by L2"| End
+    
+    %% Styling
+    classDef nodeStyle fill:#282a36,stroke:#ff79c6,stroke-width:2px,color:#f8f8f2
+    classDef decisionStyle fill:#44475a,stroke:#8be9fd,stroke-width:2px,color:#f8f8f2
+    classDef agentStyle fill:#282a36,stroke:#50fa7b,stroke-width:2px,color:#f8f8f2,font-weight:bold
+    classDef ioStyle fill:#282a36,stroke:#f1fa8c,stroke-width:2px,color:#f8f8f2
+
+    class Start,End ioStyle
+    class L1,L2 agentStyle
+    class Dispatcher,Router decisionStyle
+    class Summarizer nodeStyle
 ```
+
+---
 
 ## Technology Stack
 
-### Frontend
-- **Framework**: React 18
-- **Build Tool**: Vite
-- **Styling**: Tailwind CSS
-- **State Management**: Context API
-- **HTTP Client**: Axios
+| Category              | Technology / Library                                                              |
+| --------------------- | --------------------------------------------------------------------------------- |
+| **Frontend**          | React 18, Vite, Tailwind CSS, Axios, React Router                                 |
+| **Backend Framework** | Flask, Gunicorn (for production)                                                  |
+| **AI Orchestration**  | LangChain, LangGraph                                                              |
+| **LLM Providers**     | Google Gemini (L1 Agent), Groq Llama3-70B (L2 Agent)                              |
+| **Database**          | PostgreSQL (for application data), SQLite (for conversation state)                |
+| **Vector Store (RAG)**| ChromaDB with Sentence-Transformers                                               |
+| **External Services** | JIRA API, Gmail API                                                               |
+| **Observability**     | LangSmith                                                                         |
+| **Dependencies**      | `psycopg2`, `jira`, `google-api-python-client`, `python-dotenv`                   |
 
-### Backend
-- **Framework**: Flask
-- **AI / LLMs**: LangChain, Google Gemini, Groq (Llama3)
-- **Database**: PostgreSQL
-- **Vector Database**: ChromaDB for Retrieval-Augmented Generation (RAG)
-- **Primary Dependencies**: `psycopg2`, `jira`, `google-api-python-client`
+---
 
 ## Getting Started
 
 ### Prerequisites
-- Node.js (v16 or higher) & npm/yarn
-- Python (3.9 or higher) & pip
-- PostgreSQL Server
+
+- Node.js (v18 or higher)
+- Python (3.9 or higher)
+- PostgreSQL Server (v12 or higher)
+- API keys for Google, Groq, and JIRA.
 
 ### Installation & Setup
 
-Follow these steps to set up both the backend and frontend environments.
+> **Note**
+> The following steps guide you through a complete local setup of both the frontend and backend services.
 
-**1. Clone the repository:**
+#### 1. Clone the Repository
 ```bash
 git clone <repository-url>
-cd Insurance-Helpdesk-Internal
+cd Insurance-Helpdesk_new
 ```
 
----
+#### 2. Backend Setup
+```bash
+cd backend
 
-**2. Backend Setup:**
+# Create and activate virtual environment
+python -m venv venv
+# Windows:
+.\venv\Scripts\activate
+# macOS/Linux:
+# source venv/bin/activate
 
-- **Navigate to the backend directory:**
-  ```bash
-  cd backend
-  ```
+# Install dependencies
+pip install -r requirements.txt
 
-- **Create and activate a Python virtual environment:**
-  ```bash
-  python -m venv venv
-  # On Windows
-  .\venv\Scripts\activate
-  # On macOS/Linux
-  source venv/bin/activate
-  ```
+# Create .env file and add your credentials
+# (Refer to the detailed backend README for all required variables)
+cp .env.example .env
+```
 
-- **Install backend dependencies:**
-  ```bash
-  pip install -r requirements.txt
-  ```
+#### 3. Frontend Setup
+```bash
+cd ../frontend
 
-- **Set up backend environment variables:**
-  Create a file named `.env` in the `backend` directory and populate it with your credentials.
-  ```env
-  # Flask
-  FLASK_SECRET_KEY='your-very-secret-key'
+# Install dependencies
+npm install
 
-  # Database (PostgreSQL)
-  DB_NAME='your_db_name'
-  DB_USER='your_db_user'
-  DB_PASSWORD='your_db_password'
-  DB_HOST='localhost'
-  DB_PORT='5432'
-
-  # Google AI & Gmail API
-  GOOGLE_API_KEY='your-google-api-key'
-  SENDER_EMAIL='your-sending-email@gmail.com'
-
-  # Groq AI
-  GROQ_API_KEY='your-groq-api-key'
-
-  # Jira
-  JIRA_SERVER='https://your-domain.atlassian.net'
-  JIRA_USERNAME='your-jira-email'
-  JIRA_API_TOKEN='your-jira-api-token'
-  JIRA_PROJECT_KEY='YOUR_PROJECT_KEY'
-  ```
-
-- **Set up Gmail API Credentials:**
-  - Download your OAuth 2.0 credentials from the Google Cloud Console.
-  - Rename the file to `secret.json` and place it in the `backend` directory.
-  - The first time an email is sent, the application will prompt you to authorize it in your browser. This creates a `token.pickle` file for future sessions.
-
-- **Initialize the Database:**
-  - Ensure your PostgreSQL server is running.
-  - Manually create the `users` and `policies` tables using the schemas provided in `backend/README.md`.
-
-- **Populate the FAQ Vector Store:**
-  - The project uses a Streamlit application to load FAQ data from a CSV into ChromaDB.
-  - Run the Streamlit app:
-    ```bash
-    streamlit run ./faq_database/CsvToChroma.py
-    ```
-  - Use the web interface to upload your FAQ CSV file and populate the database.
-
----
-
-**3. Frontend Setup:**
-
-- **Navigate to the frontend directory:**
-  ```bash
-  # From the project root
-  cd frontend
-  ```
-
-- **Install frontend dependencies:**
-  ```bash
-  npm install
-  ```
-
-- **Set up frontend environment variables:**
-  Create a file named `.env` in the `frontend` directory. Point it to your running backend server, which defaults to port 5000.
-  ```env
-  VITE_API_URL=http://127.0.0.1:5000
-  ```
-
----
+# Create .env file and specify the backend API URL
+echo "VITE_API_URL=http://127.0.0.1:8001" > .env
+```
 
 ### Running the Application
 
@@ -166,15 +126,79 @@ You will need two separate terminals to run both the backend and frontend server
   # Make sure your virtual environment is activated
   python app.py
   ```
-  The backend will be available at `http://127.0.0.1:8001`.
 
 - **Terminal 2: Start the Frontend**
   ```bash
   cd frontend
   npm run dev
   ```
-  The frontend application will be available at `http://localhost:5173`.
+The application will be accessible at `http://localhost:5173`.
+
+---
+
+## Project Structure
+
+The project is organized into a `frontend` and `backend` monorepo structure.
+
+```
+Insurance-Helpdesk_new/
+│
+├── frontend/
+│   ├── src/
+│   │   ├── components/
+│   │   ├── pages/
+│   │   └── App.jsx
+│   ├── vite.config.js
+│   └── package.json
+│
+└── backend/
+    ├── app.py              # Main Flask application & API endpoints
+    ├── ai/                 # AI agents, tools, and graph logic
+    ├── database/           # Database models and connection management
+    ├── services/           # Integrations with external services (JIRA, Gmail)
+    ├── utils/              # Helper functions
+    ├── config.py           # Application configuration
+    └── requirements.txt    # Python dependencies
+```
+
+> For a more detailed breakdown, please see the [backend README](./backend/README.md).
+
+---
+
+## Development & Monitoring
+
+### LangGraph Studio
+
+For interactive development and visualization of the agent graph, you can use LangGraph Studio.
+
+1.  **Install the CLI:**
+    ```bash
+    pip install "langgraph-cli[inmem]"
+    ```
+2.  **Run the Development Server:**
+    ```bash
+    # From the backend directory
+    langgraph dev --config ai/Langgraph_module/langgraph.json
+    ```
+
+### LangSmith Observability
+
+If you have set up LangSmith credentials in your `.env` file, you can monitor traces, performance, and debug issues at [smith.langchain.com](https://smith.langchain.com).
+
+---
+
+## Contributing
+
+We welcome contributions! Please follow these steps:
+1.  Fork the repository.
+2.  Create a new feature branch (`git checkout -b feature/YourAmazingFeature`).
+3.  Commit your changes (`git commit -m 'Add some AmazingFeature'`).
+4.  Push to the branch (`git push origin feature/YourAmazingFeature`).
+5.  Open a Pull Request.
 
 ## License
 
-This project is proprietary and confidential. Unauthorized copying or distribution is prohibited. 
+This project is proprietary software. All rights reserved.
+
+---
+Built by the Cywarden Team. 

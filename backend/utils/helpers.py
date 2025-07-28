@@ -26,14 +26,14 @@ def format_history_for_prompt(history: List[Dict[str, str]]) -> str:
         # Safely get 'input' and 'output' from each dictionary.
         user_message = turn.get("input", "")
         ai_message = turn.get("output", "")
-        is_l2_session = turn.get("is_l2_session", False)
+        is_level2_session = turn.get("is_level2_session", False)
 
         # We only add non-empty messages to the prompt history.
         if user_message:
             entries.append(f"Human: {user_message}")
 
-        # We filter out the internal "L2...." escalation message from the prompt.
-        if ai_message and "L2...." not in ai_message:
+        # We filter out the internal "Level2...." escalation message from the prompt.
+        if ai_message and "Level2...." not in ai_message:
             entries.append(f"AI: {ai_message}")
 
     return "\n\n".join(entries)
@@ -58,8 +58,8 @@ def format_full_history_for_summary(history: List[Dict[str, str]]) -> str:
         if user_message:
             entries.append(f"Human: {user_message}")
 
-        # We filter out the internal "L2...." escalation message from the prompt.
-        if ai_message and "L2...." not in ai_message:
+        # We filter out the internal "Level2...." escalation message from the prompt.
+        if ai_message and "Level2...." not in ai_message:
             entries.append(f"AI: {ai_message}")
 
     return "\n\n".join(entries)

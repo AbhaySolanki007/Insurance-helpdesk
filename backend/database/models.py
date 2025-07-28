@@ -158,3 +158,60 @@ def update_user_history(user_id: str, history: List[Dict[str, str]]) -> bool:
         return False
     finally:
         db_utils.release_db_connection(conn)
+
+
+def update_user_data(user_id: str, updates: dict) -> str:
+    """
+    Updates user data in the database.
+
+    Args:
+        user_id: The user ID to update
+        updates: Dictionary containing fields to update (name, phone, address, location, passwords)
+
+    Returns:
+        Success or error message string
+    """
+    conn = db_utils.get_db_connection()
+    try:
+        # Validate that user exists first
+        with conn.cursor() as cur:
+            cur.execute("SELECT user_id FROM users WHERE user_id = %s", (user_id,))
+            if not cur.fetchone():
+                return f"User with ID {user_id} not found in the database."
+
+        # Define allowed fields for update
+        allowed_fields = {"name", "phone", "address", "location", "passwords"}
+
+        # Filter updates to only include allowed fields and non-None values
+        valid_updates = {
+            k: v for k, v in updates.items() if k in allowed_fields and v is not None
+        }
+
+        if not valid_updates:
+            return "No valid fields provided for update. Allowed fields: name, phone, address, location, passwords"
+
+        # Build dynamic UPDATE query
+        set_clause = ", ".join([f"{field} = %s" for field in valid_updates.keys()])
+        query = f"UPDATE users SET {set_clause} WHERE user_id = %s"
+
+        # Execute update
+        with conn.cursor() as cur:
+            values = list(valid_updates.values()) + [user_id]
+            cur.execute(query, values)
+
+            if cur.rowcount == 0:
+                return f"No changes made for user {user_id}"
+
+            conn.commit()
+
+            updated_fields = ", ".join(valid_updates.keys())
+            return (
+                f"Successfully updated user {user_id}. Updated fields: {updated_fields}"
+            )
+
+    except Exception as e:
+        conn.rollback()
+        print(f"Error updating user data for {user_id}: {e}")
+        return f"Error updating user data: {str(e)}"
+    finally:
+        db_utils.release_db_connection(conn)

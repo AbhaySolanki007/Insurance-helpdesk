@@ -441,7 +441,7 @@ const Tickets = () => {
           </div>
 
           {/* Vertical Bar Chart */}
-          <div className="h-65">
+          <div className="h-65">      
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
                 data={Object.entries(priorityData).map(([priority, count]) => ({

@@ -1,23 +1,20 @@
-import { useContext, useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { Context } from "../context/ContextApi";
 import {
   UserRoundCog,
   Menu,
   X,
-  Settings,
   LogOut,
   User,
   Sun,
   Moon,
   Shield,
+  MessageCircle,
 } from "lucide-react";
 import axios from "axios";
 import { toast } from "react-toastify";
 
 const Navbar = ({ isSidebarOpen, currentTheme, toggleTheme }) => {
-  const { onChat } = useContext(Context);
-  const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const userMenuRef = useRef(null);
@@ -32,21 +29,6 @@ const Navbar = ({ isSidebarOpen, currentTheme, toggleTheme }) => {
   // Check if we're in the chats section or on home page
   const isChatsSection = location.pathname.includes('/chats');
   const isHomePage = location.pathname === '/';
-
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 10) {
-        setScrolled(true);
-      } else {
-        setScrolled(false);
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
 
   // Handle click outside to close user menu
   useEffect(() => {
@@ -181,7 +163,7 @@ const Navbar = ({ isSidebarOpen, currentTheme, toggleTheme }) => {
                         isHomePage ? 'text-slate-300 hover:bg-slate-700' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700'
                       }`}
                     >
-                      <Settings className="mr-3 h-4 w-4" />
+                      <MessageCircle className="mr-3 h-4 w-4" />
                       Chat
                     </Link>
                     {isOwner && (
@@ -271,7 +253,7 @@ const Navbar = ({ isSidebarOpen, currentTheme, toggleTheme }) => {
                 isHomePage ? 'text-slate-300 hover:bg-slate-700' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700'
               }`}
             >
-              <Settings className="h-4 w-4 mr-3" />
+              <MessageCircle className="h-4 w-4 mr-3" />
               Chat
             </Link>
             {isOwner && (

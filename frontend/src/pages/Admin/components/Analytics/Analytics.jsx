@@ -12,6 +12,7 @@ import {
 } from "./ChartComponents";
 import Loader from "../../../../components/Loader";
 import ErrorBox from "../../../../components/ErrorBox";
+import { Activity, Database, Wrench, Brain, TrendingUp } from "lucide-react";
 
 // Configuration for different sections
 const SECTION_CONFIG = {
@@ -426,64 +427,89 @@ export default function Analytics() {
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
-          <h3 className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">
-            Total Traces
-          </h3>
-          <p className="text-3xl font-bold text-blue-600 dark:text-blue-400">
-            {processedData.totalTraces}
-          </p>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
-            Success: {processedData.totalTraces - processedData.totalErrors} | Error: {processedData.totalErrors}
-          </p>
+        <div className="relative overflow-hidden bg-[#2d8ffe] p-8 rounded-xl shadow-lg">
+          <div className="relative">
+            <div className="flex items-center mb-2">
+              <Activity className="h-6 w-6 text-white mr-2 font-bold" />
+              <h3 className="text-lg font-medium text-white">
+                Total Traces
+              </h3>
+            </div>
+            <p className="text-3xl font-bold text-white">
+              {processedData.totalTraces}
+            </p>
+            <p className="text-sm text-white">
+              Success: {processedData.totalTraces - processedData.totalErrors} | Error: {processedData.totalErrors}
+            </p>
+          </div>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
-          <h3 className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">
-            LLM Calls
-          </h3>
-          <p className="text-3xl font-bold text-green-600 dark:text-green-400">
-            {processedData.totalLLMCalls}
-          </p>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
-            Success: {processedData.totalLLMCalls - processedData.totalLLMErrors} | Error: {processedData.totalLLMErrors}
-          </p>
+        <div className="relative overflow-hidden bg-[#4dd291] p-8 rounded-xl shadow-lg">
+          <div className="relative">
+            <div className="flex items-center mb-2">
+              <Brain className="h-6 w-6 text-white mr-2 font-bold" />
+              <h3 className="text-lg font-medium text-white">
+                LLM Calls
+              </h3>
+            </div>
+            <p className="text-3xl font-bold text-white">
+              {processedData.totalLLMCalls}
+            </p>
+            <p className="text-sm text-white">
+              Success: {processedData.totalLLMCalls - processedData.totalLLMErrors} | Error: {processedData.totalLLMErrors}
+            </p>
+          </div>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
-          <h3 className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">
-            Total Cost
-          </h3>
-          <p className="text-3xl font-bold text-purple-600 dark:text-purple-400">
-            ${processedData.totalCost.toFixed(4)}
-          </p>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
-            Latest: ${(processedData.latestCostData.cost || 0).toFixed(4)}
-          </p>
+        <div className="relative overflow-hidden bg-[#f85cac] p-8 rounded-xl shadow-lg">
+          <div className="relative">
+            <div className="flex items-center mb-2">
+              <TrendingUp className="h-6 w-6 text-white mr-2 font-bold" />
+              <h3 className="text-lg font-medium text-white">
+                Total Cost
+              </h3>
+            </div>
+            <p className="text-3xl font-bold text-white">
+              ${processedData.totalCost.toFixed(4)}
+            </p>
+            <p className="text-sm text-white">
+              Latest: ${(processedData.latestCostData.cost || 0).toFixed(4)}
+            </p>
+          </div>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
-          <h3 className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">
-            Token Usage
-          </h3>
-          <p className="text-3xl font-bold text-red-600 dark:text-red-400">
-            {processedData.totalInputTokens + processedData.totalOutputTokens}
-          </p>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
-            Input: {processedData.totalInputTokens} | Output: {processedData.totalOutputTokens}
-          </p>
+        <div className="relative overflow-hidden bg-[#ffb671] p-8 rounded-xl shadow-lg">
+          <div className="relative">
+            <div className="flex items-center mb-2">
+              <Database className="h-6 w-6 text-white mr-2 font-bold" />
+              <h3 className="text-lg font-medium text-white">
+                Token Usage
+              </h3>
+            </div>
+            <p className="text-3xl font-bold text-white">
+              {processedData.totalInputTokens + processedData.totalOutputTokens}
+            </p>
+            <p className="text-sm text-white">
+              Input: {processedData.totalInputTokens} | Output: {processedData.totalOutputTokens}
+            </p>
+          </div>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
-          <h3 className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">
-            Tool Usage
-          </h3>
-          <p className="text-3xl font-bold text-orange-600 dark:text-orange-400">
-            {processedData.totalToolRuns}
-          </p>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
-            Active Tools: {processedData.toolPerformanceData.length} | Top: {processedData.toolPerformanceData[0]?.name || 'None'}
-          </p>
+        <div className="relative overflow-hidden bg-[#1bcce0] p-8 rounded-xl shadow-lg">
+          <div className="relative">
+            <div className="flex items-center mb-2">
+              <Wrench className="h-6 w-6 text-white mr-2 font-bold" />
+              <h3 className="text-lg font-medium text-white">
+                Tool Usage
+              </h3>
+            </div>
+            <p className="text-3xl font-bold text-white">
+              {processedData.totalToolRuns}
+            </p>
+            <p className="text-sm text-white">
+              Active Tools: {processedData.toolPerformanceData.length} | Top: {processedData.toolPerformanceData[0]?.name || 'None'}
+            </p>
+          </div>
         </div>
       </div>
 

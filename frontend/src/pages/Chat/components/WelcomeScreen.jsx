@@ -26,7 +26,7 @@ function WelcomeScreen({ setManualInput, textareaRef }) {
               alt="Health Insurance" 
               className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#000000]/90 via-[#000000]/50 to-[#000000]/20"></div>
+            <div className="absolute inset-0 bg-gradient-to-t from-[#000000]/50 via-[#000000]/30 to-[#000000]/10"></div>
           </div>
           <div className="relative p-6 h-full flex flex-col">
             <div className="bg-[#9333EA]/20 backdrop-blur-sm w-12 h-12 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
@@ -55,7 +55,7 @@ function WelcomeScreen({ setManualInput, textareaRef }) {
               alt="Car Insurance" 
               className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#000000]/90 via-[#000000]/50 to-[#000000]/20"></div>
+            <div className="absolute inset-0 bg-gradient-to-t from-[#000000]/50 via-[#000000]/30 to-[#000000]/10"></div>
           </div>
           <div className="relative p-6 h-full flex flex-col">
             <div className="bg-[#3B82F6]/20 backdrop-blur-sm w-12 h-12 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
@@ -84,7 +84,7 @@ function WelcomeScreen({ setManualInput, textareaRef }) {
               alt="Policy Updates" 
               className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#000000]/90 via-[#000000]/50 to-[#000000]/20"></div>
+            <div className="absolute inset-0 bg-gradient-to-t from-[#000000]/50 via-[#000000]/30 to-[#000000]/10"></div>
           </div>
           <div className="relative p-6 h-full flex flex-col">
             <div className="bg-[#10B981]/20 backdrop-blur-sm w-12 h-12 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">

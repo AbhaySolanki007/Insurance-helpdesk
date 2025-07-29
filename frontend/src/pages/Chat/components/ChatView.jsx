@@ -18,6 +18,35 @@ function ChatView() {
   const [isThinking, setIsThinking] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [manualInput, setManualInput] = useState("");
+  const [currentPlaceholderIndex, setCurrentPlaceholderIndex] = useState(0);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+
+  const placeholders = [
+    "Ask a question about your insurance policy...",
+    "Type your insurance query here...",
+    "Need help with your coverage? Ask me anything...",
+    "Hi there! How can I help with your insurance today?",
+    "Got a question about claims or coverage? I'm here to help.",
+    "Need help choosing a plan or filing a claim? Just ask!"
+  ];
+
+  // Rotate placeholders every 3 seconds with smooth transition
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIsTransitioning(true);
+      
+      // Wait for fade out, then change placeholder
+      setTimeout(() => {
+        setCurrentPlaceholderIndex((prevIndex) => 
+          (prevIndex + 1) % placeholders.length
+        );
+        setIsTransitioning(false);
+      }, 400); // duration of the fade out animation
+      
+    }, 5000); // duration of the placeholder rotation
+
+    return () => clearInterval(interval);
+  }, [placeholders.length]);
 
   // Load input from session storage on component mount
   useEffect(() => {
@@ -230,8 +259,10 @@ function ChatView() {
                   value={displayValue}
                   onChange={handleInputChange}
                   onKeyDown={handleKeyDown}
-                  placeholder="Message..."
-                  className="w-full bg-transparent text-black dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none resize-none px-3 py-2 max-h-32"
+                  placeholder={placeholders[currentPlaceholderIndex]}
+                  className={`w-full bg-transparent text-black dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none resize-none px-3 py-2 max-h-32 transition-opacity duration-300 ${
+                    isTransitioning ? 'opacity-0' : 'opacity-100'
+                  }`}
                   rows="1"
                 />
               </div>

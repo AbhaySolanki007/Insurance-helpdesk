@@ -47,7 +47,7 @@ const useChat = ({
         console.log("response of query from Backend:", response.data)
         setIsL2Panel(response.data.is_l2)
 
-        setManualInput("");
+        // Don't clear manual input here - let it persist during bot typing
         const responses = response.data.responses || ["No response generated."];
 
         // End thinking phase, start typing phase
@@ -58,11 +58,17 @@ const useChat = ({
         for (let responseIndex = 0; responseIndex < responses.length; responseIndex++) {
           const currentResponse = responses[responseIndex];
           
+          // Hardcode icon logic: First response in L2 escalation shows L1 icon
+          let displayIcon = response.data.is_l2;
+          if (response.data.is_l2 && responseIndex === 0) {
+            displayIcon = false; // Show L1 icon for first response in L2 escalation
+          }
+          
           // Add empty bot message that will be progressively filled
           setMessages((prev) => [...prev, { 
             text: "", 
             sender: "bot", 
-            isL2: response.data.is_l2,
+            isL2: displayIcon,
             isTransition: responseIndex === 0 // First response is transition
           }]);
 
@@ -76,7 +82,7 @@ const useChat = ({
               newMessages[newMessages.length - 1] = {
                 text: displayedText,
                 sender: "bot",
-                isL2: response.data.is_l2,
+                isL2: displayIcon,
                 isTransition: responseIndex === 0 // First response is transition
               };
               return newMessages;

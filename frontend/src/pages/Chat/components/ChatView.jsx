@@ -19,6 +19,19 @@ function ChatView() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [manualInput, setManualInput] = useState("");
 
+  // Load input from session storage on component mount
+  useEffect(() => {
+    const savedInput = sessionStorage.getItem('chatInput');
+    if (savedInput) {
+      setManualInput(savedInput);
+    }
+  }, []);
+
+  // Save input to session storage whenever it changes
+  useEffect(() => {
+    sessionStorage.setItem('chatInput', manualInput);
+  }, [manualInput]);
+
   const {
     audio,
     handleAudioOnFrontend,

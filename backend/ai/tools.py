@@ -52,6 +52,20 @@ class UserUpdateInput(BaseModel):
 T = TypeVar("T", bound=BaseModel)
 
 
+def update_user_data_with_approval(user_id: str, updates: dict) -> str:
+    """
+    Wrapper function that triggers human approval workflow instead of directly updating.
+    This function will be called by the agent, but the actual update will be handled
+    by the human approval node in the LangGraph workflow.
+    """
+    return {
+        "status": "pending_approval",
+        "message": "Your update request has been submitted for approval",
+        "updates": updates,
+        "user_id": user_id,
+    }
+
+
 def create_tool_wrapper(
     func: Callable[[T], str], schema_class: Type[T]
 ) -> Callable[[Union[str, Dict[str, Any]]], str]:
@@ -124,7 +138,7 @@ def create_tools(support_chain, tool_names: List[str]):
         "update_user_data": Tool(
             name="update_user_data",
             func=create_tool_wrapper(
-                lambda x: update_user_data(
+                lambda x: update_user_data_with_approval(
                     x.user_id,
                     {
                         k: v

@@ -14,6 +14,7 @@ const Users = () => {
       setError(null);
       const response = await axios.get('http://localhost:8001/api/admin/users');
       setUsersData(response.data.users || []);
+      console.log('Fetched users:', response.data);
     } catch (err) {
       setError(err.response?.data?.error || err.message || 'Failed to fetch users');
       console.error('Error fetching users:', err);

@@ -2,7 +2,8 @@
 """Langgraph configuration for the support agent workflow."""
 import config
 import operator
-from typing import TypedDict, Annotated, List, Dict
+import uuid
+from typing import TypedDict, Annotated, List, Dict, Optional, Any
 from langchain_core.messages import BaseMessage, AIMessage, HumanMessage
 from langchain_google_genai import GoogleGenerativeAI
 from langchain_groq import ChatGroq
@@ -22,6 +23,10 @@ class AgentState(TypedDict):
     new_responses: List[str]
     is_level2_session: bool
     routing_decision: str
+    # Human approval fields for update_user_data
+    pending_user_update: Optional[Dict[str, Any]]  # Stores the update request
+    human_approval_status: Optional[str]  # "pending", "approved", "declined"
+    human_approval_response: Optional[str]  # Human's decision message
 
 
 # 2. Define the individual nodes (functions) for the graph.
@@ -89,9 +94,6 @@ def summarize_for_level2_node(state: AgentState):
 def level2_node(state: AgentState, agent_executor):
     """Runs the Level2 agent."""
     print("---EXECUTING Level2 NODE---")
-    print(
-        f"---Level2 NODE RECEIVED SUMMARY:\n{state.get('escalation_summary', 'No summary provided.')}\n---"
-    )
     history_text = format_history_for_prompt(state["history"])
     response = agent_executor.invoke(
         {
@@ -99,20 +101,71 @@ def level2_node(state: AgentState, agent_executor):
             "user_id": state["user_id"],
             "language": state["language"],
             "chat_history": history_text,
-            # Pass the summary from the state to the prompt
             "escalation_summary": state.get(
                 "escalation_summary", "No summary was provided."
             ),
         }
     )
-    output = response.get("output", "")
 
-    # Combine the L2 response with any previous messages from this turn.
+    # NEW: Check intermediate steps for tool calls
+    if "intermediate_steps" in response:
+        for action, observation in response["intermediate_steps"]:
+            if action.tool == "update_user_data":
+                print(
+                    "---UPDATE_USER_DATA TOOL DETECTED - STORING FOR HUMAN APPROVAL---"
+                )
+
+                # Extract the updates from the tool call and ensure it's a dictionary
+                import json
+                import re
+
+                tool_input = action.tool_input
+                updates = {}
+                if isinstance(tool_input, str):
+                    # Use regex to find the JSON part of the string
+                    json_match = re.search(r"\{.*\}", tool_input, re.DOTALL)
+                    if json_match:
+                        json_string = json_match.group(0)
+                        try:
+                            updates = json.loads(json_string)
+                        except json.JSONDecodeError:
+                            print(
+                                f"---ERROR: Could not parse extracted JSON string: {json_string}---"
+                            )
+                            continue
+                    else:
+                        print(
+                            f"---ERROR: No JSON object found in tool_input string: {tool_input}---"
+                        )
+                        continue
+                elif isinstance(tool_input, dict):
+                    updates = tool_input
+
+                # The user_id is already in the state, so we can remove it from the updates dict
+                # to avoid redundancy in the approval prompt.
+                updates.pop("user_id", None)
+
+                # Store the request for human approval
+                pending_update = {
+                    "updates": updates,
+                    "original_output": observation,
+                    "timestamp": str(uuid.uuid4()),
+                }
+
+                return {
+                    "pending_user_update": pending_update,
+                    "new_responses": [
+                        "Your update request has been submitted for approval. Please wait while we review your request."
+                    ],
+                    "is_level2_session": True,
+                    "escalation_summary": "",
+                }
+
+    # If no update_user_data tool was detected, continue with normal processing
+    output = response.get("output", "")
+    print("---CONTINUING WITH NORMAL PROCESSING---")
     current_responses = state.get("new_responses", [])
     current_responses.append(output)
-
-    # The Level2 node is responsible for the final history entry on escalation.
-    # We create a combined string for the history, but send the array to the frontend.
     final_history_output = "\n\n".join(current_responses)
     turn_data = {
         "input": state["query"],
@@ -126,6 +179,95 @@ def level2_node(state: AgentState, agent_executor):
         "is_level2_session": True,
         "escalation_summary": "",  # Clear the summary
     }
+
+
+def human_approval_node(state: AgentState):
+    """Node that handles human approval for user data updates."""
+    print("---EXECUTING HUMAN APPROVAL NODE---")
+
+    # Check if we have a pending update that needs approval
+    if state.get("pending_user_update"):
+        print(f"---HUMAN APPROVAL REQUEST FOR USER: {state['user_id']}---")
+
+        # Display approval request in terminal
+        pending_update = state.get("pending_user_update", {})
+        updates = pending_update.get("updates", {})
+
+        print("\n" + "=" * 60)
+        print("🚨 UPDATE USER DATA REQUEST DETECTED!")
+        print("=" * 60)
+        print(f"👤 User ID: {state['user_id']}")
+        print(f"📝 Requested Updates:")
+
+        for key, value in updates.items():
+            print(f"   • {key}: {value}")
+
+        print("\n" + "=" * 60)
+        print("Available actions:")
+        print("1. Approve this request")
+        print("2. Decline this request")
+        print("=" * 60)
+
+        # Get admin decision
+        while True:
+            try:
+                choice = input("\nEnter your choice (1-2): ").strip()
+
+                if choice == "1":
+                    print("✅ Request approved! Processing update...")
+                    # Execute the update immediately
+                    from database.models import update_user_data
+
+                    try:
+                        result = update_user_data(state["user_id"], updates)
+                        print(f"---DATABASE UPDATE RESULT: {result}---")
+
+                        return {
+                            "pending_user_update": None,
+                            "human_approval_status": "approved",
+                            "human_approval_response": "Database updated successfully",
+                            "new_responses": [
+                                f"Your information has been updated successfully. {result}"
+                            ],
+                        }
+                    except Exception as e:
+                        print(f"---ERROR UPDATING DATABASE: {e}---")
+                        return {
+                            "pending_user_update": None,
+                            "human_approval_status": "error",
+                            "human_approval_response": f"Error updating database: {e}",
+                            "new_responses": [
+                                "There was an error processing your update request. Please try again."
+                            ],
+                        }
+
+                elif choice == "2":
+                    print("❌ Request declined!")
+                    return {
+                        "pending_user_update": None,
+                        "human_approval_status": "declined",
+                        "human_approval_response": "Your request is under review by our security team",
+                        "new_responses": [
+                            "Your request is under review by our security team. We'll contact you shortly."
+                        ],
+                    }
+
+                else:
+                    print("❌ Invalid choice. Please enter 1 or 2.")
+
+            except KeyboardInterrupt:
+                print("\n⚠️ Approval cancelled by user. Declining request...")
+                return {
+                    "pending_user_update": None,
+                    "human_approval_status": "declined",
+                    "human_approval_response": "Request cancelled by admin",
+                    "new_responses": [
+                        "Your request has been cancelled. Please try again later."
+                    ],
+                }
+
+    # If no pending update, just pass through
+    return state
 
 
 def dispatcher(state: AgentState) -> str:

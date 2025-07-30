@@ -62,6 +62,30 @@ Your goal is to handle complex issues by gathering detailed information and crea
 **Your Expert Problem-Solving Workflow:**
 **Crucial Rule:** Your primary task is to answer the user's most recent `Question`. The `L1 AGENT BRIEFING` and `Previous Conversation History` are for context, but your immediate task is to respond to what the user just asked.
 
+**CRITICAL UPDATE RULE:** When a user asks to update their information (e.g., phone, address), you MUST use the `update_user_data` tool.
+- You already know the user's ID: `{user_id}`.
+- Your `Action Input` MUST be a JSON object containing the `user_id` and the fields to be updated.
+- NEVER use other tools like `get_user_data` to find the user's ID. You already have it.
+- Correctly use the 'phone' field for phone numbers, not 'phone_number'.
+
+**CORRECT UPDATE EXAMPLES:**
+- User: "Update my phone to 111-222-3333" -> Action Input: {{"user_id": "{user_id}", "phone": "111-222-3333"}}
+- User: "Change my address to 456 Main St" -> Action Input: {{"user_id": "{user_id}", "address": "456 Main St"}}
+
+**WRONG:**
+- Asking for the user's ID first.
+- Using `get_user_data`.
+- Using "phone_number" instead of "phone".
+
+**IMMEDIATE ACTION RULE:** When using the `update_user_data` tool, your response MUST end immediately after the `Action Input`. You are FORBIDDEN from asking for confirmation or adding any conversational text after the tool call. Your entire response must be ONLY `Thought`, `Action`, and `Action Input`.
+
+**PERFECT, REQUIRED EXAMPLE:**
+User: "I need to change my phone number to 987-654-3210"
+Your EXACT output:
+Thought: The user wants to update their phone number. I must use the `update_user_data` tool and include their `user_id`.
+Action: update_user_data
+Action Input: {{"user_id": "{user_id}", "phone": "987-654-3210"}}
+
 **IMPORTANT:** Always respond to the user's immediate question first. If the user sends a simple greeting (like "hello", "hi", "how are you"), respond naturally to the greeting. Then, if there's relevant escalation context, you can follow up with a question about their specific issue.
 
 **CRITICAL:** When the user asks a simple question or greeting, respond to that FIRST before mentioning any escalation context.
@@ -76,6 +100,7 @@ Your goal is to handle complex issues by gathering detailed information and crea
 3.  **Execute Your Plan Step-by-Step:** Use your tools to gather all the necessary information.
     *   **Use `faq_search` for process questions:** Even if the situation is user-specific, the general process is often in the FAQ. Use it to get procedural information (e.g., "how to file a claim," "what documents are needed for a car accident claim").
     *   **Use `get_user_data` and `get_policy_data` for specifics:** Get the user's policy details, contact information, and other personal data needed to tailor the solution.
+    *   **Use `update_user_data` for updates:** When users request information updates, use this tool directly with the provided information.
     *   **Ask for more details when you're stuck:** If you can't find the information with your tools, ask the user for clarification. Be specific about what you need.
 
 4.  **Synthesize and Guide:** Do not just give the user raw data. Combine the general process with their specific information to provide a clear, actionable, step-by-step guide. Your goal is to resolve their issue, not just answer a question.
@@ -116,7 +141,11 @@ Thought:{agent_scratchpad}
 
     agent = create_react_agent(llm, tools, prompt)
     return AgentExecutor(
-        agent=agent, tools=tools, verbose=True, handle_parsing_errors=True
+        agent=agent,
+        tools=tools,
+        verbose=True,
+        handle_parsing_errors=True,
+        return_intermediate_steps=True,
     ).with_config(
         {"run_name": "Level2 Agent"}
     )  # The Level2 agent might sometimes not receive a summary (on direct Level2 calls),

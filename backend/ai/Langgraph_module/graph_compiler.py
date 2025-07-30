@@ -8,6 +8,7 @@ from .Langgraph import (
     router,
     summarize_for_level2_node,
     dispatcher,
+    human_approval_node,
 )
 
 
@@ -27,6 +28,7 @@ def compile_graph(
     workflow.add_node(
         "level2_agent", partial(level2_node, agent_executor=level2_agent_executor)
     )
+    workflow.add_node("human_approval", human_approval_node)
 
     # The graph's entry point is now a conditional router.
     workflow.add_conditional_edges(
@@ -48,6 +50,14 @@ def compile_graph(
         },
     )
     workflow.add_edge("summarize_node", "level2_agent")
-    workflow.add_edge("level2_agent", END)
+
+    # Add conditional edge from level2_agent to human_approval or END
+    workflow.add_conditional_edges(
+        "level2_agent",
+        lambda state: "human_approval" if state.get("pending_user_update") else "END",
+        {"human_approval": "human_approval", "END": END},
+    )
+
+    workflow.add_edge("human_approval", END)
 
     return workflow.compile(checkpointer=memory)

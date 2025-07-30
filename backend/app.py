@@ -410,7 +410,7 @@ def get_all_users_api():
         users = get_all_users()
         return jsonify({"users": users}), 200
     except Exception as e:
-        print(f"Error fetching all users: {e}")
+        print(f"Error fetching users: {e}")
         return jsonify({"error": "Failed to fetch users"}), 500
 
 

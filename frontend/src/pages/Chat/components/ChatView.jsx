@@ -41,12 +41,12 @@ function ChatView() {
           (prevIndex + 1) % placeholders.length
         );
         setIsTransitioning(false);
-      }, 400); // duration of the fade out animation
+      }, 1000); // duration of the fade out animation
       
     }, 5000); // duration of the placeholder rotation
 
     return () => clearInterval(interval);
-  }, [placeholders.length]);
+  }, []);
 
   // Load input from session storage on component mount
   useEffect(() => {
@@ -253,18 +253,25 @@ function ChatView() {
         <div className="max-w-5xl mx-auto">
           <div className="bg-gray-50 dark:bg-white/5 rounded-2xl border border-gray-200 dark:border-white/10">
             <div className="flex items-end p-2">
-              <div className="flex-1">
+              <div className="flex-1 relative">
                 <textarea
                   ref={textareaRef}
                   value={displayValue}
                   onChange={handleInputChange}
                   onKeyDown={handleKeyDown}
-                  placeholder={placeholders[currentPlaceholderIndex]}
-                  className={`w-full bg-transparent text-black dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none resize-none px-3 py-2 max-h-32 transition-opacity duration-300 ${
-                    isTransitioning ? 'opacity-0' : 'opacity-100'
-                  }`}
+                  placeholder=""
+                  className="w-full bg-transparent text-black dark:text-white focus:outline-none resize-none px-3 py-2 max-h-32"
                   rows="1"
                 />
+                {!displayValue && (
+                  <div className="absolute inset-0 pointer-events-none flex items-center px-3 py-2">
+                    <span className={`text-gray-500 dark:text-gray-400 transition-opacity duration-800 ${
+                      isTransitioning ? 'opacity-0' : 'opacity-100'
+                    }`}>
+                      {placeholders[currentPlaceholderIndex]}
+                    </span>
+                  </div>
+                )}
               </div>
               <div className="flex items-center gap-2 px-2">
                 <button

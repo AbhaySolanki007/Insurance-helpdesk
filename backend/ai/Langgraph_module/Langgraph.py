@@ -107,6 +107,7 @@ def level2_node(state: AgentState, agent_executor):
         }
     )
 
+    # For Human-in-the-Loop processing, we need to check for tool calls
     # NEW: Check intermediate steps for tool calls
     if "intermediate_steps" in response:
         for action, observation in response["intermediate_steps"]:
@@ -181,6 +182,7 @@ def level2_node(state: AgentState, agent_executor):
     }
 
 
+# Human-in-the-Loop Node
 def human_approval_node(state: AgentState):
     """Node that handles human approval for user data updates."""
     print("---EXECUTING HUMAN APPROVAL NODE---")
@@ -194,7 +196,8 @@ def human_approval_node(state: AgentState):
         updates = pending_update.get("updates", {})
 
         print("\n" + "=" * 60)
-        print("🚨 UPDATE USER DATA REQUEST DETECTED!")
+        print("           INSURANCE HELPDESK - ADMIN CONSOLE")
+        print("           Human-in-the-Loop Approval System")
         print("=" * 60)
         print(f"👤 User ID: {state['user_id']}")
         print(f"📝 Requested Updates:")

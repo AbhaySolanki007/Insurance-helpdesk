@@ -9,6 +9,7 @@ The Insurance Helpdesk Backend is a Flask-based conversational AI system that le
 ### Key Features
 
 - **🤖 Dual-Agent Architecture**: Intelligent routing between L1 and L2 agents based on query complexity
+- **🛡️ API-Driven Human-in-the-Loop (HITL)**: For sensitive actions like `update_user_data`, the system pauses execution using LangGraph's checkpointing and awaits approval from an administrator via a secure API.
 - **💾 Stateful Conversations**: Persistent conversation state using LangGraph checkpointing
 - **🔍 RAG-Powered FAQ Search**: Semantic search through insurance documentation using ChromaDB
 - **🎫 JIRA Integration**: Automated ticket creation and management for complex issues
@@ -247,6 +248,28 @@ GET /api/tickets/all
 GET /api/metrics
 ```
 
+```
+
+### Human-in-the-Loop (HITL) Endpoints
+```
+GET /api/pending-approvals
+Response: [
+    {
+        "thread_id": "uuid",
+        "pending_update": { ... }
+    }
+]
+
+POST /api/approve-update/<thread_id>
+Body: {
+    "decision": "approved" | "declined"
+}
+Response: {
+    "status": "success",
+    "message": "Update processed"
+}
+```
+
 ## 🏃‍♂️ Running the Application
 
 ```bash
@@ -327,6 +350,51 @@ backend/
 - Flask logs to console by default
 - Agent execution logs visible with `verbose=True`
 - Database queries logged with connection pool
+
+---
+
+## 🛡️ Human-in-the-Loop (HITL) Architecture
+
+To ensure security and oversight for sensitive operations, the backend implements an API-driven Human-in-the-Loop (HITL) system. This is triggered specifically when the L2 agent determines that user data needs to be modified via the `update_user_data` tool.
+
+### HITL Workflow Visualization
+
+```mermaid
+graph TD
+    subgraph "Main Agent Workflow"
+        L2["L2 Agent"] -->|"Decides to use<br/>'update_user_data' tool"| L2Node["level2_node"]
+        L2Node -->|"Tool call detected via<br/>'intermediate_steps'"| ApprovalNode["human_approval_node"]
+        ApprovalNode -->|"`interrupt()` is called"| Checkpoint["💾 Graph State Persisted<br/>(Conversation Paused)"]
+    end
+    
+    subgraph "External Admin Approval Workflow"
+        Admin["Admin Operator"] -->|Runs `admin_console.py`| AdminConsole["Admin Console"]
+        AdminConsole -->|"1. View pending tasks"| GetAPI["GET /api/pending-approvals"]
+        GetAPI --> AdminConsole
+        AdminConsole -->|"2. Approve/Decline task"| PostAPI["POST /api/approve-update/:thread_id"]
+    end
+    
+    PostAPI -->|"Resumes graph execution"| ResumedNode["human_approval_node (Resumed)"]
+    ResumedNode -->|If approved| UpdateDB["✅ Update User Data in DB"] --> NotifyUserSuccess["Notify User: Success"]
+    ResumedNode -->|If declined| DeclineDB["❌ Log Decline Event"] --> NotifyUserDecline["Notify User: Declined"]
+
+    %% Styling
+    style L2 fill:#fce4ec,stroke:#d81b60
+    style Admin fill:#e0e0e0, stroke:#333
+    style Checkpoint fill:#fff3e0,stroke:#f57c00
+    style GetAPI,PostAPI fill:#e3f2fd,stroke:#1976d2
+```
+
+### Workflow Explanation
+
+1.  **Detection**: The `level2_node` inspects the `intermediate_steps` of the agent's execution. If it detects a call to the `update_user_data` tool, it adds a `pending_user_update` object to the graph's state.
+2.  **Interruption**: The graph transitions to the `human_approval_node`, which immediately calls `interrupt()`. This pauses the graph, and the `SqliteSaver` checkpointer saves the entire conversation state (including the pending update) to the `checkpoints.sqlite` database.
+3.  **Admin Notification (Pull Model)**: An administrator runs the separate `admin_console.py` client. This client makes a `GET` request to the `/api/pending-approvals` endpoint on the Flask server.
+4.  **Approval API**: The Flask backend queries the checkpoints database for any interrupted threads and returns them to the admin console.
+5.  **Decision**: The admin can choose to "approve" or "decline" a request. The console then sends a `POST` request to `/api/approve-update/<thread_id>` with the decision.
+6.  **Resumption**: The backend API loads the graph state for the given thread, updates it with the decision, and resumes execution. The `human_approval_node` continues from where it left off, either calling the real `update_user_data` function or returning a "declined" message to the user.
+
+This decoupled architecture ensures that the main application is non-blocking and that sensitive operations are handled securely and with human oversight.
 
 ---
 

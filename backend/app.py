@@ -50,6 +50,7 @@ all API endpoints for the conversational AI system.
 
 import sqlite3
 import traceback
+import threading
 from typing import Dict, Any
 
 from flask import Flask, request, jsonify
@@ -414,17 +415,26 @@ def get_all_users_api():
         return jsonify({"error": "Failed to fetch users"}), 500
 
 
+def background_metrics_caching():
+    """
+    Fetches and caches LangSmith metrics in a background thread.
+    """
+    print("🔄 [INFO] Background task started: Populating LangSmith metrics cache...")
+    try:
+        fetch_and_cache_all_metrics()
+        print("✅ [SUCCESS] Background task complete: Metrics cache populated.")
+    except Exception as e:
+        print(f"⚠️ [WARNING] The background metrics caching task failed: {e}")
+
+
 if __name__ == "__main__":
     # Initialize database
     init_db()
 
-    # Populate metrics cache on startup
-    print("🔄 [INFO] Populating LangSmith metrics cache...")
-    try:
-        fetch_and_cache_all_metrics()
-        print("✅ [SUCCESS] Metrics cache populated successfully")
-    except Exception as e:
-        print(f"⚠️ [WARNING] Failed to populate metrics cache: {e}")
+    # Populate metrics cache on startup in a background thread
+    print("🚀 [INFO] Starting off metrics caching in the background.")
+    metrics_thread = threading.Thread(target=background_metrics_caching)
+    metrics_thread.start()
 
     # Run Flask app
     app.run(debug=config.DEBUG, host="0.0.0.0", port=8001)

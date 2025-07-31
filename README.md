@@ -5,6 +5,7 @@ A full-stack, AI-powered internal helpdesk application designed for insurance co
 ## Key Features
 
 - **Dual-Agent Architecture**: A tiered system with L1 and L2 agents, orchestrated by LangGraph, to handle queries of varying complexity.
+- **API-Driven Human-in-the-Loop (HITL)**: A robust approval workflow for sensitive operations like user data updates. The system uses graph checkpointing to pause execution and waits for an administrator's decision via a secure API, managed by a separate admin console.
 - **Stateful Conversations**: LangGraph's SQLite checkpointing enables persistent, multi-turn conversations, allowing agents to remember context.
 - **RAG-Powered Search**: A powerful Retrieval-Augmented Generation (RAG) pipeline using ChromaDB provides agents with instant access to a knowledge base of FAQ articles.
 - **Automated Ticketing**: Seamless integration with the JIRA API allows the L2 agent to create, search, and manage support tickets automatically.
@@ -26,7 +27,7 @@ graph TD
     
     Dispatcher -->|"New conversation or<br/>previous L1 interaction"| L1["L1 Agent<br/>Handles common queries<br/>and information gathering"]
     
-    Dispatcher -->|"Ongoing L2 session<br/>(sticky routing)"| L2["L2 Agent<br/>Handles complex issues<br/>and ticket creation"]
+    Dispatcher -->|"Ongoing L2 session<br/>(sticky routing)"| L2["L2 Agent<br/>Handles complex issues,<br/>ticketing, and data updates"]
     
     L1 --> Router{{"Router<br/>Evaluates if escalation<br/>is needed"}}
     
@@ -34,18 +35,32 @@ graph TD
     Router -->|"Escalation needed<br/>(L2.... triggered)"| Summarizer["Summarizer<br/>Creates comprehensive<br/>handoff summary"]
     
     Summarizer --> L2
-    L2 -->|"Resolved by L2"| End
     
+    L2 -->|"Standard resolution"| End
+    L2 -->|"update_user_data tool used"| HITL["Human Approval Node<br/>Pauses graph via Checkpointing"]
+    
+    HITL -->|"Admin approves via API"| UpdateDB["Update Database<br/>(Action completes)"] --> End
+    HITL -->|"Admin declines via API"| Decline(["Notify User of Decline"]) --> End
+
+    subgraph "Admin Interaction (External)"
+        AdminConsole["Admin Console App"] -- "Fetches pending requests" --> API_Get["GET /api/pending-approvals"]
+        AdminConsole -- "Submits decision" --> API_Post["POST /api/approve-update"]
+    end
+    
+    API_Post -- "Resumes graph" --> HITL
+
     %% Styling
     classDef nodeStyle fill:#282a36,stroke:#ff79c6,stroke-width:2px,color:#f8f8f2
     classDef decisionStyle fill:#44475a,stroke:#8be9fd,stroke-width:2px,color:#f8f8f2
     classDef agentStyle fill:#282a36,stroke:#50fa7b,stroke-width:2px,color:#f8f8f2,font-weight:bold
     classDef ioStyle fill:#282a36,stroke:#f1fa8c,stroke-width:2px,color:#f8f8f2
+    classDef hitlStyle fill:#ffb86c,stroke:#ff5555,stroke-width:2px,color:#282a36,font-weight:bold
 
-    class Start,End ioStyle
+    class Start,End,Decline ioStyle
     class L1,L2 agentStyle
     class Dispatcher,Router decisionStyle
-    class Summarizer nodeStyle
+    class Summarizer,UpdateDB nodeStyle
+    class HITL,AdminConsole,API_Get,API_Post hitlStyle
 ```
 
 ---

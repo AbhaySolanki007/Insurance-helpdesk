@@ -45,6 +45,14 @@ graph TD
     style Router fill:#f3e5f5,stroke:#7b1fa2
 ```
 
+### Workflow Automation: n8n
+
+In addition to the conversational agent flow, this backend utilizes **n8n** for proactive, event-driven workflow automation. This system runs separately and connects to our application's services to automate key business processes.
+
+Our primary use case is a **Proactive Renewal Workflow** that automatically identifies expiring policies, notifies customers, and creates internal tasks for agents.
+
+For a detailed explanation of the n8n setup and a breakdown of the automation workflows, please see the dedicated **[n8n README](../n8n/README.md)**.
+
 ### Workflow Explanation
 
 1. **🚀 User Query**: Every interaction begins with a user's question or request

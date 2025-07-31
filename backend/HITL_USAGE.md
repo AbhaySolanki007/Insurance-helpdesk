@@ -15,7 +15,8 @@ The Human-in-the-Loop system provides real-time approval for user data updates d
 1. Backend terminal shows approval request immediately:
    ```
    ============================================================
-   🚨 UPDATE USER DATA REQUEST DETECTED!
+           INSURANCE HELPDESK - ADMIN CONSOLE
+           Human-in-the-Loop Approval System
    ============================================================
    👤 User ID: USR1002
    📝 Requested Updates:
@@ -69,7 +70,8 @@ When an update request is triggered, you'll see:
 ---HUMAN APPROVAL REQUEST FOR USER: USR1002---
 
 ============================================================
-🚨 UPDATE USER DATA REQUEST DETECTED!
+           INSURANCE HELPDESK - ADMIN CONSOLE
+           Human-in-the-Loop Approval System
 ============================================================
 👤 User ID: USR1002
 📝 Requested Updates:

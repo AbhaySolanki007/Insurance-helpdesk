@@ -60,7 +60,7 @@ const useChat = ({
           
           // Hardcode icon logic: First response in L2 escalation shows L1 icon
           let displayIcon = response.data.is_l2;
-          if (response.data.is_l2 && responseIndex === 0) {
+          if (response.data.is_l2 && response.data.responses.length > 1 && responseIndex === 0) {
             displayIcon = false; // Show L1 icon for first response in L2 escalation
           }
           

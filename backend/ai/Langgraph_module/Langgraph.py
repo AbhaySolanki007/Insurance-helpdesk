@@ -184,93 +184,56 @@ def level2_node(state: AgentState, agent_executor):
 
 # Human-in-the-Loop Node
 def human_approval_node(state: AgentState):
-    """Node that handles human approval for user data updates."""
+    """
+    Node that handles human approval for user data updates.
+    On the first pass, it interrupts. On resume, it processes the decision.
+    """
     print("---EXECUTING HUMAN APPROVAL NODE---")
 
-    # Check if we have a pending update that needs approval
-    if state.get("pending_user_update"):
-        print(f"---HUMAN APPROVAL REQUEST FOR USER: {state['user_id']}---")
+    if not state.get("human_approval_status"):
+        # If no decision has been made, interrupt the graph and wait.
+        # The API call to /approve-update will resume from this point.
+        print("---INTERRUPTING FOR HUMAN APPROVAL---")
+        return
 
-        # Display approval request in terminal
-        pending_update = state.get("pending_user_update", {})
-        updates = pending_update.get("updates", {})
+    # This part of the code will only be executed AFTER the graph is resumed.
+    print(f"---RESUMED WITH APPROVAL STATUS: {state['human_approval_status']}---")
 
-        print("\n" + "=" * 60)
-        print("           INSURANCE HELPDESK - ADMIN CONSOLE")
-        print("           Human-in-the-Loop Approval System")
-        print("=" * 60)
-        print(f"👤 User ID: {state['user_id']}")
-        print(f"📝 Requested Updates:")
+    if state["human_approval_status"] == "approved":
+        print("---UPDATE APPROVED. PROCESSING...---")
+        from database.models import update_user_data
 
-        for key, value in updates.items():
-            print(f"   • {key}: {value}")
-
-        print("\n" + "=" * 60)
-        print("Available actions:")
-        print("1. Approve this request")
-        print("2. Decline this request")
-        print("=" * 60)
-
-        # Get admin decision
-        while True:
-            try:
-                choice = input("\nEnter your choice (1-2): ").strip()
-
-                if choice == "1":
-                    print("✅ Request approved! Processing update...")
-                    # Execute the update immediately
-                    from database.models import update_user_data
-
-                    try:
-                        result = update_user_data(state["user_id"], updates)
-                        print(f"---DATABASE UPDATE RESULT: {result}---")
-
-                        return {
-                            "pending_user_update": None,
-                            "human_approval_status": "approved",
-                            "human_approval_response": "Database updated successfully",
-                            "new_responses": [
-                                f"Your information has been updated successfully. {result}"
-                            ],
-                        }
-                    except Exception as e:
-                        print(f"---ERROR UPDATING DATABASE: {e}---")
-                        return {
-                            "pending_user_update": None,
-                            "human_approval_status": "error",
-                            "human_approval_response": f"Error updating database: {e}",
-                            "new_responses": [
-                                "There was an error processing your update request. Please try again."
-                            ],
-                        }
-
-                elif choice == "2":
-                    print("❌ Request declined!")
-                    return {
-                        "pending_user_update": None,
-                        "human_approval_status": "declined",
-                        "human_approval_response": "Your request is under review by our security team",
-                        "new_responses": [
-                            "Your request is under review by our security team. We'll contact you shortly."
-                        ],
-                    }
-
-                else:
-                    print("❌ Invalid choice. Please enter 1 or 2.")
-
-            except KeyboardInterrupt:
-                print("\n⚠️ Approval cancelled by user. Declining request...")
+        try:
+            updates = state.get("pending_user_update", {}).get("updates", {})
+            if updates:
+                result = update_user_data(state["user_id"], updates)
+                print(f"---DATABASE UPDATE RESULT: {result}---")
+                # Clear the pending state after processing
                 return {
                     "pending_user_update": None,
-                    "human_approval_status": "declined",
-                    "human_approval_response": "Request cancelled by admin",
-                    "new_responses": [
-                        "Your request has been cancelled. Please try again later."
-                    ],
+                    "human_approval_status": None,
+                    "human_approval_response": "Update successful.",
                 }
-
-    # If no pending update, just pass through
-    return state
+            else:
+                return {
+                    "pending_user_update": None,
+                    "human_approval_status": "error",
+                    "human_approval_response": "No updates found to process.",
+                }
+        except Exception as e:
+            print(f"---ERROR DURING DATABASE UPDATE: {e}---")
+            return {
+                "pending_user_update": None,
+                "human_approval_status": "error",
+                "human_approval_response": f"An error occurred: {e}",
+            }
+    else:  # Declined
+        print("---UPDATE DECLINED BY ADMINISTRATOR.---")
+        return {
+            "pending_user_update": None,  # Clear the pending state
+            "human_approval_status": None,
+            "human_approval_response": "Update request was declined.",
+        }
 
 
 def dispatcher(state: AgentState) -> str:

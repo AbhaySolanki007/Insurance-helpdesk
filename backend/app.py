@@ -51,13 +51,16 @@ all API endpoints for the conversational AI system.
 import sqlite3
 import traceback
 import threading
+import pickle
 from typing import Dict, Any
 
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from google.api_core import exceptions
 from langgraph.checkpoint.sqlite import SqliteSaver
+from langgraph.graph import START
 from psycopg2.extras import RealDictCursor
+
 
 import config
 from ai.L1_agent import create_l1_agent_executor
@@ -259,6 +262,100 @@ def login():
         if conn:
             DB_POOL.putconn(conn)
             print("[INFO] DB connection returned to pool.")
+
+
+@app.route("/api/pending-approvals", methods=["GET"])
+def get_pending_approvals():
+    """
+    Scans the checkpoint database for conversations that are currently
+    interrupted and waiting for human approval.
+    """
+    try:
+        # Connect directly to the db to get all active thread_ids
+        with sqlite3.connect("checkpoints.sqlite") as conn:
+            conn.row_factory = sqlite3.Row
+            cursor = conn.cursor()
+            # We only need the unique thread_ids, not all checkpoint rows
+            cursor.execute("SELECT DISTINCT thread_id FROM checkpoints")
+            threads = cursor.fetchall()
+
+        pending_approvals = []
+        for row in threads:
+            thread_id = row["thread_id"]
+            if not thread_id:
+                continue
+
+            config = {"configurable": {"thread_id": thread_id}}
+            try:
+                # Use the graph's public API to get the state, which handles deserialization.
+                # This is the robust way to avoid serialization errors.
+                graph_state = app_graph.get_state(config)
+
+                if graph_state and "human_approval" in graph_state.next:
+                    user_state = graph_state.values
+                    pending_update = user_state.get("pending_user_update")
+                    if pending_update:
+                        pending_approvals.append(
+                            {
+                                "thread_id": thread_id,
+                                "user_id": user_state.get("user_id"),
+                                "details": pending_update.get("updates"),
+                                "timestamp": pending_update.get("timestamp"),
+                            }
+                        )
+            except Exception as e:
+                # This can happen if a thread is corrupted or in an unexpected state.
+                print(
+                    f"---WARNING: Could not get state for thread_id: {thread_id}. Error: {e}. Skipping.---"
+                )
+                continue
+
+        return jsonify(pending_approvals), 200
+
+    except Exception as e:
+        print(f"---ERROR FETCHING PENDING APPROVALS---: {e}")
+        traceback.print_exc()
+        return jsonify({"error": "Failed to fetch pending approvals."}), 500
+
+
+@app.route("/api/approve-update/<string:thread_id>", methods=["POST"])
+def approve_update(thread_id):
+    """
+    Resumes a paused graph execution with the admin's decision.
+    """
+    data = request.get_json()
+    decision = data.get("decision")
+
+    if not decision or decision not in ["approved", "declined"]:
+        return jsonify({"error": "Invalid decision provided."}), 400
+
+    try:
+        config = {"configurable": {"thread_id": thread_id}}
+
+        # Get the current state of the paused graph
+        current_state = app_graph.get_state(config)
+
+        # Inject the human's decision into the state
+        current_state.values["human_approval_status"] = decision
+
+        # Resume the graph from the point of interruption
+        # Pass the modified state to continue the execution
+        app_graph.update_state(config, current_state.values)
+
+        return (
+            jsonify(
+                {
+                    "status": "success",
+                    "message": f"Decision '{decision}' processed for thread {thread_id}.",
+                }
+            ),
+            200,
+        )
+
+    except Exception as e:
+        print(f"---ERROR PROCESSING APPROVAL---: {e}")
+        traceback.print_exc()
+        return jsonify({"error": "Failed to process approval decision."}), 500
 
 
 @app.route("/api/logout/", methods=["POST"])

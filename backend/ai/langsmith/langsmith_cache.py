@@ -447,6 +447,8 @@ def fetch_and_cache_all_metrics():
     except Exception as e:
         print(f"Error processing trace metrics: {e}")
 
+    time.sleep(1)  # Add a delay to avoid rate limiting
+
     try:
         llm_runs = _fetch_paginated_runs(client, project_name, "llm")
         if llm_runs:
@@ -461,6 +463,8 @@ def fetch_and_cache_all_metrics():
                 set_cached_metric(key, data)
     except Exception as e:
         print(f"Error processing LLM/cost metrics: {e}")
+
+    time.sleep(1)  # Add another delay
 
     try:
         tool_runs = _fetch_paginated_runs(client, project_name, "tool")

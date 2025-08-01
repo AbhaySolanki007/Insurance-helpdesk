@@ -60,4 +60,6 @@ def compile_graph(
 
     workflow.add_edge("human_approval", END)
 
-    return workflow.compile(checkpointer=memory)
+    # When compiling, tell LangGraph to interrupt BEFORE the human_approval node
+    # This ensures the graph pauses and waits for an external action.
+    return workflow.compile(checkpointer=memory, interrupt_before=["human_approval"])

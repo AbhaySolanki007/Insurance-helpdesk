@@ -51,14 +51,23 @@ def compile_graph(
     )
     workflow.add_edge("summarize_node", "level2_agent")
 
-    # Add conditional edge from level2_agent to human_approval or END
+    # a new, explicit routing decision to make the flow more robust.
     workflow.add_conditional_edges(
         "level2_agent",
-        lambda state: "human_approval" if state.get("pending_user_update") else "END",
-        {"human_approval": "human_approval", "END": END},
+        # The router now simply returns the explicit decision made by the node.
+        lambda state: state.get("routing_decision"),
+        {
+            "human_approval": "human_approval",
+            "END": END,
+        },
     )
 
-    workflow.add_edge("human_approval", END)
+    # After human approval, the conversation should loop back to the Level 2
+    # agent. This allows the agent to provide a concluding message to the user
+    # (e.g., "Your update was successful.") and ensures the final state,
+    # including the now-updated approval lists, is saved correctly by the
+    # top-level invoke call in app.py.
+    workflow.add_edge("human_approval", "level2_agent")
 
     # When compiling, tell LangGraph to interrupt BEFORE the human_approval node
     # This ensures the graph pauses and waits for an external action.

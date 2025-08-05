@@ -267,55 +267,65 @@ def login():
 @app.route("/api/pending-approvals", methods=["GET"])
 def get_pending_approvals():
     """
-    Scans the checkpoint database for conversations that are currently
-    interrupted and waiting for human approval.
+    Fetches all approval requests from the checkpoints database,
+    categorized into pending, approved, and declined.
     """
     try:
-        # Connect directly to the db to get all active thread_ids
+        all_pending = []
+        all_approved = []
+        all_declined = []
+
+        # Connect to SQLite to get all thread_ids
         with sqlite3.connect("checkpoints.sqlite") as conn:
             conn.row_factory = sqlite3.Row
             cursor = conn.cursor()
-            # We only need the unique thread_ids, not all checkpoint rows
+            # DISTINCT to avoid processing the same thread multiple times
             cursor.execute("SELECT DISTINCT thread_id FROM checkpoints")
-            threads = cursor.fetchall()
+            rows = cursor.fetchall()
 
-        pending_approvals = []
-        for row in threads:
+        # If there are no threads, there's nothing to do
+        if not rows:
+            return (
+                jsonify(
+                    {
+                        "pending": [],
+                        "approved": [],
+                        "declined": [],
+                    }
+                ),
+                200,
+            )
+
+        # For each thread, get its state and aggregate the approval lists
+        for row in rows:
             thread_id = row["thread_id"]
             if not thread_id:
                 continue
 
             config = {"configurable": {"thread_id": thread_id}}
-            try:
-                # Use the graph's public API to get the state, which handles deserialization.
-                # This is the robust way to avoid serialization errors.
-                graph_state = app_graph.get_state(config)
+            graph_state = app_graph.get_state(config)
 
-                if graph_state and "human_approval" in graph_state.next:
-                    user_state = graph_state.values
-                    pending_update = user_state.get("pending_user_update")
-                    if pending_update:
-                        pending_approvals.append(
-                            {
-                                "thread_id": thread_id,
-                                "user_id": user_state.get("user_id"),
-                                "details": pending_update.get("updates"),
-                                "timestamp": pending_update.get("timestamp"),
-                            }
-                        )
-            except Exception as e:
-                # This can happen if a thread is corrupted or in an unexpected state.
-                print(
-                    f"---WARNING: Could not get state for thread_id: {thread_id}. Error: {e}. Skipping.---"
-                )
-                continue
+            if graph_state:
+                user_state = graph_state.values
+                all_pending.extend(user_state.get("pending_approvals", []))
+                all_approved.extend(user_state.get("approved_approvals", []))
+                all_declined.extend(user_state.get("declined_approvals", []))
 
-        return jsonify(pending_approvals), 200
+        return (
+            jsonify(
+                {
+                    "pending": all_pending,
+                    "approved": all_approved,
+                    "declined": all_declined,
+                }
+            ),
+            200,
+        )
 
     except Exception as e:
-        print(f"---ERROR FETCHING PENDING APPROVALS---: {e}")
+        print(f"---ERROR FETCHING APPROVALS---: {e}")
         traceback.print_exc()
-        return jsonify({"error": "Failed to fetch pending approvals."}), 500
+        return jsonify({"error": "Failed to fetch approvals."}), 500
 
 
 @app.route("/api/approve-update/<string:thread_id>", methods=["POST"])
@@ -323,8 +333,10 @@ def approve_update(thread_id):
     """
     Resumes a paused graph execution with the admin's decision.
     """
+    print(f"\n---APPROVE-UPDATE ENDPOINT TRIGGERED FOR THREAD: {thread_id}---")
     data = request.get_json()
     decision = data.get("decision")
+    print(f"---RECEIVED DECISION: {decision}---")
 
     if not decision or decision not in ["approved", "declined"]:
         return jsonify({"error": "Invalid decision provided."}), 400
@@ -332,15 +344,28 @@ def approve_update(thread_id):
     try:
         config = {"configurable": {"thread_id": thread_id}}
 
-        # Get the current state of the paused graph
+        # Get the current state
         current_state = app_graph.get_state(config)
+        if not current_state:
+            print(f"---ERROR: No state found for thread_id: {thread_id}---")
+            return jsonify({"error": "Approval request not found."}), 404
 
-        # Inject the human's decision into the state
+        print(
+            f"---[BEFORE INVOKE] CURRENT STATE for thread {thread_id}: {current_state.values}---"
+        )
+        print(f"---[BEFORE INVOKE] NEXT NODE: {current_state.next}---")
+
+        # Inject the decision into the state
         current_state.values["human_approval_status"] = decision
-
-        # Resume the graph from the point of interruption
-        # Pass the modified state to continue the execution
         app_graph.update_state(config, current_state.values)
+        print(f"---STATE UPDATED with decision: {decision} for thread {thread_id}---")
+
+        # Resume the graph
+        print(f"---INVOKING GRAPH to resume thread: {thread_id}---")
+        resumed_state = app_graph.invoke(None, config)
+        print(
+            f"---[AFTER INVOKE] RESUMED STATE for thread {thread_id}: {resumed_state}---"
+        )
 
         return (
             jsonify(

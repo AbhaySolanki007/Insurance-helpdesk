@@ -24,7 +24,9 @@ class AgentState(TypedDict):
     is_level2_session: bool
     routing_decision: str
     # Human approval fields for update_user_data
-    pending_user_update: Optional[Dict[str, Any]]  # Stores the update request
+    pending_approvals: List[Dict[str, Any]]  # List of pending update requests
+    approved_approvals: List[Dict[str, Any]]  # List of approved update requests
+    declined_approvals: List[Dict[str, Any]]  # List of declined update requests
     human_approval_status: Optional[str]  # "pending", "approved", "declined"
     human_approval_response: Optional[str]  # Human's decision message
 
@@ -146,20 +148,26 @@ def level2_node(state: AgentState, agent_executor):
                 # to avoid redundancy in the approval prompt.
                 updates.pop("user_id", None)
 
-                # Store the request for human approval
-                pending_update = {
-                    "updates": updates,
-                    "original_output": observation,
+                # Create the approval request using the conversation's thread_id
+                approval_request = {
+                    "thread_id": state["user_id"],  # Use user_id as thread_id for now
+                    "user_id": state["user_id"],
+                    "details": updates,
                     "timestamp": str(uuid.uuid4()),
                 }
 
+                # Get existing pending list or create new one
+                pending_list = state.get("pending_approvals", [])
+                pending_list.append(approval_request)
+
                 return {
-                    "pending_user_update": pending_update,
+                    "pending_approvals": pending_list,
                     "new_responses": [
                         "Your update request has been submitted for approval. Please wait while we review your request."
                     ],
                     "is_level2_session": True,
                     "escalation_summary": "",
+                    "routing_decision": "human_approval",  # Explicitly route to approval
                 }
 
     # If no update_user_data tool was detected, continue with normal processing
@@ -179,6 +187,7 @@ def level2_node(state: AgentState, agent_executor):
         "new_responses": current_responses,
         "is_level2_session": True,
         "escalation_summary": "",  # Clear the summary
+        "routing_decision": "END",  # Explicitly route to END
     }
 
 
@@ -186,54 +195,64 @@ def level2_node(state: AgentState, agent_executor):
 def human_approval_node(state: AgentState):
     """
     Node that handles human approval for user data updates.
-    On the first pass, it interrupts. On resume, it processes the decision.
     """
-    print("---EXECUTING HUMAN APPROVAL NODE---")
+    print("\n---EXECUTING HUMAN APPROVAL NODE---")
+    print(f"---Initial State: {state}---")
 
+    # If no decision has been made yet, interrupt.
     if not state.get("human_approval_status"):
-        # If no decision has been made, interrupt the graph and wait.
-        # The API call to /approve-update will resume from this point.
         print("---INTERRUPTING FOR HUMAN APPROVAL---")
         return
 
-    # This part of the code will only be executed AFTER the graph is resumed.
     print(f"---RESUMED WITH APPROVAL STATUS: {state['human_approval_status']}---")
 
+    pending_list = state.get("pending_approvals", [])
+    approved_list = state.get("approved_approvals", [])
+    declined_list = state.get("declined_approvals", [])
+
+    if not pending_list:
+        print("---APPROVAL NODE: No pending requests found. Exiting.---")
+        return {
+            "human_approval_status": None,
+            "human_approval_response": "No pending requests found to process.",
+        }
+
+    # Process the most recent pending request
+    request_to_process = pending_list.pop()
+    print(f"---Processing request: {request_to_process}---")
+
     if state["human_approval_status"] == "approved":
-        print("---UPDATE APPROVED. PROCESSING...---")
+        print("---DECISION: APPROVED. Updating database...---")
         from database.models import update_user_data
 
         try:
-            updates = state.get("pending_user_update", {}).get("updates", {})
-            if updates:
-                result = update_user_data(state["user_id"], updates)
-                print(f"---DATABASE UPDATE RESULT: {result}---")
-                # Clear the pending state after processing
-                return {
-                    "pending_user_update": None,
-                    "human_approval_status": None,
-                    "human_approval_response": "Update successful.",
-                }
-            else:
-                return {
-                    "pending_user_update": None,
-                    "human_approval_status": "error",
-                    "human_approval_response": "No updates found to process.",
-                }
+            result = update_user_data(
+                request_to_process["user_id"], request_to_process["details"]
+            )
+            print(f"---DATABASE UPDATE RESULT: {result}---")
+            approved_list.append(request_to_process)
+            response_message = "Update successful."
         except Exception as e:
-            print(f"---ERROR DURING DATABASE UPDATE: {e}---")
-            return {
-                "pending_user_update": None,
-                "human_approval_status": "error",
-                "human_approval_response": f"An error occurred: {e}",
-            }
-    else:  # Declined
-        print("---UPDATE DECLINED BY ADMINISTRATOR.---")
-        return {
-            "pending_user_update": None,  # Clear the pending state
-            "human_approval_status": None,
-            "human_approval_response": "Update request was declined.",
-        }
+            print(f"---ERROR DURING DB UPDATE: {e}---")
+            declined_list.append(request_to_process)
+            response_message = f"DB update failed: {e}"
+    else:
+        print("---DECISION: DECLINED.---")
+        declined_list.append(request_to_process)
+        response_message = "Update request was declined by the administrator."
+
+    print(
+        f"---FINAL LISTS---\nPending: {pending_list}\nApproved: {approved_list}\nDeclined: {declined_list}"
+    )
+
+    # Reset status and return updated lists
+    return {
+        "pending_approvals": pending_list,
+        "approved_approvals": approved_list,
+        "declined_approvals": declined_list,
+        "human_approval_status": None,
+        "human_approval_response": response_message,
+    }
 
 
 def dispatcher(state: AgentState) -> str:

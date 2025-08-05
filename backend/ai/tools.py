@@ -148,24 +148,24 @@ def create_tools(support_chain, tool_names: List[str]):
                 ),
                 UserUpdateInput,
             ),
-            description="Use this ONLY for L2 escalation. Update user's personal information like name, phone, address, location, or password.",
+            description="Use this ONLY for Level2 escalation. Update user's personal information like name, phone, address, location, or password.",
         ),
         "create_ticket": Tool(
             name="create_ticket",
             func=create_tool_wrapper(lambda x: create_ticket(x), TicketCreateInput),
-            description="Use this ONLY for L2 escalation. Creates a support ticket in JIRA after collecting a summary and description.",
+            description="Use this ONLY for Level2 escalation. Creates a support ticket in JIRA after collecting a summary and description.",
         ),
         "search_ticket": Tool(
             name="search_ticket",
             func=create_tool_wrapper(lambda x: search_tickets(x), TicketSearchInput),
-            description="Use this ONLY for L2 escalation. Search for a user's existing support tickets.",
+            description="Use this ONLY for Level2 escalation. Search for a user's existing support tickets.",
         ),
         "send_email": Tool(
             name="send_email",
             func=create_tool_wrapper(
                 lambda x: send_email(x.user_id, x.subject, x.body), EmailSendInput
             ),
-            description="Use this ONLY for L2 escalation. Send an email to the user.",
+            description="Use this ONLY for Level2 escalation. Send an email to the user.",
         ),
     }
 

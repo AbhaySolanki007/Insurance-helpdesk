@@ -1,4 +1,4 @@
-# 4. database/models.py
+# 4. database/postgre.py
 """Database models for the insurance support system."""
 import json
 import psycopg2

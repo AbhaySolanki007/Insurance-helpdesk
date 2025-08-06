@@ -7,7 +7,7 @@ from pydantic import BaseModel, Field
 from langchain.tools import Tool
 from typing import Dict, Any, List
 
-from database.models import get_policy_data, get_user_data, update_user_data
+from database.postgre import get_policy_data, get_user_data, update_user_data
 from services.email_service import send_email
 from services.ticket_service import create_ticket, search_tickets
 

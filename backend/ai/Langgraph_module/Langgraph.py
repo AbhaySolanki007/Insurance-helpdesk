@@ -223,7 +223,7 @@ def human_approval_node(state: AgentState):
 
     if state["human_approval_status"] == "approved":
         print("---DECISION: APPROVED. Updating database...---")
-        from database.models import update_user_data
+        from database.postgre import update_user_data
 
         try:
             result = update_user_data(

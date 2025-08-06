@@ -19,7 +19,7 @@ insurance_support_backend/
 │   ├── L1_agent.py         # 9. L1 Agent: Defines the prompt, tools, and logic for the primary, first-response agent.
 │   ├── Level2_agent.py     # 10. Level2 Agent: Defines the prompt, tools, and logic for the escalation agent, handling complex queries.
 │   ├── tools.py            # 11. Agent Tools: A factory for creating and providing tools (e.g., FAQ search, ticket creation) to the agents.
-│   ├── unified_chain.py    # 12. FAQ Retriever: Manages the ChromaDB vector store for performing RAG-based FAQ searches.
+│   ├── rag_orchestrator.py    # 12. FAQ Retriever: Manages the ChromaDB vector store for performing RAG-based FAQ searches.
 │   │
 │   ├── Langgraph_module/
 │   │   ├── Langgraph.py        # 13. Graph Nodes: Defines the core functions (nodes) that make up the graph's logic (e.g., l1_node, l2_node, summarize_node).
@@ -63,13 +63,13 @@ from psycopg2.extras import RealDictCursor
 
 
 import config
-from ai.L1_agent import create_l1_agent_executor
+from ai.Level1_agent import create_l1_agent_executor
 from ai.Level2_agent import create_level2_agent_executor
 from ai.Langgraph_module.graph_compiler import compile_graph
 from ai.langsmith.langsmith_cache import fetch_and_cache_all_metrics, get_cached_metric
-from ai.unified_chain import UnifiedSupportChain
+from ai.rag_orchestrator import UnifiedSupportChain
 from database.db_utils import DB_POOL
-from database.models import init_db, update_user_history, get_all_users
+from database.postgre import init_db, update_user_history, get_all_users
 from services import ticket_service
 
 

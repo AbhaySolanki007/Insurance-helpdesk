@@ -46,6 +46,55 @@ graph TD
     style Router fill:#f3e5f5,stroke:#7b1fa2
 ```
 
+
+### Agent Workflow Visualization
+
+The core of the backend is a stateful graph that manages the flow of conversation between different components. This ensures a logical and efficient handling of user requests.
+
+```mermaid
+graph TD
+    Start(["User Query"]) --> Dispatcher{{"Dispatcher<br/>Routes based on<br/>conversation state"}}
+    
+    Dispatcher -->|"New conversation or<br/>previous L1 interaction"| L1["L1 Agent<br/>Handles common queries<br/>and information gathering"]
+    
+    Dispatcher -->|"Ongoing L2 session<br/>(sticky routing)"| L2["L2 Agent<br/>Handles complex issues,<br/>ticketing, and data updates"]
+    
+    L1 --> Router{{"Router<br/>Evaluates if escalation<br/>is needed"}}
+    
+    Router -->|"Resolved by L1"| End(["Response to User"])
+    Router -->|"Escalation needed<br/>(L2.... triggered)"| Summarizer["Summarizer<br/>Creates comprehensive<br/>handoff summary"]
+    
+    Summarizer --> L2
+    
+    L2 -->|"Standard resolution"| End
+    L2 -->|"update_user_data tool used"| HITL["Human Approval Node<br/>Pauses graph via Checkpointing"]
+    
+    HITL -->|"Admin approves via API"| UpdateDB["Update Database<br/>(Action completes)"] --> End
+    HITL -->|"Admin declines via API"| Decline(["Notify User of Decline"]) --> End
+
+    subgraph "Admin Interaction (External)"
+        AdminConsole["Admin Console App"] -- "Fetches pending requests" --> API_Get["GET /api/pending-approvals"]
+        AdminConsole -- "Submits decision" --> API_Post["POST /api/approve-update"]
+    end
+    
+    API_Post -- "Resumes graph" --> HITL
+
+    %% Styling
+    classDef nodeStyle fill:#282a36,stroke:#ff79c6,stroke-width:2px,color:#f8f8f2
+    classDef decisionStyle fill:#44475a,stroke:#8be9fd,stroke-width:2px,color:#f8f8f2
+    classDef agentStyle fill:#282a36,stroke:#50fa7b,stroke-width:2px,color:#f8f8f2,font-weight:bold
+    classDef ioStyle fill:#282a36,stroke:#f1fa8c,stroke-width:2px,color:#f8f8f2
+    classDef hitlStyle fill:#ffb86c,stroke:#ff5555,stroke-width:2px,color:#282a36,font-weight:bold
+
+    class Start,End,Decline ioStyle
+    class L1,L2 agentStyle
+    class Dispatcher,Router decisionStyle
+    class Summarizer,UpdateDB nodeStyle
+    class HITL,AdminConsole,API_Get,API_Post hitlStyle
+```
+
+---
+
 ### Workflow Automation: n8n
 
 In addition to the conversational agent flow, this backend utilizes **n8n** for proactive, event-driven workflow automation. This system runs separately and connects to our application's services to automate key business processes.
@@ -357,44 +406,7 @@ backend/
 
 To ensure security and oversight for sensitive operations, the backend implements an API-driven Human-in-the-Loop (HITL) system. This is triggered specifically when the L2 agent determines that user data needs to be modified via the `update_user_data` tool.
 
-### HITL Workflow Visualization
-
-```mermaid
-graph TD
-    subgraph "Main Agent Workflow"
-        L2["L2 Agent"] -->|"Decides to use<br/>'update_user_data' tool"| L2Node["level2_node"]
-        L2Node -->|"Tool call detected via<br/>'intermediate_steps'"| ApprovalNode["human_approval_node"]
-        ApprovalNode -->|"`interrupt()` is called"| Checkpoint["💾 Graph State Persisted<br/>(Conversation Paused)"]
-    end
-    
-    subgraph "External Admin Approval Workflow"
-        Admin["Admin Operator"] -->|Runs `admin_console.py`| AdminConsole["Admin Console"]
-        AdminConsole -->|"1. View pending tasks"| GetAPI["GET /api/pending-approvals"]
-        GetAPI --> AdminConsole
-        AdminConsole -->|"2. Approve/Decline task"| PostAPI["POST /api/approve-update/:thread_id"]
-    end
-    
-    PostAPI -->|"Resumes graph execution"| ResumedNode["human_approval_node (Resumed)"]
-    ResumedNode -->|If approved| UpdateDB["✅ Update User Data in DB"] --> NotifyUserSuccess["Notify User: Success"]
-    ResumedNode -->|If declined| DeclineDB["❌ Log Decline Event"] --> NotifyUserDecline["Notify User: Declined"]
-
-    %% Styling
-    style L2 fill:#fce4ec,stroke:#d81b60
-    style Admin fill:#e0e0e0, stroke:#333
-    style Checkpoint fill:#fff3e0,stroke:#f57c00
-    style GetAPI,PostAPI fill:#e3f2fd,stroke:#1976d2
-```
-
-### Workflow Explanation
-
-1.  **Detection**: The `level2_node` inspects the `intermediate_steps` of the agent's execution. If it detects a call to the `update_user_data` tool, it adds a `pending_user_update` object to the graph's state.
-2.  **Interruption**: The graph transitions to the `human_approval_node`, which immediately calls `interrupt()`. This pauses the graph, and the `SqliteSaver` checkpointer saves the entire conversation state (including the pending update) to the `checkpoints.sqlite` database.
-3.  **Admin Notification (Pull Model)**: An administrator runs the separate `admin_console.py` client. This client makes a `GET` request to the `/api/pending-approvals` endpoint on the Flask server.
-4.  **Approval API**: The Flask backend queries the checkpoints database for any interrupted threads and returns them to the admin console.
-5.  **Decision**: The admin can choose to "approve" or "decline" a request. The console then sends a `POST` request to `/api/approve-update/<thread_id>` with the decision.
-6.  **Resumption**: The backend API loads the graph state for the given thread, updates it with the decision, and resumes execution. The `human_approval_node` continues from where it left off, either calling the real `update_user_data` function or returning a "declined" message to the user.
-
-This decoupled architecture ensures that the main application is non-blocking and that sensitive operations are handled securely and with human oversight.
+For a detailed explanation of the HITL setup, workflow diagrams, API endpoints, and comprehensive usage guide, please see the dedicated **[HITL Documentation](HITL.md)**.
 
 ---
 

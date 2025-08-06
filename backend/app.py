@@ -328,6 +328,58 @@ def get_pending_approvals():
         return jsonify({"error": "Failed to fetch approvals."}), 500
 
 
+@app.route("/api/pending-approvals/<string:user_id>", methods=["GET"])
+def get_user_approval_status(user_id):
+    """
+    Fetches the approval status for a specific user.
+    Returns a simple status string: "pending", "approved", "declined", or "no_history"
+    """
+    try:
+        # Create config for the specific user
+        config = {"configurable": {"thread_id": user_id}}
+
+        # Get the user's state from checkpoints
+        graph_state = app_graph.get_state(config)
+
+        if not graph_state:
+            # User not found or no state exists
+            return jsonify({"status": "no_history"}), 200
+
+        user_state = graph_state.values
+
+        # Check approval lists in priority order
+        pending_list = user_state.get("pending_approvals", [])
+        approved_list = user_state.get("approved_approvals", [])
+        declined_list = user_state.get("declined_approvals", [])
+
+        # Debug logging to see what's in each list
+        print(f"---DEBUG USER STATUS for {user_id}---")
+        print(f"Pending list: {pending_list}")
+        print(f"Approved list: {approved_list}")
+        print(f"Declined list: {declined_list}")
+
+        # Determine status based on priority: declined > pending > approved > no_history
+        # If there are declined requests, prioritize them over pending (to handle duplicate requests)
+        if declined_list:
+            status = "declined"
+        elif pending_list:
+            status = "pending"
+        elif approved_list:
+            status = "approved"
+        else:
+            status = "no_history"
+
+        print(f"---DETERMINED STATUS: {status}---")
+
+        return jsonify({"status": status}), 200
+
+    except Exception as e:
+        print(f"---ERROR FETCHING USER APPROVAL STATUS for {user_id}---: {e}")
+        traceback.print_exc()
+        # Return no_history for any errors to keep it simple
+        return jsonify({"status": "no_history"}), 200
+
+
 @app.route("/api/approve-update/<string:thread_id>", methods=["POST"])
 def approve_update(thread_id):
     """

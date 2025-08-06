@@ -343,17 +343,17 @@ backend/
 │
 ├── database/
 │   ├── db_utils.py         # Connection pool management
-│   └── models.py           # Database operations
+│   └── postgre.py           # Database operations
 │
 ├── faq_database/
 │   ├── chroma.sqlite3      # Vector embeddings
 │   └── update_faq_db.py    # FAQ loader script
 │
 ├── ai/
-│   ├── L1_agent.py         # Primary agent logic
+│   ├── Level1_agent.py         # Primary agent logic
 │   ├── L2_agent.py         # Escalation agent logic
 │   ├── tools.py            # Agent tools factory
-│   ├── unified_chain.py    # RAG implementation
+│   ├── rag_orchestrator.py    # RAG implementation
 │   │
 │   ├── Langgraph_module/
 │   │   ├── Langgraph.py    # Graph nodes definition
@@ -379,12 +379,12 @@ backend/
 3. Update agent prompts if necessary
 
 ### Modifying Agent Behavior
-- L1 Agent prompt: `ai/L1_agent.py`
+- L1 Agent prompt: `ai/Level1_agent.py`
 - L2 Agent prompt: `ai/L2_agent.py`
 - Graph flow: `ai/Langgraph_module/graph_compiler.py`
 
 ### Database Migrations
-- Add new models in `database/models.py`
+- Add new models in `database/postgre.py`
 - Update schema documentation
 - Create migration scripts as needed
 

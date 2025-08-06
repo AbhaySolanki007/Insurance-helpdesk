@@ -1,4 +1,4 @@
-# 11. ai/unified_chain.py
+# 11. ai/rag_orchestrator.py
 """Unified support chain combining FAQ and ticket retrieval.
 with RAG implententation
 also in future it will be used for RAG the documents and other data"""
@@ -13,7 +13,7 @@ from langchain_google_genai import GoogleGenerativeAI, GoogleGenerativeAIEmbeddi
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough
 from langchain_chroma import Chroma
-from database.models import get_policy_data, get_user_data
+from database.postgre import get_policy_data, get_user_data
 
 
 class UnifiedSupportChain:

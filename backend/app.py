@@ -19,7 +19,7 @@ insurance_support_backend/
 │   ├── L1_agent.py         # 9. L1 Agent: Defines the prompt, tools, and logic for the primary, first-response agent.
 │   ├── Level2_agent.py     # 10. Level2 Agent: Defines the prompt, tools, and logic for the escalation agent, handling complex queries.
 │   ├── tools.py            # 11. Agent Tools: A factory for creating and providing tools (e.g., FAQ search, ticket creation) to the agents.
-│   ├── unified_chain.py    # 12. FAQ Retriever: Manages the ChromaDB vector store for performing RAG-based FAQ searches.
+│   ├── rag_orchestrator.py    # 12. FAQ Retriever: Manages the ChromaDB vector store for performing RAG-based FAQ searches.
 │   │
 │   ├── Langgraph_module/
 │   │   ├── Langgraph.py        # 13. Graph Nodes: Defines the core functions (nodes) that make up the graph's logic (e.g., l1_node, l2_node, summarize_node).
@@ -63,13 +63,13 @@ from psycopg2.extras import RealDictCursor
 
 
 import config
-from ai.L1_agent import create_l1_agent_executor
+from ai.Level1_agent import create_l1_agent_executor
 from ai.Level2_agent import create_level2_agent_executor
 from ai.Langgraph_module.graph_compiler import compile_graph
 from ai.langsmith.langsmith_cache import fetch_and_cache_all_metrics, get_cached_metric
-from ai.unified_chain import UnifiedSupportChain
+from ai.rag_orchestrator import UnifiedSupportChain
 from database.db_utils import DB_POOL
-from database.models import init_db, update_user_history, get_all_users
+from database.postgre import init_db, update_user_history, get_all_users
 from services import ticket_service
 
 
@@ -267,55 +267,117 @@ def login():
 @app.route("/api/pending-approvals", methods=["GET"])
 def get_pending_approvals():
     """
-    Scans the checkpoint database for conversations that are currently
-    interrupted and waiting for human approval.
+    Fetches all approval requests from the checkpoints database,
+    categorized into pending, approved, and declined.
     """
     try:
-        # Connect directly to the db to get all active thread_ids
+        all_pending = []
+        all_approved = []
+        all_declined = []
+
+        # Connect to SQLite to get all thread_ids
         with sqlite3.connect("checkpoints.sqlite") as conn:
             conn.row_factory = sqlite3.Row
             cursor = conn.cursor()
-            # We only need the unique thread_ids, not all checkpoint rows
+            # DISTINCT to avoid processing the same thread multiple times
             cursor.execute("SELECT DISTINCT thread_id FROM checkpoints")
-            threads = cursor.fetchall()
+            rows = cursor.fetchall()
 
-        pending_approvals = []
-        for row in threads:
+        # If there are no threads, there's nothing to do
+        if not rows:
+            return (
+                jsonify(
+                    {
+                        "pending": [],
+                        "approved": [],
+                        "declined": [],
+                    }
+                ),
+                200,
+            )
+
+        # For each thread, get its state and aggregate the approval lists
+        for row in rows:
             thread_id = row["thread_id"]
             if not thread_id:
                 continue
 
             config = {"configurable": {"thread_id": thread_id}}
-            try:
-                # Use the graph's public API to get the state, which handles deserialization.
-                # This is the robust way to avoid serialization errors.
-                graph_state = app_graph.get_state(config)
+            graph_state = app_graph.get_state(config)
 
-                if graph_state and "human_approval" in graph_state.next:
-                    user_state = graph_state.values
-                    pending_update = user_state.get("pending_user_update")
-                    if pending_update:
-                        pending_approvals.append(
-                            {
-                                "thread_id": thread_id,
-                                "user_id": user_state.get("user_id"),
-                                "details": pending_update.get("updates"),
-                                "timestamp": pending_update.get("timestamp"),
-                            }
-                        )
-            except Exception as e:
-                # This can happen if a thread is corrupted or in an unexpected state.
-                print(
-                    f"---WARNING: Could not get state for thread_id: {thread_id}. Error: {e}. Skipping.---"
-                )
-                continue
+            if graph_state:
+                user_state = graph_state.values
+                all_pending.extend(user_state.get("pending_approvals", []))
+                all_approved.extend(user_state.get("approved_approvals", []))
+                all_declined.extend(user_state.get("declined_approvals", []))
 
-        return jsonify(pending_approvals), 200
+        return (
+            jsonify(
+                {
+                    "pending": all_pending,
+                    "approved": all_approved,
+                    "declined": all_declined,
+                }
+            ),
+            200,
+        )
 
     except Exception as e:
-        print(f"---ERROR FETCHING PENDING APPROVALS---: {e}")
+        print(f"---ERROR FETCHING APPROVALS---: {e}")
         traceback.print_exc()
-        return jsonify({"error": "Failed to fetch pending approvals."}), 500
+        return jsonify({"error": "Failed to fetch approvals."}), 500
+
+
+@app.route("/api/pending-approvals/<string:user_id>", methods=["GET"])
+def get_user_approval_status(user_id):
+    """
+    Fetches the approval status for a specific user.
+    Returns a simple status string: "pending", "approved", "declined", or "no_history"
+    """
+    try:
+        # Create config for the specific user
+        config = {"configurable": {"thread_id": user_id}}
+
+        # Get the user's state from checkpoints
+        graph_state = app_graph.get_state(config)
+
+        if not graph_state:
+            # User not found or no state exists
+            return jsonify({"status": "no_history"}), 200
+
+        user_state = graph_state.values
+
+        # Check approval lists in priority order
+        pending_list = user_state.get("pending_approvals", [])
+        approved_list = user_state.get("approved_approvals", [])
+        declined_list = user_state.get("declined_approvals", [])
+
+        # Debug logging to see what's in each list
+        print(f"---DEBUG USER STATUS for {user_id}---")
+        print(f"Pending list: {pending_list}")
+        print(f"Approved list: {approved_list}")
+        print(f"Declined list: {declined_list}")
+
+        # Determine status based on priority: declined > pending > approved > no_history
+        # If there are declined requests, prioritize them over pending (to handle duplicate requests)
+        if declined_list:
+            status = "declined"
+        elif pending_list:
+            status = "pending"
+        elif approved_list:
+            status = "approved"
+        else:
+            status = "no_history"
+
+        print(f"---DETERMINED STATUS: {status}---")
+
+        return jsonify({"status": status}), 200
+
+    except Exception as e:
+        print(f"---ERROR FETCHING USER APPROVAL STATUS for {user_id}---: {e}")
+        traceback.print_exc()
+        # Return no_history for any errors to keep it simple
+        return jsonify({"status": "no_history"}), 200
 
 
 @app.route("/api/approve-update/<string:thread_id>", methods=["POST"])
@@ -323,8 +385,10 @@ def approve_update(thread_id):
     """
     Resumes a paused graph execution with the admin's decision.
     """
+    print(f"\n---APPROVE-UPDATE ENDPOINT TRIGGERED FOR THREAD: {thread_id}---")
     data = request.get_json()
     decision = data.get("decision")
+    print(f"---RECEIVED DECISION: {decision}---")
 
     if not decision or decision not in ["approved", "declined"]:
         return jsonify({"error": "Invalid decision provided."}), 400
@@ -332,15 +396,28 @@ def approve_update(thread_id):
     try:
         config = {"configurable": {"thread_id": thread_id}}
 
-        # Get the current state of the paused graph
+        # Get the current state
         current_state = app_graph.get_state(config)
+        if not current_state:
+            print(f"---ERROR: No state found for thread_id: {thread_id}---")
+            return jsonify({"error": "Approval request not found."}), 404
 
-        # Inject the human's decision into the state
+        print(
+            f"---[BEFORE INVOKE] CURRENT STATE for thread {thread_id}: {current_state.values}---"
+        )
+        print(f"---[BEFORE INVOKE] NEXT NODE: {current_state.next}---")
+
+        # Inject the decision into the state
         current_state.values["human_approval_status"] = decision
-
-        # Resume the graph from the point of interruption
-        # Pass the modified state to continue the execution
         app_graph.update_state(config, current_state.values)
+        print(f"---STATE UPDATED with decision: {decision} for thread {thread_id}---")
+
+        # Resume the graph
+        print(f"---INVOKING GRAPH to resume thread: {thread_id}---")
+        resumed_state = app_graph.invoke(None, config)
+        print(
+            f"---[AFTER INVOKE] RESUMED STATE for thread {thread_id}: {resumed_state}---"
+        )
 
         return (
             jsonify(

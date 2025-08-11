@@ -11,7 +11,7 @@ from google.auth.transport.requests import Request
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
-from database import models
+from database import postgre
 import config
 
 
@@ -35,7 +35,7 @@ def get_credentials():
 
 def send_email(user_id: str, subject: str, body: str) -> str:
     """Sends an email to the user identified by user_id."""
-    recipient_email = models.get_user_email(user_id)  # CHANGED: Call new model function
+    recipient_email = postgre.get_user_email(user_id)
     if not recipient_email:
         return f"Could not send email: No email address found for user_id {user_id}."
 

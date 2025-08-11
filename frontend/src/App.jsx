@@ -13,6 +13,7 @@ import ChatLayout from './pages/Chat/components/ChatLayout';
 import ChatView from './pages/Chat/components/ChatView';
 import ChatHistory from './pages/Chat/components/ChatHistory';
 import Policy from './pages/Chat/components/Policy';
+import MyRequests from './pages/Chat/components/MyRequests';
 
 // Create a layout component that includes the navbar and background
 const RootLayout = ({ theme, toggleTheme, themePreference, updateThemePreference }) => {
@@ -121,12 +122,13 @@ function App() {
       >
         <Route path="/" element={<Hero />} />
         <Route path="login" element={<Login />} />
-        <Route path="/chat/:userId" element={<ChatLayout />}>
+        <Route path="/chat" element={<ChatLayout />}>
           <Route index element={<ChatView />} />
           <Route path="history" element={<ChatHistory />} />
           <Route path="policy" element={<Policy />} />
+          <Route path="requests" element={<MyRequests />} />
         </Route>
-        <Route path="profile/:id" element={<Profile />} />
+        <Route path="profile" element={<Profile />} />
         <Route path="video" element={<Video />} />
         <Route path="admin" element={<Admin />} />
       </Route>

@@ -2,19 +2,26 @@ import { useState, useEffect } from 'react';
 import { MessageSquare, User, ArrowLeft, MessageCircle } from 'lucide-react';
 import axios from 'axios';
 import { useOutletContext } from 'react-router-dom';
+import Loader from '../../../components/Loader';
+import ErrorBox from '../../../components/ErrorBox';
 
 function ChatHistory() {
   const [chatHistory, setChatHistory] = useState([]);
   const [selectedChat, setSelectedChat] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const { showChatHistory } = useOutletContext();
   const baseURL = "http://localhost:8001";
 
   const fetchChatHistory = async () => {
     try {
+      setLoading(true);
+      setError(null);
       const userId = localStorage.getItem("user_id");
       
       if (!userId) {
         console.error("No user_id found in localStorage");
+        setError("User ID not found");
         return;
       }
 
@@ -43,7 +50,10 @@ function ChatHistory() {
       
     } catch (error) {
       console.error("Error fetching chat history:", error);
+      setError("Failed to fetch chat history");
       setChatHistory([]);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -147,7 +157,16 @@ function ChatHistory() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Chat History</h2>
-        <div className="text-sm text-gray-500 dark:text-gray-400">{chatHistory.length} conversations</div>
+        <div className="flex items-center gap-4">
+          <div className="text-sm text-gray-500 dark:text-gray-400">{chatHistory.length} conversations</div>
+          <button
+            onClick={fetchChatHistory}
+            disabled={loading}
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 flex items-center gap-2"
+          >
+            {loading ? "Refreshing..." : "Refresh"}
+          </button>
+        </div>
       </div>
       
       {chatHistory.length === 0 ? (
@@ -213,7 +232,15 @@ function ChatHistory() {
     <div className="flex-1 h-full bg-white dark:bg-[#1e1e1e]">
       <div className="h-full overflow-y-auto scrollbar-hide py-4 px-4">
         <div className="max-w-5xl mx-auto">
-          {selectedChat ? renderDetailView() : renderListView()}
+          {loading ? (
+            <Loader text="Loading chat history..." />
+          ) : error ? (
+            <ErrorBox error={error} onRetry={fetchChatHistory} />
+          ) : selectedChat ? (
+            renderDetailView()
+          ) : (
+            renderListView()
+          )}
         </div>
       </div>
     </div>

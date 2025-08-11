@@ -8,24 +8,19 @@ import {
   FileText, 
   Calendar, 
   AlertCircle,
-  Hash,
-  Tag,
   Clock,
   DollarSign,
   Shield,
   ChevronDown,
   ChevronUp,
-  Sparkles,
   Eye,
   CheckCircle,
   XCircle,
-  Zap,
   TrendingUp,
-  Activity
 } from 'lucide-react';
 import { FaPlane, FaHeartbeat, FaPaw, FaUserShield, FaBuilding, FaHome, FaCar } from 'react-icons/fa';
 
-const Policy = ({ isSidebarOpen }) => {
+const Policy = () => {
   const { id } = useParams();
   const [policies, setPolicies] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -172,6 +167,29 @@ const Policy = ({ isSidebarOpen }) => {
                 <p className="text-gray-600 dark:text-slate-400 mt-1">Manage and view your policy details</p>
               </div>
             </div>
+            <button
+              onClick={() => {
+                setLoading(true);
+                setError(null);
+                const userId = id || localStorage.getItem("user_id");
+                if (userId) {
+                  axios.get(`${baseURL}/api/user/policies/${userId}`)
+                    .then(response => {
+                      setPolicies(response.data.policies || []);
+                      setLoading(false);
+                    })
+                    .catch(err => {
+                      console.error("Error fetching policies:", err);
+                      setError('Failed to fetch policies');
+                      setLoading(false);
+                    });
+                }
+              }}
+              disabled={loading}
+              className="px-6 py-3 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-xl hover:from-indigo-600 hover:to-purple-600 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading ? "Refreshing..." : "Refresh"}
+            </button>
           </div>
         </div>
 

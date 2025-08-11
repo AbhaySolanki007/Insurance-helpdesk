@@ -163,7 +163,7 @@ def level2_node(state: AgentState, agent_executor):
                 return {
                     "pending_approvals": pending_list,
                     "new_responses": [
-                        "Your update request has been submitted for approval. Please wait while we review your request."
+                        "Thank you for your update request. It has been submitted for review and is currently pending approval. We appreciate your patience during this process."
                     ],
                     "is_level2_session": True,
                     "escalation_summary": "",

@@ -1,4 +1,4 @@
-import { ChevronDown, MessageSquare, FileText, Globe } from "lucide-react";
+import { ChevronDown, MessageSquare, FileText, Globe, ClipboardList } from "lucide-react";
 import { useEffect } from "react";
 
 function Sidebar({
@@ -8,8 +8,11 @@ function Sidebar({
   handleChatClick,
   handlePolicyClick,
   handleChatHistoryClick,
+  handleMyRequestsClick,
   showChat,
   showChatHistory,
+  showMyRequests,
+  showPolicy,
   isL2Panel,
   setIsL2Panel,
   toggle,
@@ -108,7 +111,7 @@ function Sidebar({
             className={`w-full flex items-center ${
               isSidebarOpen ? 'justify-start pl-6' : 'justify-center'
             } ${
-              !showChat && !showChatHistory
+              showPolicy
                 ? 'bg-gray-200 dark:bg-white/10 text-gray-900 dark:text-white'
                 : 'text-gray-600 hover:bg-gray-200 dark:text-gray-400 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white'
             } transition-colors p-3 rounded-full`}
@@ -150,6 +153,29 @@ function Sidebar({
               <svg width="20" height="20" viewBox="0 0 512 512" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                 <path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24h110.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24v104c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/>
               </svg>
+            )}
+          </button>
+
+          <button
+            onClick={handleMyRequestsClick}
+            className={`w-full flex items-center ${
+              isSidebarOpen ? 'justify-start pl-6' : 'justify-center'
+            } ${
+              showMyRequests
+                ? 'bg-gray-200 dark:bg-white/10 text-gray-900 dark:text-white'
+                : 'text-gray-600 hover:bg-gray-200 dark:text-gray-400 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white'
+            } transition-colors p-3 rounded-full`}
+            title="My Requests"
+          >
+            {isSidebarOpen ? (
+              <>
+                <div className="flex items-center gap-6">
+                  <ClipboardList size={20} />
+                  <span className="font-medium">My Requests</span>
+                </div>
+              </>
+            ) : (
+              <ClipboardList size={20} />
             )}
           </button>
         </div>

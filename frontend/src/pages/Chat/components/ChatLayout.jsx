@@ -3,11 +3,13 @@ import { useNavigate, useLocation, Outlet } from "react-router-dom";
 import { Plus, MessageSquare, FileText, ChevronDown, Globe } from "lucide-react";
 import { Context } from "../../../context/ContextApi";
 import Sidebar from "./Sidebar";
+import MyRequests from "./MyRequests";
 
 function ChatLayout() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [showChat, setShowChat] = useState(true);
   const [showChatHistory, setShowChatHistory] = useState(false);
+  const [showMyRequests, setShowMyRequests] = useState(false);
   const [selectedChat, setSelectedChat] = useState(null);
   const [isViewingHistoryDetail, setIsViewingHistoryDetail] = useState(false);
   const [chatSession, setChatSession] = useState(0);
@@ -41,6 +43,7 @@ function ChatLayout() {
     const userId = localStorage.getItem("user_id");
     setShowChat(true);
     setShowChatHistory(false);
+    setShowMyRequests(false);
     setSelectedChat(null);
     setIsViewingHistoryDetail(false);
     setChatSession(s => s + 1);
@@ -51,6 +54,7 @@ function ChatLayout() {
     const userId = localStorage.getItem("user_id");
     setShowChat(false);
     setShowChatHistory(false);
+    setShowMyRequests(false);
     setIsViewingHistoryDetail(false);
     navigate(`/chat/${userId}/policy`, { replace: true });
   };
@@ -59,6 +63,7 @@ function ChatLayout() {
     const userId = localStorage.getItem("user_id");
     setShowChat(true);
     setShowChatHistory(false);
+    setShowMyRequests(false);
     setSelectedChat(null);
     setIsViewingHistoryDetail(false);
     navigate(`/chat/${userId}`, { replace: true });
@@ -68,7 +73,16 @@ function ChatLayout() {
     const userId = localStorage.getItem("user_id");
     setShowChatHistory(true);
     setShowChat(false);
+    setShowMyRequests(false);
     navigate(`/chat/${userId}/history`, { replace: true });
+  };
+
+  const handleMyRequestsClick = () => {
+    const userId = localStorage.getItem("user_id");
+    setShowMyRequests(true);
+    setShowChat(false);
+    setShowChatHistory(false);
+    navigate(`/chat/${userId}/requests`, { replace: true });
   };
 
   const handleSelectChat = (chat) => {
@@ -88,14 +102,21 @@ function ChatLayout() {
     if (location.pathname.endsWith('/policy')) {
       setShowChat(false);
       setShowChatHistory(false);
+      setShowMyRequests(false);
     } else if (location.pathname.endsWith('/history')) {
       setShowChatHistory(true);
       setShowChat(false);
+      setShowMyRequests(false);
       setIsViewingHistoryDetail(false);
       setSelectedChat(null);
+    } else if (location.pathname.endsWith('/requests')) {
+      setShowMyRequests(true);
+      setShowChat(false);
+      setShowChatHistory(false);
     } else if (location.pathname === `/chat/${userId}`) {
       setShowChat(true);
       setShowChatHistory(false);
+      setShowMyRequests(false);
     }
   }, [location.pathname]);
 
@@ -108,8 +129,10 @@ function ChatLayout() {
         handleChatClick={handleChatClick}
         handlePolicyClick={handlePolicyClick}
         handleChatHistoryClick={handleChatHistoryClick}
+        handleMyRequestsClick={handleMyRequestsClick}
         showChat={showChat}
         showChatHistory={showChatHistory}
+        showMyRequests={showMyRequests}
         isL2Panel={isL2Panel}
         setIsL2Panel={setIsL2Panel}
         toggle={toggle}
@@ -127,18 +150,22 @@ function ChatLayout() {
       <div 
         className={`flex-1 ${isSidebarOpen ? 'ml-72' : 'ml-20'} relative h-[calc(100vh-64px)]`}
       >
-        <Outlet context={{ 
-          selectedLanguage,
-          isL2Panel,
-          setIsL2Panel,
-          showChat,
-          showChatHistory,
-          theme,
-          isSidebarOpen,
-          selectedChat,
-          handleSelectChat,
-          chatSession,
-        }} />
+        {showMyRequests ? (
+          <MyRequests />
+        ) : (
+          <Outlet context={{ 
+            selectedLanguage,
+            isL2Panel,
+            setIsL2Panel,
+            showChat,
+            showChatHistory,
+            theme,
+            isSidebarOpen,
+            selectedChat,
+            handleSelectChat,
+            chatSession,
+          }} />
+        )}
       </div>
     </div>
   );

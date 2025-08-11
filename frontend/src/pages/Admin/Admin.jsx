@@ -5,10 +5,12 @@ import {
   Ticket,
   Users,
   BarChart2,
+  CheckCircle,
 } from "lucide-react";
 import UsersComponent from "./components/Users";
 import TicketsComponent from "./components/Tickets";
 import AnalyticsComponent from "./components/Analytics/Analytics";
+import ApprovalsComponent from "./components/Approvals";
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState("tickets");
@@ -90,6 +92,21 @@ export default function AdminDashboard() {
               Analytics
             </span>
           </button>
+
+          <button
+            onClick={() => {
+              setActiveTab("approvals");
+              setSidebarOpen(false);
+              return;
+            }}
+            className={`flex items-center w-full ${sidebarOpen ? 'px-4' : 'px-2'} py-3 ${activeTab === "approvals" ? "bg-blue-600 dark:bg-blue-600 text-white" : "hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300"
+              }`}
+          >
+            <CheckCircle size={23} className="flex-shrink-0 ml-4" />
+            <span className={`ml-3 transition-all duration-300 ease-in-out whitespace-nowrap ${sidebarOpen ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-2'}`}>
+              Approvals
+            </span>
+          </button>
         </div>
       </div>
 
@@ -100,6 +117,7 @@ export default function AdminDashboard() {
           {activeTab === "tickets" && <TicketsComponent />}
           {activeTab === "users" && <UsersComponent />}
           {activeTab === "analytics" && <AnalyticsComponent />}
+          {activeTab === "approvals" && <ApprovalsComponent />}
         </main>
       </div>
     </div>

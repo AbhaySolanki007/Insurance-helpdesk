@@ -33,7 +33,7 @@ const Login = () => {
       localStorage.setItem("name", user.name);
       localStorage.setItem("user_email", user.email);
 
-      navigate(`/chat/${user.user_id}`);
+      navigate(`/chat`);
 
     } catch (err) {
       setIsLoading(false);

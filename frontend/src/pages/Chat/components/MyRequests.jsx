@@ -49,13 +49,13 @@ const MyRequests = () => {
   const getStatusText = (status) => {
     switch (status?.toLowerCase()) {
       case 'approved':
-        return 'Your request has been approved!';
+        return 'We’ve approved your request. Changes will be applied shortly.';
       case 'declined':
-        return 'Your request has been declined.';
+        return 'Your request has been reviewed, but we’re unable to approve it at this time.';
       case 'pending':
-        return 'Your request is pending admin approval.';
+        return 'We’ve received your request and it’s pending approval.';
       case 'no_history':
-        return 'No requests found.';
+        return 'We couldn’t find any requests linked to your account.';
       default:
         return 'Unable to determine status.';
     }

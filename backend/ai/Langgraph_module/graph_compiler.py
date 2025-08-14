@@ -62,12 +62,11 @@ def compile_graph(
         },
     )
 
-    # After human approval, the conversation should loop back to the Level 2
-    # agent. This allows the agent to provide a concluding message to the user
-    # (e.g., "Your update was successful.") and ensures the final state,
-    # including the now-updated approval lists, is saved correctly by the
-    # top-level invoke call in app.py.
-    workflow.add_edge("human_approval", "level2_agent")
+    # After human approval, the conversation should end directly.
+    # This ensures the final state, including the now-updated approval lists,
+    # is saved correctly by the top-level invoke call in app.py without
+    # re-triggering the L2 agent.
+    workflow.add_edge("human_approval", END)
 
     # When compiling, tell LangGraph to interrupt BEFORE the human_approval node
     # This ensures the graph pauses and waits for an external action.

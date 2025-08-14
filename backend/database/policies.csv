@@ -1,0 +1,3774 @@
+policy_id,user_id,policy_type,policy_status,issue_date,expiry_date,premium_amount,coverage_amount,Markdown Formatt
+POL3000,USR1000,Travel,Expired,03-06-2024 00:00,12-12-2025 00:00,43272.26,1953131.02,"## For Travel Insurance
+- **Travel Region:** International
+- **Trip Duration:** 14 days
+- **Coverage Type:** Individual
+- **Baggage Loss Cover:** Yes
+- **Flight Delay Cover:** Yes
+- **Medical Emergency Cover:** Yes
+"
+POL3001,USR1000,Health,Pending,20-06-2015 00:00,04-09-2025 00:00,36066.71,1559071.63,"## For Health Insurance
+- **Coverage Limit:** ₹10,00,000
+- **Hospital Network:** Network B
+- **Cashless Available:** Yes
+- **Waiting Period:** 2 months
+- **Includes Maternity:** No
+- **Critical Illness Cover:** Yes
+- **Deductibles:** ₹10,000
+"
+POL3003,USR1001,Pet,Under Review,07-03-2019 00:00,26-05-2027 00:00,23383.59,753213.19,"## For Pet Insurance
+- **Pet Type:** Dog
+- **Breed:** Golden Retriever
+- **Pet Age:** 5 years
+- **Vet Visits Covered:** Yes
+- **Accident/Illness Cover:** Yes
+- **Vaccination Coverage:** Yes
+"
+POL3006,USR1002,Pet,Pending,31-07-2018 00:00,06-09-2026 00:00,15894.13,1537314.27,"## For Pet Insurance
+- **Pet Type:** Dog
+- **Breed:** Golden Retriever
+- **Pet Age:** 5 years
+- **Vet Visits Covered:** Yes
+- **Accident/Illness Cover:** Yes
+- **Vaccination Coverage:** Yes
+"
+POL3009,USR1003,Pet,Cancelled,09-01-2023 00:00,11-06-2024 00:00,31110.68,127919.1,"## For Pet Insurance
+- **Pet Type:** Dog
+- **Breed:** Golden Retriever
+- **Pet Age:** 5 years
+- **Vet Visits Covered:** Yes
+- **Accident/Illness Cover:** Yes
+- **Vaccination Coverage:** Yes
+"
+POL3010,USR1003,Life,Pending,13-10-2016 00:00,19-07-2026 00:00,47493.62,1961307.77,"## For Life Insurance
+- **Policy Term (Years):** 20
+- **Sum Assured:** ₹25,00,000
+- **Payment Term:** Yearly
+- **Nominee Name:** John Doe
+- **Medical Exam Required:** Yes
+- **Smoker Status:** Non-Smoker
+"
+POL3011,USR1003,Travel,Under Review,16-01-2023 00:00,20-06-2025 00:00,48646.55,1843472.73,"## For Travel Insurance
+- **Travel Region:** International
+- **Trip Duration:** 14 days
+- **Coverage Type:** Individual
+- **Baggage Loss Cover:** Yes
+- **Flight Delay Cover:** Yes
+- **Medical Emergency Cover:** Yes
+"
+POL3012,USR1004,Travel,Active,11-04-2018 00:00,13-02-2025 00:00,43545.76,604228.31,"## For Travel Insurance
+- **Travel Region:** International
+- **Trip Duration:** 14 days
+- **Coverage Type:** Individual
+- **Baggage Loss Cover:** Yes
+- **Flight Delay Cover:** Yes
+- **Medical Emergency Cover:** Yes
+"
+POL3013,USR1004,Health,Active,27-06-2019 00:00,23-05-2026 00:00,13422.84,989531.61,"## For Health Insurance
+- **Coverage Limit:** ₹10,00,000
+- **Hospital Network:** Network B
+- **Cashless Available:** Yes
+- **Waiting Period:** 2 months
+- **Includes Maternity:** No
+- **Critical Illness Cover:** Yes
+- **Deductibles:** ₹10,000
+"
+POL3014,USR1004,Home,Active,08-01-2019 00:00,12-03-2027 00:00,49077.4,264942.88,"## For Home Insurance
+- **Property Type:** Apartment
+- **Property Value:** ₹50,00,000
+- **Year Built:** 2015
+- **Natural Disaster Cover:** Yes
+- **Theft Cover:** Yes
+- **Structure & Contents:** Combined
+"
+POL3015,USR1005,Home,Active,24-01-2019 00:00,20-05-2025 00:00,38735.08,999207.3,"## For Home Insurance
+- **Property Type:** Apartment
+- **Property Value:** ₹50,00,000
+- **Year Built:** 2015
+- **Natural Disaster Cover:** Yes
+- **Theft Cover:** Yes
+- **Structure & Contents:** Combined
+"
+POL3016,USR1005,Travel,Expired,06-11-2022 00:00,23-01-2027 00:00,30077.29,1344575.61,"## For Travel Insurance
+- **Travel Region:** International
+- **Trip Duration:** 14 days
+- **Coverage Type:** Individual
+- **Baggage Loss Cover:** Yes
+- **Flight Delay Cover:** Yes
+- **Medical Emergency Cover:** Yes
+"
+POL3018,USR1006,Travel,Active,25-12-2020 00:00,26-01-2025 00:00,37247.24,1861650.92,"## For Travel Insurance
+- **Travel Region:** International
+- **Trip Duration:** 14 days
+- **Coverage Type:** Individual
+- **Baggage Loss Cover:** Yes
+- **Flight Delay Cover:** Yes
+- **Medical Emergency Cover:** Yes
+"
+POL3019,USR1006,Health,Under Review,24-01-2019 00:00,04-10-2025 00:00,46037.42,601678.14,"## For Health Insurance
+- **Coverage Limit:** ₹10,00,000
+- **Hospital Network:** Network B
+- **Cashless Available:** Yes
+- **Waiting Period:** 2 months
+- **Includes Maternity:** No
+- **Critical Illness Cover:** Yes
+- **Deductibles:** ₹10,000
+"
+POL3021,USR1007,Business,Expired,14-10-2023 00:00,15-09-2025 00:00,31654.27,1851543.13,"## For Business Insurance
+- **Business Type:** Retail
+- **Annual Revenue:** 1M–10M
+- **Employee Count:** 50
+- **Property Cover:** Yes
+- **Liability Cover:** Yes
+- **Cyber Attack Cover:** No
+"
+POL3022,USR1007,Travel,Cancelled,03-03-2018 00:00,18-09-2024 00:00,3677.18,510006.47,"## For Travel Insurance
+- **Travel Region:** International
+- **Trip Duration:** 14 days
+- **Coverage Type:** Individual
+- **Baggage Loss Cover:** Yes
+- **Flight Delay Cover:** Yes
+- **Medical Emergency Cover:** Yes
+"
+POL3024,USR1008,Business,Pending,19-04-2021 00:00,04-12-2024 00:00,6080.09,1209598.64,"## For Business Insurance
+- **Business Type:** Retail
+- **Annual Revenue:** 1M–10M
+- **Employee Count:** 50
+- **Property Cover:** Yes
+- **Liability Cover:** Yes
+- **Cyber Attack Cover:** No
+"
+POL3025,USR1008,Business,Active,28-09-2019 00:00,30-06-2024 00:00,16056.97,1265591.07,"## For Business Insurance
+- **Business Type:** Retail
+- **Annual Revenue:** 1M–10M
+- **Employee Count:** 50
+- **Property Cover:** Yes
+- **Liability Cover:** Yes
+- **Cyber Attack Cover:** No
+"
+POL3026,USR1008,Travel,Expired,19-05-2019 00:00,10-09-2026 00:00,11318.68,1583847.06,"## For Travel Insurance
+- **Travel Region:** International
+- **Trip Duration:** 14 days
+- **Coverage Type:** Individual
+- **Baggage Loss Cover:** Yes
+- **Flight Delay Cover:** Yes
+- **Medical Emergency Cover:** Yes
+"
+POL3027,USR1009,Health,Active,01-08-2021 00:00,06-10-2024 00:00,17931.59,1442995.77,"## For Health Insurance
+- **Coverage Limit:** ₹10,00,000
+- **Hospital Network:** Network B
+- **Cashless Available:** Yes
+- **Waiting Period:** 2 months
+- **Includes Maternity:** No
+- **Critical Illness Cover:** Yes
+- **Deductibles:** ₹10,000
+"
+POL3030,USR1010,Life,Cancelled,29-09-2017 00:00,06-01-2026 00:00,35787.06,645716.28,"## For Life Insurance
+- **Policy Term (Years):** 20
+- **Sum Assured:** ₹25,00,000
+- **Payment Term:** Yearly
+- **Nominee Name:** John Doe
+- **Medical Exam Required:** Yes
+- **Smoker Status:** Non-Smoker
+"
+POL3031,USR1010,Business,Cancelled,05-11-2020 00:00,20-06-2026 00:00,17898.85,720097.86,"## For Business Insurance
+- **Business Type:** Retail
+- **Annual Revenue:** 1M–10M
+- **Employee Count:** 50
+- **Property Cover:** Yes
+- **Liability Cover:** Yes
+- **Cyber Attack Cover:** No
+"
+POL3033,USR1011,Home,Expired,03-04-2023 00:00,10-08-2024 00:00,36245.36,422120.85,"## For Home Insurance
+- **Property Type:** Apartment
+- **Property Value:** ₹50,00,000
+- **Year Built:** 2015
+- **Natural Disaster Cover:** Yes
+- **Theft Cover:** Yes
+- **Structure & Contents:** Combined
+"
+POL3034,USR1011,Car,Expired,09-08-2015 00:00,22-06-2025 00:00,25707.11,237572.99,"## For Car Insurance
+- **Vehicle Type:** SUV
+- **Vehicle Model:** Swift 456
+- **Registration Number:** MH-12-AB-4567
+- **Manufacture Year:** 2019
+- **Insured Declared Value (IDV):** ₹7,00,000
+- **Driver Age:** 34
+- **Accident History:** 1 claim
+- **Third Party Cover:** Yes
+- **Add-ons:** Zero Depreciation, Engine Protect
+"
+POL3035,USR1011,Health,Under Review,24-08-2021 00:00,11-01-2027 00:00,41499.86,1505777.61,"## For Health Insurance
+- **Coverage Limit:** ₹10,00,000
+- **Hospital Network:** Network B
+- **Cashless Available:** Yes
+- **Waiting Period:** 2 months
+- **Includes Maternity:** No
+- **Critical Illness Cover:** Yes
+- **Deductibles:** ₹10,000
+"
+POL3036,USR1012,Travel,Active,16-12-2022 00:00,12-05-2025 00:00,40075.67,1545786.28,"## For Travel Insurance
+- **Travel Region:** International
+- **Trip Duration:** 14 days
+- **Coverage Type:** Individual
+- **Baggage Loss Cover:** Yes
+- **Flight Delay Cover:** Yes
+- **Medical Emergency Cover:** Yes
+"
+POL3037,USR1012,Business,Under Review,09-06-2021 00:00,09-12-2026 00:00,23123.99,472772.92,"## For Business Insurance
+- **Business Type:** Retail
+- **Annual Revenue:** 1M–10M
+- **Employee Count:** 50
+- **Property Cover:** Yes
+- **Liability Cover:** Yes
+- **Cyber Attack Cover:** No
+"
+POL3038,USR1012,Travel,Active,17-07-2021 00:00,25-09-2025 00:00,37428.87,261209.82,"## For Travel Insurance
+- **Travel Region:** International
+- **Trip Duration:** 14 days
+- **Coverage Type:** Individual
+- **Baggage Loss Cover:** Yes
+- **Flight Delay Cover:** Yes
+- **Medical Emergency Cover:** Yes
+"
+POL3039,USR1013,Car,Under Review,28-05-2017 00:00,13-02-2027 00:00,23757.52,1437459.11,"## For Car Insurance
+- **Vehicle Type:** SUV
+- **Vehicle Model:** Swift 456
+- **Registration Number:** MH-12-AB-4567
+- **Manufacture Year:** 2019
+- **Insured Declared Value (IDV):** ₹7,00,000
+- **Driver Age:** 34
+- **Accident History:** 1 claim
+- **Third Party Cover:** Yes
+- **Add-ons:** Zero Depreciation, Engine Protect
+"
+POL3040,USR1013,Health,Active,12-02-2023 00:00,12-07-2024 00:00,28673.52,505428.71,"## For Health Insurance
+- **Coverage Limit:** ₹10,00,000
+- **Hospital Network:** Network B
+- **Cashless Available:** Yes
+- **Waiting Period:** 2 months
+- **Includes Maternity:** No
+- **Critical Illness Cover:** Yes
+- **Deductibles:** ₹10,000
+"
+POL3042,USR1014,Pet,Active,12-02-2020 00:00,27-09-2024 00:00,25902.9,896267.96,"## For Pet Insurance
+- **Pet Type:** Dog
+- **Breed:** Golden Retriever
+- **Pet Age:** 5 years
+- **Vet Visits Covered:** Yes
+- **Accident/Illness Cover:** Yes
+- **Vaccination Coverage:** Yes
+"
+POL3043,USR1014,Health,Active,14-02-2024 00:00,28-09-2025 00:00,27507.86,1269732.54,"## For Health Insurance
+- **Coverage Limit:** ₹10,00,000
+- **Hospital Network:** Network B
+- **Cashless Available:** Yes
+- **Waiting Period:** 2 months
+- **Includes Maternity:** No
+- **Critical Illness Cover:** Yes
+- **Deductibles:** ₹10,000
+"
+POL3045,USR1015,Car,Pending,03-10-2020 00:00,26-08-2026 00:00,7930.48,1345351.63,"## For Car Insurance
+- **Vehicle Type:** SUV
+- **Vehicle Model:** Swift 456
+- **Registration Number:** MH-12-AB-4567
+- **Manufacture Year:** 2019
+- **Insured Declared Value (IDV):** ₹7,00,000
+- **Driver Age:** 34
+- **Accident History:** 1 claim
+- **Third Party Cover:** Yes
+- **Add-ons:** Zero Depreciation, Engine Protect
+"
+POL3046,USR1015,Home,Expired,26-12-2022 00:00,17-07-2025 00:00,23436.91,1210588.87,"## For Home Insurance
+- **Property Type:** Apartment
+- **Property Value:** ₹50,00,000
+- **Year Built:** 2015
+- **Natural Disaster Cover:** Yes
+- **Theft Cover:** Yes
+- **Structure & Contents:** Combined
+"
+POL3048,USR1016,Health,Active,14-06-2016 00:00,19-02-2027 00:00,35647.66,1511292.96,"## For Health Insurance
+- **Coverage Limit:** ₹10,00,000
+- **Hospital Network:** Network B
+- **Cashless Available:** Yes
+- **Waiting Period:** 2 months
+- **Includes Maternity:** No
+- **Critical Illness Cover:** Yes
+- **Deductibles:** ₹10,000
+"
+POL3051,USR1017,Life,Expired,05-10-2019 00:00,02-09-2026 00:00,7129.61,472394.13,"## For Life Insurance
+- **Policy Term (Years):** 20
+- **Sum Assured:** ₹25,00,000
+- **Payment Term:** Yearly
+- **Nominee Name:** John Doe
+- **Medical Exam Required:** Yes
+- **Smoker Status:** Non-Smoker
+"
+POL3052,USR1017,Health,Expired,14-10-2018 00:00,13-06-2024 00:00,47084.52,1553068.66,"## For Health Insurance
+- **Coverage Limit:** ₹10,00,000
+- **Hospital Network:** Network B
+- **Cashless Available:** Yes
+- **Waiting Period:** 2 months
+- **Includes Maternity:** No
+- **Critical Illness Cover:** Yes
+- **Deductibles:** ₹10,000
+"
+POL3053,USR1017,Home,Under Review,12-02-2020 00:00,29-01-2026 00:00,13936.46,803035.26,"## For Home Insurance
+- **Property Type:** Apartment
+- **Property Value:** ₹50,00,000
+- **Year Built:** 2015
+- **Natural Disaster Cover:** Yes
+- **Theft Cover:** Yes
+- **Structure & Contents:** Combined
+"
+POL3054,USR1018,Pet,Active,29-10-2022 00:00,11-11-2024 00:00,5236.83,864098.51,"## For Pet Insurance
+- **Pet Type:** Dog
+- **Breed:** Golden Retriever
+- **Pet Age:** 5 years
+- **Vet Visits Covered:** Yes
+- **Accident/Illness Cover:** Yes
+- **Vaccination Coverage:** Yes
+"
+POL3055,USR1018,Life,Under Review,05-06-2018 00:00,13-05-2027 00:00,30790.88,1342257.83,"## For Life Insurance
+- **Policy Term (Years):** 20
+- **Sum Assured:** ₹25,00,000
+- **Payment Term:** Yearly
+- **Nominee Name:** John Doe
+- **Medical Exam Required:** Yes
+- **Smoker Status:** Non-Smoker
+"
+POL3056,USR1018,Health,Expired,02-01-2016 00:00,22-01-2027 00:00,11176.26,1038786.23,"## For Health Insurance
+- **Coverage Limit:** ₹10,00,000
+- **Hospital Network:** Network B
+- **Cashless Available:** Yes
+- **Waiting Period:** 2 months
+- **Includes Maternity:** No
+- **Critical Illness Cover:** Yes
+- **Deductibles:** ₹10,000
+"
+POL3057,USR1019,Travel,Under Review,12-06-2022 00:00,18-07-2025 00:00,11408.22,1088848.74,"## For Travel Insurance
+- **Travel Region:** International
+- **Trip Duration:** 14 days
+- **Coverage Type:** Individual
+- **Baggage Loss Cover:** Yes
+- **Flight Delay Cover:** Yes
+- **Medical Emergency Cover:** Yes
+"
+POL3060,USR1020,Business,Expired,14-04-2021 00:00,01-02-2026 00:00,30737.5,1076704.4,"## For Business Insurance
+- **Business Type:** Retail
+- **Annual Revenue:** 1M–10M
+- **Employee Count:** 50
+- **Property Cover:** Yes
+- **Liability Cover:** Yes
+- **Cyber Attack Cover:** No
+"
+POL3063,USR1021,Car,Expired,03-06-2024 00:00,24-01-2027 00:00,29721.76,1631403.55,"## For Car Insurance
+- **Vehicle Type:** SUV
+- **Vehicle Model:** Swift 456
+- **Registration Number:** MH-12-AB-4567
+- **Manufacture Year:** 2019
+- **Insured Declared Value (IDV):** ₹7,00,000
+- **Driver Age:** 34
+- **Accident History:** 1 claim
+- **Third Party Cover:** Yes
+- **Add-ons:** Zero Depreciation, Engine Protect
+"
+POL3064,USR1021,Car,Expired,15-12-2022 00:00,24-01-2027 00:00,9141.41,611724.05,"## For Car Insurance
+- **Vehicle Type:** SUV
+- **Vehicle Model:** Swift 456
+- **Registration Number:** MH-12-AB-4567
+- **Manufacture Year:** 2019
+- **Insured Declared Value (IDV):** ₹7,00,000
+- **Driver Age:** 34
+- **Accident History:** 1 claim
+- **Third Party Cover:** Yes
+- **Add-ons:** Zero Depreciation, Engine Protect
+"
+POL3066,USR1022,Health,Cancelled,24-02-2017 00:00,01-12-2024 00:00,47672.99,1958546.36,"## For Health Insurance
+- **Coverage Limit:** ₹10,00,000
+- **Hospital Network:** Network B
+- **Cashless Available:** Yes
+- **Waiting Period:** 2 months
+- **Includes Maternity:** No
+- **Critical Illness Cover:** Yes
+- **Deductibles:** ₹10,000
+"
+POL3069,USR1023,Health,Expired,10-12-2019 00:00,23-02-2026 00:00,33711.93,1315257.73,"## For Health Insurance
+- **Coverage Limit:** ₹10,00,000
+- **Hospital Network:** Network B
+- **Cashless Available:** Yes
+- **Waiting Period:** 2 months
+- **Includes Maternity:** No
+- **Critical Illness Cover:** Yes
+- **Deductibles:** ₹10,000
+"
+POL3070,USR1023,Business,Under Review,26-04-2024 00:00,25-08-2024 00:00,4870.57,1560720.36,"## For Business Insurance
+- **Business Type:** Retail
+- **Annual Revenue:** 1M–10M
+- **Employee Count:** 50
+- **Property Cover:** Yes
+- **Liability Cover:** Yes
+- **Cyber Attack Cover:** No
+"
+POL3072,USR1024,Pet,Active,28-05-2024 00:00,24-08-2024 00:00,17881.06,264834.67,"## For Pet Insurance
+- **Pet Type:** Dog
+- **Breed:** Golden Retriever
+- **Pet Age:** 5 years
+- **Vet Visits Covered:** Yes
+- **Accident/Illness Cover:** Yes
+- **Vaccination Coverage:** Yes
+"
+POL3073,USR1024,Travel,Expired,28-04-2023 00:00,03-11-2024 00:00,5810.61,1383921.4,"## For Travel Insurance
+- **Travel Region:** International
+- **Trip Duration:** 14 days
+- **Coverage Type:** Individual
+- **Baggage Loss Cover:** Yes
+- **Flight Delay Cover:** Yes
+- **Medical Emergency Cover:** Yes
+"
+POL3074,USR1024,Life,Cancelled,08-07-2022 00:00,16-02-2025 00:00,18266.94,1397038.57,"## For Life Insurance
+- **Policy Term (Years):** 20
+- **Sum Assured:** ₹25,00,000
+- **Payment Term:** Yearly
+- **Nominee Name:** John Doe
+- **Medical Exam Required:** Yes
+- **Smoker Status:** Non-Smoker
+"
+POL3075,USR1025,Life,Cancelled,12-12-2015 00:00,04-02-2027 00:00,21449.66,1868684.99,"## For Life Insurance
+- **Policy Term (Years):** 20
+- **Sum Assured:** ₹25,00,000
+- **Payment Term:** Yearly
+- **Nominee Name:** John Doe
+- **Medical Exam Required:** Yes
+- **Smoker Status:** Non-Smoker
+"
+POL3078,USR1026,Business,Expired,25-10-2019 00:00,25-03-2027 00:00,3400.5,609077.67,"## For Business Insurance
+- **Business Type:** Retail
+- **Annual Revenue:** 1M–10M
+- **Employee Count:** 50
+- **Property Cover:** Yes
+- **Liability Cover:** Yes
+- **Cyber Attack Cover:** No
+"
+POL3081,USR1027,Travel,Active,13-09-2020 00:00,21-11-2025 00:00,24358.81,1422986.95,"## For Travel Insurance
+- **Travel Region:** International
+- **Trip Duration:** 14 days
+- **Coverage Type:** Individual
+- **Baggage Loss Cover:** Yes
+- **Flight Delay Cover:** Yes
+- **Medical Emergency Cover:** Yes
+"
+POL3084,USR1028,Business,Pending,08-02-2021 00:00,02-10-2026 00:00,6440.99,1404009.33,"## For Business Insurance
+- **Business Type:** Retail
+- **Annual Revenue:** 1M–10M
+- **Employee Count:** 50
+- **Property Cover:** Yes
+- **Liability Cover:** Yes
+- **Cyber Attack Cover:** No
+"
+POL3085,USR1028,Travel,Expired,10-01-2019 00:00,19-09-2026 00:00,3904.62,1175832.38,"## For Travel Insurance
+- **Travel Region:** International
+- **Trip Duration:** 14 days
+- **Coverage Type:** Individual
+- **Baggage Loss Cover:** Yes
+- **Flight Delay Cover:** Yes
+- **Medical Emergency Cover:** Yes
+"
+POL3086,USR1028,Business,Pending,14-11-2022 00:00,29-05-2026 00:00,17053.7,1503971.05,"## For Business Insurance
+- **Business Type:** Retail
+- **Annual Revenue:** 1M–10M
+- **Employee Count:** 50
+- **Property Cover:** Yes
+- **Liability Cover:** Yes
+- **Cyber Attack Cover:** No
+"
+POL3087,USR1029,Pet,Pending,07-09-2023 00:00,05-08-2025 00:00,21971.69,1314178.21,"## For Pet Insurance
+- **Pet Type:** Dog
+- **Breed:** Golden Retriever
+- **Pet Age:** 5 years
+- **Vet Visits Covered:** Yes
+- **Accident/Illness Cover:** Yes
+- **Vaccination Coverage:** Yes
+"
+POL3088,USR1029,Pet,Pending,01-11-2019 00:00,16-03-2027 00:00,33705.51,257758.07,"## For Pet Insurance
+- **Pet Type:** Dog
+- **Breed:** Golden Retriever
+- **Pet Age:** 5 years
+- **Vet Visits Covered:** Yes
+- **Accident/Illness Cover:** Yes
+- **Vaccination Coverage:** Yes
+"
+POL3090,USR1030,Travel,Expired,22-11-2018 00:00,28-01-2025 00:00,15423.42,563569.48,"## For Travel Insurance
+- **Travel Region:** International
+- **Trip Duration:** 14 days
+- **Coverage Type:** Individual
+- **Baggage Loss Cover:** Yes
+- **Flight Delay Cover:** Yes
+- **Medical Emergency Cover:** Yes
+"
+POL3091,USR1030,Pet,Under Review,28-03-2017 00:00,10-05-2026 00:00,4339.15,1757139.05,"## For Pet Insurance
+- **Pet Type:** Dog
+- **Breed:** Golden Retriever
+- **Pet Age:** 5 years
+- **Vet Visits Covered:** Yes
+- **Accident/Illness Cover:** Yes
+- **Vaccination Coverage:** Yes
+"
+POL3092,USR1030,Car,Expired,18-10-2022 00:00,06-04-2026 00:00,43710.33,669613.05,"## For Car Insurance
+- **Vehicle Type:** SUV
+- **Vehicle Model:** Swift 456
+- **Registration Number:** MH-12-AB-4567
+- **Manufacture Year:** 2019
+- **Insured Declared Value (IDV):** ₹7,00,000
+- **Driver Age:** 34
+- **Accident History:** 1 claim
+- **Third Party Cover:** Yes
+- **Add-ons:** Zero Depreciation, Engine Protect
+"
+POL3093,USR1031,Business,Under Review,14-05-2016 00:00,23-12-2026 00:00,39709.32,1076432.4,"## For Business Insurance
+- **Business Type:** Retail
+- **Annual Revenue:** 1M–10M
+- **Employee Count:** 50
+- **Property Cover:** Yes
+- **Liability Cover:** Yes
+- **Cyber Attack Cover:** No
+"
+POL3096,USR1032,Pet,Active,15-10-2015 00:00,25-08-2024 00:00,10328.5,82070.13,"## For Pet Insurance
+- **Pet Type:** Dog
+- **Breed:** Golden Retriever
+- **Pet Age:** 5 years
+- **Vet Visits Covered:** Yes
+- **Accident/Illness Cover:** Yes
+- **Vaccination Coverage:** Yes
+"
+POL3097,USR1032,Life,Active,05-03-2020 00:00,24-12-2026 00:00,43761.15,761700.88,"## For Life Insurance
+- **Policy Term (Years):** 20
+- **Sum Assured:** ₹25,00,000
+- **Payment Term:** Yearly
+- **Nominee Name:** John Doe
+- **Medical Exam Required:** Yes
+- **Smoker Status:** Non-Smoker
+"
+POL3098,USR1032,Travel,Expired,08-01-2024 00:00,02-08-2024 00:00,5122.33,1054721.31,"## For Travel Insurance
+- **Travel Region:** International
+- **Trip Duration:** 14 days
+- **Coverage Type:** Individual
+- **Baggage Loss Cover:** Yes
+- **Flight Delay Cover:** Yes
+- **Medical Emergency Cover:** Yes
+"
+POL3099,USR1033,Pet,Pending,27-02-2022 00:00,26-10-2026 00:00,7470.74,1962211.28,"## For Pet Insurance
+- **Pet Type:** Dog
+- **Breed:** Golden Retriever
+- **Pet Age:** 5 years
+- **Vet Visits Covered:** Yes
+- **Accident/Illness Cover:** Yes
+- **Vaccination Coverage:** Yes
+"
+POL3100,USR1033,Home,Pending,07-07-2018 00:00,17-12-2025 00:00,47456.56,40539.34,"## For Home Insurance
+- **Property Type:** Apartment
+- **Property Value:** ₹50,00,000
+- **Year Built:** 2015
+- **Natural Disaster Cover:** Yes
+- **Theft Cover:** Yes
+- **Structure & Contents:** Combined
+"
+POL3101,USR1033,Travel,Expired,19-08-2016 00:00,05-01-2025 00:00,6994.72,1116250.95,"## For Travel Insurance
+- **Travel Region:** International
+- **Trip Duration:** 14 days
+- **Coverage Type:** Individual
+- **Baggage Loss Cover:** Yes
+- **Flight Delay Cover:** Yes
+- **Medical Emergency Cover:** Yes
+"
+POL3102,USR1034,Pet,Pending,18-01-2020 00:00,04-10-2024 00:00,1299.87,396216.64,"## For Pet Insurance
+- **Pet Type:** Dog
+- **Breed:** Golden Retriever
+- **Pet Age:** 5 years
+- **Vet Visits Covered:** Yes
+- **Accident/Illness Cover:** Yes
+- **Vaccination Coverage:** Yes
+"
+POL3105,USR1035,Life,Expired,01-10-2019 00:00,12-04-2026 00:00,33328.18,156868.72,"## For Life Insurance
+- **Policy Term (Years):** 20
+- **Sum Assured:** ₹25,00,000
+- **Payment Term:** Yearly
+- **Nominee Name:** John Doe
+- **Medical Exam Required:** Yes
+- **Smoker Status:** Non-Smoker
+"
+POL3106,USR1035,Business,Active,19-12-2015 00:00,18-07-2024 00:00,20776.7,246048.39,"## For Business Insurance
+- **Business Type:** Retail
+- **Annual Revenue:** 1M–10M
+- **Employee Count:** 50
+- **Property Cover:** Yes
+- **Liability Cover:** Yes
+- **Cyber Attack Cover:** No
+"
+POL3107,USR1035,Life,Expired,25-03-2021 00:00,17-06-2025 00:00,26234.69,1025707.92,"## For Life Insurance
+- **Policy Term (Years):** 20
+- **Sum Assured:** ₹25,00,000
+- **Payment Term:** Yearly
+- **Nominee Name:** John Doe
+- **Medical Exam Required:** Yes
+- **Smoker Status:** Non-Smoker
+"
+POL3108,USR1036,Car,Active,07-01-2016 00:00,21-10-2024 00:00,5440.7,1720260,"## For Car Insurance
+- **Vehicle Type:** SUV
+- **Vehicle Model:** Swift 456
+- **Registration Number:** MH-12-AB-4567
+- **Manufacture Year:** 2019
+- **Insured Declared Value (IDV):** ₹7,00,000
+- **Driver Age:** 34
+- **Accident History:** 1 claim
+- **Third Party Cover:** Yes
+- **Add-ons:** Zero Depreciation, Engine Protect
+"
+POL3109,USR1036,Home,Pending,15-07-2015 00:00,08-06-2025 00:00,16467.75,1754017.51,"## For Home Insurance
+- **Property Type:** Apartment
+- **Property Value:** ₹50,00,000
+- **Year Built:** 2015
+- **Natural Disaster Cover:** Yes
+- **Theft Cover:** Yes
+- **Structure & Contents:** Combined
+"
+POL3110,USR1036,Travel,Under Review,18-01-2023 00:00,04-10-2025 00:00,44054.21,1882426.23,"## For Travel Insurance
+- **Travel Region:** International
+- **Trip Duration:** 14 days
+- **Coverage Type:** Individual
+- **Baggage Loss Cover:** Yes
+- **Flight Delay Cover:** Yes
+- **Medical Emergency Cover:** Yes
+"
+POL3111,USR1037,Health,Expired,16-12-2015 00:00,25-12-2025 00:00,40383.15,644011,"## For Health Insurance
+- **Coverage Limit:** ₹10,00,000
+- **Hospital Network:** Network B
+- **Cashless Available:** Yes
+- **Waiting Period:** 2 months
+- **Includes Maternity:** No
+- **Critical Illness Cover:** Yes
+- **Deductibles:** ₹10,000
+"
+POL3114,USR1038,Health,Cancelled,31-05-2019 00:00,23-05-2026 00:00,23223.74,1644265.17,"## For Health Insurance
+- **Coverage Limit:** ₹10,00,000
+- **Hospital Network:** Network B
+- **Cashless Available:** Yes
+- **Waiting Period:** 2 months
+- **Includes Maternity:** No
+- **Critical Illness Cover:** Yes
+- **Deductibles:** ₹10,000
+"
+POL3115,USR1038,Business,Expired,08-02-2018 00:00,08-04-2026 00:00,34679.64,1485744.97,"## For Business Insurance
+- **Business Type:** Retail
+- **Annual Revenue:** 1M–10M
+- **Employee Count:** 50
+- **Property Cover:** Yes
+- **Liability Cover:** Yes
+- **Cyber Attack Cover:** No
+"
+POL3117,USR1039,Home,Active,26-12-2021 00:00,09-11-2025 00:00,28903.4,1052894.53,"## For Home Insurance
+- **Property Type:** Apartment
+- **Property Value:** ₹50,00,000
+- **Year Built:** 2015
+- **Natural Disaster Cover:** Yes
+- **Theft Cover:** Yes
+- **Structure & Contents:** Combined
+"
+POL3118,USR1039,Business,Under Review,26-08-2016 00:00,09-08-2025 00:00,41162.05,1620963.57,"## For Business Insurance
+- **Business Type:** Retail
+- **Annual Revenue:** 1M–10M
+- **Employee Count:** 50
+- **Property Cover:** Yes
+- **Liability Cover:** Yes
+- **Cyber Attack Cover:** No
+"
+POL3120,USR1040,Health,Cancelled,12-01-2019 00:00,10-02-2026 00:00,16658.8,1973874.61,"## For Health Insurance
+- **Coverage Limit:** ₹10,00,000
+- **Hospital Network:** Network B
+- **Cashless Available:** Yes
+- **Waiting Period:** 2 months
+- **Includes Maternity:** No
+- **Critical Illness Cover:** Yes
+- **Deductibles:** ₹10,000
+"
+POL3121,USR1040,Car,Cancelled,04-08-2022 00:00,27-02-2025 00:00,43012.4,945270.33,"## For Car Insurance
+- **Vehicle Type:** SUV
+- **Vehicle Model:** Swift 456
+- **Registration Number:** MH-12-AB-4567
+- **Manufacture Year:** 2019
+- **Insured Declared Value (IDV):** ₹7,00,000
+- **Driver Age:** 34
+- **Accident History:** 1 claim
+- **Third Party Cover:** Yes
+- **Add-ons:** Zero Depreciation, Engine Protect
+"
+POL3123,USR1041,Business,Active,20-12-2016 00:00,06-11-2025 00:00,10282.17,504373.85,"## For Business Insurance
+- **Business Type:** Retail
+- **Annual Revenue:** 1M–10M
+- **Employee Count:** 50
+- **Property Cover:** Yes
+- **Liability Cover:** Yes
+- **Cyber Attack Cover:** No
+"
+POL3126,USR1042,Travel,Under Review,20-06-2022 00:00,06-09-2024 00:00,2302.26,1205106.21,"## For Travel Insurance
+- **Travel Region:** International
+- **Trip Duration:** 14 days
+- **Coverage Type:** Individual
+- **Baggage Loss Cover:** Yes
+- **Flight Delay Cover:** Yes
+- **Medical Emergency Cover:** Yes
+"
+POL3127,USR1042,Home,Pending,10-03-2016 00:00,03-07-2024 00:00,17875.39,423164.8,"## For Home Insurance
+- **Property Type:** Apartment
+- **Property Value:** ₹50,00,000
+- **Year Built:** 2015
+- **Natural Disaster Cover:** Yes
+- **Theft Cover:** Yes
+- **Structure & Contents:** Combined
+"
+POL3128,USR1042,Health,Active,10-01-2020 00:00,21-07-2025 00:00,38831.65,1666046.05,"## For Health Insurance
+- **Coverage Limit:** ₹10,00,000
+- **Hospital Network:** Network B
+- **Cashless Available:** Yes
+- **Waiting Period:** 2 months
+- **Includes Maternity:** No
+- **Critical Illness Cover:** Yes
+- **Deductibles:** ₹10,000
+"
+POL3129,USR1043,Travel,Active,21-11-2021 00:00,10-02-2027 00:00,42101.13,160692.97,"## For Travel Insurance
+- **Travel Region:** International
+- **Trip Duration:** 14 days
+- **Coverage Type:** Individual
+- **Baggage Loss Cover:** Yes
+- **Flight Delay Cover:** Yes
+- **Medical Emergency Cover:** Yes
+"
+POL3130,USR1043,Life,Active,02-04-2016 00:00,13-04-2025 00:00,24442.97,543821.88,"## For Life Insurance
+- **Policy Term (Years):** 20
+- **Sum Assured:** ₹25,00,000
+- **Payment Term:** Yearly
+- **Nominee Name:** John Doe
+- **Medical Exam Required:** Yes
+- **Smoker Status:** Non-Smoker
+"
+POL3131,USR1043,Business,Cancelled,14-02-2020 00:00,25-11-2025 00:00,38332.14,795842.67,"## For Business Insurance
+- **Business Type:** Retail
+- **Annual Revenue:** 1M–10M
+- **Employee Count:** 50
+- **Property Cover:** Yes
+- **Liability Cover:** Yes
+- **Cyber Attack Cover:** No
+"
+POL3132,USR1044,Travel,Under Review,09-11-2020 00:00,12-09-2025 00:00,9551.14,1968185.86,"## For Travel Insurance
+- **Travel Region:** International
+- **Trip Duration:** 14 days
+- **Coverage Type:** Individual
+- **Baggage Loss Cover:** Yes
+- **Flight Delay Cover:** Yes
+- **Medical Emergency Cover:** Yes
+"
+POL3133,USR1044,Car,Pending,25-09-2015 00:00,15-06-2026 00:00,41039.78,1681812.46,"## For Car Insurance
+- **Vehicle Type:** SUV
+- **Vehicle Model:** Swift 456
+- **Registration Number:** MH-12-AB-4567
+- **Manufacture Year:** 2019
+- **Insured Declared Value (IDV):** ₹7,00,000
+- **Driver Age:** 34
+- **Accident History:** 1 claim
+- **Third Party Cover:** Yes
+- **Add-ons:** Zero Depreciation, Engine Protect
+"
+POL3134,USR1044,Health,Active,02-09-2015 00:00,11-08-2025 00:00,29385.73,1209266.07,"## For Health Insurance
+- **Coverage Limit:** ₹10,00,000
+- **Hospital Network:** Network B
+- **Cashless Available:** Yes
+- **Waiting Period:** 2 months
+- **Includes Maternity:** No
+- **Critical Illness Cover:** Yes
+- **Deductibles:** ₹10,000
+"
+POL3135,USR1045,Business,Cancelled,27-05-2018 00:00,24-10-2024 00:00,36857.04,629650.9,"## For Business Insurance
+- **Business Type:** Retail
+- **Annual Revenue:** 1M–10M
+- **Employee Count:** 50
+- **Property Cover:** Yes
+- **Liability Cover:** Yes
+- **Cyber Attack Cover:** No
+"
+POL3138,USR1046,Car,Cancelled,08-01-2018 00:00,19-07-2025 00:00,11619.9,871823.36,"## For Car Insurance
+- **Vehicle Type:** SUV
+- **Vehicle Model:** Swift 456
+- **Registration Number:** MH-12-AB-4567
+- **Manufacture Year:** 2019
+- **Insured Declared Value (IDV):** ₹7,00,000
+- **Driver Age:** 34
+- **Accident History:** 1 claim
+- **Third Party Cover:** Yes
+- **Add-ons:** Zero Depreciation, Engine Protect
+"
+POL3139,USR1046,Life,Cancelled,31-10-2020 00:00,29-07-2025 00:00,20256.53,101415.84,"## For Life Insurance
+- **Policy Term (Years):** 20
+- **Sum Assured:** ₹25,00,000
+- **Payment Term:** Yearly
+- **Nominee Name:** John Doe
+- **Medical Exam Required:** Yes
+- **Smoker Status:** Non-Smoker
+"
+POL3141,USR1047,Business,Active,27-12-2017 00:00,06-06-2024 00:00,12921.77,72392.25,"## For Business Insurance
+- **Business Type:** Retail
+- **Annual Revenue:** 1M–10M
+- **Employee Count:** 50
+- **Property Cover:** Yes
+- **Liability Cover:** Yes
+- **Cyber Attack Cover:** No
+"
+POL3142,USR1047,Travel,Expired,22-03-2020 00:00,16-01-2026 00:00,48764.73,342365.26,"## For Travel Insurance
+- **Travel Region:** International
+- **Trip Duration:** 14 days
+- **Coverage Type:** Individual
+- **Baggage Loss Cover:** Yes
+- **Flight Delay Cover:** Yes
+- **Medical Emergency Cover:** Yes
+"
+POL3143,USR1047,Travel,Under Review,04-11-2015 00:00,19-06-2024 00:00,29907.05,554312.1,"## For Travel Insurance
+- **Travel Region:** International
+- **Trip Duration:** 14 days
+- **Coverage Type:** Individual
+- **Baggage Loss Cover:** Yes
+- **Flight Delay Cover:** Yes
+- **Medical Emergency Cover:** Yes
+"
+POL3144,USR1048,Car,Active,10-10-2022 00:00,16-10-2024 00:00,7852.62,1980715.91,"## For Car Insurance
+- **Vehicle Type:** SUV
+- **Vehicle Model:** Swift 456
+- **Registration Number:** MH-12-AB-4567
+- **Manufacture Year:** 2019
+- **Insured Declared Value (IDV):** ₹7,00,000
+- **Driver Age:** 34
+- **Accident History:** 1 claim
+- **Third Party Cover:** Yes
+- **Add-ons:** Zero Depreciation, Engine Protect
+"
+POL3145,USR1048,Health,Cancelled,14-05-2020 00:00,08-05-2027 00:00,26166.46,727880.71,"## For Health Insurance
+- **Coverage Limit:** ₹10,00,000
+- **Hospital Network:** Network B
+- **Cashless Available:** Yes
+- **Waiting Period:** 2 months
+- **Includes Maternity:** No
+- **Critical Illness Cover:** Yes
+- **Deductibles:** ₹10,000
+"
+POL3146,USR1048,Home,Under Review,27-04-2017 00:00,25-05-2025 00:00,34338.17,577690.57,"## For Home Insurance
+- **Property Type:** Apartment
+- **Property Value:** ₹50,00,000
+- **Year Built:** 2015
+- **Natural Disaster Cover:** Yes
+- **Theft Cover:** Yes
+- **Structure & Contents:** Combined
+"
+POL3147,USR1049,Health,Pending,01-12-2018 00:00,26-03-2026 00:00,28866.51,879574.27,"## For Health Insurance
+- **Coverage Limit:** ₹10,00,000
+- **Hospital Network:** Network B
+- **Cashless Available:** Yes
+- **Waiting Period:** 2 months
+- **Includes Maternity:** No
+- **Critical Illness Cover:** Yes
+- **Deductibles:** ₹10,000
+"
+POL3148,USR1049,Health,Active,02-03-2020 00:00,12-02-2027 00:00,24097.79,1416201.21,"## For Health Insurance
+- **Coverage Limit:** ₹10,00,000
+- **Hospital Network:** Network B
+- **Cashless Available:** Yes
+- **Waiting Period:** 2 months
+- **Includes Maternity:** No
+- **Critical Illness Cover:** Yes
+- **Deductibles:** ₹10,000
+"
+POL3150,USR1050,Health,Under Review,10-05-2021 00:00,05-07-2024 00:00,43263.02,1345218.63,"## For Health Insurance
+- **Coverage Limit:** ₹10,00,000
+- **Hospital Network:** Network B
+- **Cashless Available:** Yes
+- **Waiting Period:** 2 months
+- **Includes Maternity:** No
+- **Critical Illness Cover:** Yes
+- **Deductibles:** ₹10,000
+"
+POL3151,USR1050,Travel,Cancelled,09-02-2023 00:00,12-02-2027 00:00,9000.14,888710.41,"## For Travel Insurance
+- **Travel Region:** International
+- **Trip Duration:** 14 days
+- **Coverage Type:** Individual
+- **Baggage Loss Cover:** Yes
+- **Flight Delay Cover:** Yes
+- **Medical Emergency Cover:** Yes
+"
+POL3152,USR1050,Travel,Cancelled,08-02-2018 00:00,01-05-2025 00:00,29926.16,1189718.96,"## For Travel Insurance
+- **Travel Region:** International
+- **Trip Duration:** 14 days
+- **Coverage Type:** Individual
+- **Baggage Loss Cover:** Yes
+- **Flight Delay Cover:** Yes
+- **Medical Emergency Cover:** Yes
+"
+POL3153,USR1051,Travel,Active,21-11-2022 00:00,27-10-2026 00:00,20196.09,709246.8,"## For Travel Insurance
+- **Travel Region:** International
+- **Trip Duration:** 14 days
+- **Coverage Type:** Individual
+- **Baggage Loss Cover:** Yes
+- **Flight Delay Cover:** Yes
+- **Medical Emergency Cover:** Yes
+"
+POL3154,USR1051,Pet,Cancelled,11-05-2017 00:00,05-11-2026 00:00,23269.68,1422902.7,"## For Pet Insurance
+- **Pet Type:** Dog
+- **Breed:** Golden Retriever
+- **Pet Age:** 5 years
+- **Vet Visits Covered:** Yes
+- **Accident/Illness Cover:** Yes
+- **Vaccination Coverage:** Yes
+"
+POL3156,USR1052,Home,Cancelled,31-01-2023 00:00,05-06-2026 00:00,24428.2,560439.11,"## For Home Insurance
+- **Property Type:** Apartment
+- **Property Value:** ₹50,00,000
+- **Year Built:** 2015
+- **Natural Disaster Cover:** Yes
+- **Theft Cover:** Yes
+- **Structure & Contents:** Combined
+"
+POL3159,USR1053,Car,Active,13-05-2016 00:00,03-09-2024 00:00,31513.96,1727695.45,"## For Car Insurance
+- **Vehicle Type:** SUV
+- **Vehicle Model:** Swift 456
+- **Registration Number:** MH-12-AB-4567
+- **Manufacture Year:** 2019
+- **Insured Declared Value (IDV):** ₹7,00,000
+- **Driver Age:** 34
+- **Accident History:** 1 claim
+- **Third Party Cover:** Yes
+- **Add-ons:** Zero Depreciation, Engine Protect
+"
+POL3160,USR1053,Life,Under Review,27-07-2018 00:00,13-03-2026 00:00,20016.59,616092,"## For Life Insurance
+- **Policy Term (Years):** 20
+- **Sum Assured:** ₹25,00,000
+- **Payment Term:** Yearly
+- **Nominee Name:** John Doe
+- **Medical Exam Required:** Yes
+- **Smoker Status:** Non-Smoker
+"
+POL3162,USR1054,Home,Under Review,15-11-2020 00:00,20-11-2024 00:00,2224.15,1518149.64,"## For Home Insurance
+- **Property Type:** Apartment
+- **Property Value:** ₹50,00,000
+- **Year Built:** 2015
+- **Natural Disaster Cover:** Yes
+- **Theft Cover:** Yes
+- **Structure & Contents:** Combined
+"
+POL3163,USR1054,Pet,Active,19-12-2019 00:00,31-01-2025 00:00,20384.04,295809.19,"## For Pet Insurance
+- **Pet Type:** Dog
+- **Breed:** Golden Retriever
+- **Pet Age:** 5 years
+- **Vet Visits Covered:** Yes
+- **Accident/Illness Cover:** Yes
+- **Vaccination Coverage:** Yes
+"
+POL3164,USR1054,Pet,Pending,06-10-2016 00:00,09-07-2024 00:00,24893.2,757245.58,"## For Pet Insurance
+- **Pet Type:** Dog
+- **Breed:** Golden Retriever
+- **Pet Age:** 5 years
+- **Vet Visits Covered:** Yes
+- **Accident/Illness Cover:** Yes
+- **Vaccination Coverage:** Yes
+"
+POL3165,USR1055,Car,Pending,14-05-2017 00:00,30-01-2026 00:00,4816.61,1718018.55,"## For Car Insurance
+- **Vehicle Type:** SUV
+- **Vehicle Model:** Swift 456
+- **Registration Number:** MH-12-AB-4567
+- **Manufacture Year:** 2019
+- **Insured Declared Value (IDV):** ₹7,00,000
+- **Driver Age:** 34
+- **Accident History:** 1 claim
+- **Third Party Cover:** Yes
+- **Add-ons:** Zero Depreciation, Engine Protect
+"
+POL3168,USR1056,Car,Cancelled,26-05-2017 00:00,01-03-2027 00:00,44824,1698685.6,"## For Car Insurance
+- **Vehicle Type:** SUV
+- **Vehicle Model:** Swift 456
+- **Registration Number:** MH-12-AB-4567
+- **Manufacture Year:** 2019
+- **Insured Declared Value (IDV):** ₹7,00,000
+- **Driver Age:** 34
+- **Accident History:** 1 claim
+- **Third Party Cover:** Yes
+- **Add-ons:** Zero Depreciation, Engine Protect
+"
+POL3171,USR1057,Business,Cancelled,20-01-2020 00:00,17-10-2026 00:00,46121.5,807747.9,"## For Business Insurance
+- **Business Type:** Retail
+- **Annual Revenue:** 1M–10M
+- **Employee Count:** 50
+- **Property Cover:** Yes
+- **Liability Cover:** Yes
+- **Cyber Attack Cover:** No
+"
+POL3172,USR1057,Life,Expired,01-08-2022 00:00,30-07-2026 00:00,48916.66,403380.47,"## For Life Insurance
+- **Policy Term (Years):** 20
+- **Sum Assured:** ₹25,00,000
+- **Payment Term:** Yearly
+- **Nominee Name:** John Doe
+- **Medical Exam Required:** Yes
+- **Smoker Status:** Non-Smoker
+"
+POL3173,USR1057,Travel,Expired,03-07-2018 00:00,25-08-2025 00:00,29331.49,1629756.45,"## For Travel Insurance
+- **Travel Region:** International
+- **Trip Duration:** 14 days
+- **Coverage Type:** Individual
+- **Baggage Loss Cover:** Yes
+- **Flight Delay Cover:** Yes
+- **Medical Emergency Cover:** Yes
+"
+POL3174,USR1058,Business,Cancelled,02-10-2022 00:00,19-09-2024 00:00,31889.38,520603.04,"## For Business Insurance
+- **Business Type:** Retail
+- **Annual Revenue:** 1M–10M
+- **Employee Count:** 50
+- **Property Cover:** Yes
+- **Liability Cover:** Yes
+- **Cyber Attack Cover:** No
+"
+POL3177,USR1059,Home,Cancelled,01-04-2016 00:00,21-06-2024 00:00,7661.07,543822.37,"## For Home Insurance
+- **Property Type:** Apartment
+- **Property Value:** ₹50,00,000
+- **Year Built:** 2015
+- **Natural Disaster Cover:** Yes
+- **Theft Cover:** Yes
+- **Structure & Contents:** Combined
+"
+POL3178,USR1059,Home,Under Review,03-02-2024 00:00,27-01-2027 00:00,29833.38,1905659.36,"## For Home Insurance
+- **Property Type:** Apartment
+- **Property Value:** ₹50,00,000
+- **Year Built:** 2015
+- **Natural Disaster Cover:** Yes
+- **Theft Cover:** Yes
+- **Structure & Contents:** Combined
+"
+POL3179,USR1059,Home,Expired,29-08-2023 00:00,27-11-2026 00:00,48034.14,1529799.58,"## For Home Insurance
+- **Property Type:** Apartment
+- **Property Value:** ₹50,00,000
+- **Year Built:** 2015
+- **Natural Disaster Cover:** Yes
+- **Theft Cover:** Yes
+- **Structure & Contents:** Combined
+"
+POL3180,USR1060,Business,Expired,02-05-2023 00:00,29-10-2026 00:00,797.58,1321462.24,"## For Business Insurance
+- **Business Type:** Retail
+- **Annual Revenue:** 1M–10M
+- **Employee Count:** 50
+- **Property Cover:** Yes
+- **Liability Cover:** Yes
+- **Cyber Attack Cover:** No
+"
+POL3183,USR1061,Travel,Active,06-06-2023 00:00,02-03-2025 00:00,27038.56,869297.7,"## For Travel Insurance
+- **Travel Region:** International
+- **Trip Duration:** 14 days
+- **Coverage Type:** Individual
+- **Baggage Loss Cover:** Yes
+- **Flight Delay Cover:** Yes
+- **Medical Emergency Cover:** Yes
+"
+POL3184,USR1061,Business,Cancelled,02-11-2021 00:00,31-10-2024 00:00,3963.71,335165.57,"## For Business Insurance
+- **Business Type:** Retail
+- **Annual Revenue:** 1M–10M
+- **Employee Count:** 50
+- **Property Cover:** Yes
+- **Liability Cover:** Yes
+- **Cyber Attack Cover:** No
+"
+POL3185,USR1061,Life,Under Review,28-11-2022 00:00,09-11-2024 00:00,10603.79,699233.47,"## For Life Insurance
+- **Policy Term (Years):** 20
+- **Sum Assured:** ₹25,00,000
+- **Payment Term:** Yearly
+- **Nominee Name:** John Doe
+- **Medical Exam Required:** Yes
+- **Smoker Status:** Non-Smoker
+"
+POL3186,USR1062,Travel,Cancelled,02-07-2019 00:00,21-01-2025 00:00,43989.72,713577.59,"## For Travel Insurance
+- **Travel Region:** International
+- **Trip Duration:** 14 days
+- **Coverage Type:** Individual
+- **Baggage Loss Cover:** Yes
+- **Flight Delay Cover:** Yes
+- **Medical Emergency Cover:** Yes
+"
+POL3189,USR1063,Pet,Cancelled,16-02-2019 00:00,17-10-2026 00:00,30255.9,1349773.27,"## For Pet Insurance
+- **Pet Type:** Dog
+- **Breed:** Golden Retriever
+- **Pet Age:** 5 years
+- **Vet Visits Covered:** Yes
+- **Accident/Illness Cover:** Yes
+- **Vaccination Coverage:** Yes
+"
+POL3190,USR1063,Health,Expired,02-01-2019 00:00,14-11-2025 00:00,11275.82,578522.8,"## For Health Insurance
+- **Coverage Limit:** ₹10,00,000
+- **Hospital Network:** Network B
+- **Cashless Available:** Yes
+- **Waiting Period:** 2 months
+- **Includes Maternity:** No
+- **Critical Illness Cover:** Yes
+- **Deductibles:** ₹10,000
+"
+POL3191,USR1063,Pet,Expired,26-04-2017 00:00,30-10-2025 00:00,7650.78,955529.29,"## For Pet Insurance
+- **Pet Type:** Dog
+- **Breed:** Golden Retriever
+- **Pet Age:** 5 years
+- **Vet Visits Covered:** Yes
+- **Accident/Illness Cover:** Yes
+- **Vaccination Coverage:** Yes
+"
+POL3192,USR1064,Car,Active,17-09-2022 00:00,11-06-2024 00:00,24008.3,104177.09,"## For Car Insurance
+- **Vehicle Type:** SUV
+- **Vehicle Model:** Swift 456
+- **Registration Number:** MH-12-AB-4567
+- **Manufacture Year:** 2019
+- **Insured Declared Value (IDV):** ₹7,00,000
+- **Driver Age:** 34
+- **Accident History:** 1 claim
+- **Third Party Cover:** Yes
+- **Add-ons:** Zero Depreciation, Engine Protect
+"
+POL3195,USR1065,Life,Pending,18-01-2019 00:00,25-02-2026 00:00,39737.74,1722743.77,"## For Life Insurance
+- **Policy Term (Years):** 20
+- **Sum Assured:** ₹25,00,000
+- **Payment Term:** Yearly
+- **Nominee Name:** John Doe
+- **Medical Exam Required:** Yes
+- **Smoker Status:** Non-Smoker
+"
+POL3198,USR1066,Car,Expired,25-12-2015 00:00,04-01-2027 00:00,16746.62,1431521.51,"## For Car Insurance
+- **Vehicle Type:** SUV
+- **Vehicle Model:** Swift 456
+- **Registration Number:** MH-12-AB-4567
+- **Manufacture Year:** 2019
+- **Insured Declared Value (IDV):** ₹7,00,000
+- **Driver Age:** 34
+- **Accident History:** 1 claim
+- **Third Party Cover:** Yes
+- **Add-ons:** Zero Depreciation, Engine Protect
+"
+POL3199,USR1066,Travel,Active,27-04-2016 00:00,17-03-2026 00:00,25361.34,380561.12,"## For Travel Insurance
+- **Travel Region:** International
+- **Trip Duration:** 14 days
+- **Coverage Type:** Individual
+- **Baggage Loss Cover:** Yes
+- **Flight Delay Cover:** Yes
+- **Medical Emergency Cover:** Yes
+"
+POL3201,USR1067,Car,Cancelled,26-08-2015 00:00,20-07-2026 00:00,34624.25,712001.96,"## For Car Insurance
+- **Vehicle Type:** SUV
+- **Vehicle Model:** Swift 456
+- **Registration Number:** MH-12-AB-4567
+- **Manufacture Year:** 2019
+- **Insured Declared Value (IDV):** ₹7,00,000
+- **Driver Age:** 34
+- **Accident History:** 1 claim
+- **Third Party Cover:** Yes
+- **Add-ons:** Zero Depreciation, Engine Protect
+"
+POL3202,USR1067,Health,Active,14-11-2018 00:00,29-09-2025 00:00,47411.21,196173.85,"## For Health Insurance
+- **Coverage Limit:** ₹10,00,000
+- **Hospital Network:** Network B
+- **Cashless Available:** Yes
+- **Waiting Period:** 2 months
+- **Includes Maternity:** No
+- **Critical Illness Cover:** Yes
+- **Deductibles:** ₹10,000
+"
+POL3204,USR1068,Pet,Cancelled,23-06-2018 00:00,12-02-2025 00:00,25299.33,562569.55,"## For Pet Insurance
+- **Pet Type:** Dog
+- **Breed:** Golden Retriever
+- **Pet Age:** 5 years
+- **Vet Visits Covered:** Yes
+- **Accident/Illness Cover:** Yes
+- **Vaccination Coverage:** Yes
+"
+POL3205,USR1068,Car,Under Review,28-03-2016 00:00,31-12-2025 00:00,40402.95,36922.95,"## For Car Insurance
+- **Vehicle Type:** SUV
+- **Vehicle Model:** Swift 456
+- **Registration Number:** MH-12-AB-4567
+- **Manufacture Year:** 2019
+- **Insured Declared Value (IDV):** ₹7,00,000
+- **Driver Age:** 34
+- **Accident History:** 1 claim
+- **Third Party Cover:** Yes
+- **Add-ons:** Zero Depreciation, Engine Protect
+"
+POL3207,USR1069,Car,Pending,06-06-2020 00:00,10-03-2026 00:00,6250.47,223471.34,"## For Car Insurance
+- **Vehicle Type:** SUV
+- **Vehicle Model:** Swift 456
+- **Registration Number:** MH-12-AB-4567
+- **Manufacture Year:** 2019
+- **Insured Declared Value (IDV):** ₹7,00,000
+- **Driver Age:** 34
+- **Accident History:** 1 claim
+- **Third Party Cover:** Yes
+- **Add-ons:** Zero Depreciation, Engine Protect
+"
+POL3208,USR1069,Pet,Pending,24-04-2024 00:00,07-07-2026 00:00,6484.08,1032748.21,"## For Pet Insurance
+- **Pet Type:** Dog
+- **Breed:** Golden Retriever
+- **Pet Age:** 5 years
+- **Vet Visits Covered:** Yes
+- **Accident/Illness Cover:** Yes
+- **Vaccination Coverage:** Yes
+"
+POL3210,USR1070,Health,Cancelled,10-03-2022 00:00,11-02-2026 00:00,24308.25,1281198.73,"## For Health Insurance
+- **Coverage Limit:** ₹10,00,000
+- **Hospital Network:** Network B
+- **Cashless Available:** Yes
+- **Waiting Period:** 2 months
+- **Includes Maternity:** No
+- **Critical Illness Cover:** Yes
+- **Deductibles:** ₹10,000
+"
+POL3211,USR1070,Car,Pending,25-06-2017 00:00,30-08-2025 00:00,7959.66,699352.77,"## For Car Insurance
+- **Vehicle Type:** SUV
+- **Vehicle Model:** Swift 456
+- **Registration Number:** MH-12-AB-4567
+- **Manufacture Year:** 2019
+- **Insured Declared Value (IDV):** ₹7,00,000
+- **Driver Age:** 34
+- **Accident History:** 1 claim
+- **Third Party Cover:** Yes
+- **Add-ons:** Zero Depreciation, Engine Protect
+"
+POL3212,USR1070,Home,Expired,14-04-2020 00:00,26-06-2024 00:00,29953.46,1689341.91,"## For Home Insurance
+- **Property Type:** Apartment
+- **Property Value:** ₹50,00,000
+- **Year Built:** 2015
+- **Natural Disaster Cover:** Yes
+- **Theft Cover:** Yes
+- **Structure & Contents:** Combined
+"
+POL3213,USR1071,Home,Under Review,02-01-2023 00:00,17-01-2025 00:00,25127.35,1032906.43,"## For Home Insurance
+- **Property Type:** Apartment
+- **Property Value:** ₹50,00,000
+- **Year Built:** 2015
+- **Natural Disaster Cover:** Yes
+- **Theft Cover:** Yes
+- **Structure & Contents:** Combined
+"
+POL3214,USR1071,Pet,Expired,22-04-2022 00:00,25-07-2026 00:00,33907.66,1934010.61,"## For Pet Insurance
+- **Pet Type:** Dog
+- **Breed:** Golden Retriever
+- **Pet Age:** 5 years
+- **Vet Visits Covered:** Yes
+- **Accident/Illness Cover:** Yes
+- **Vaccination Coverage:** Yes
+"
+POL3215,USR1071,Health,Active,26-03-2017 00:00,14-10-2024 00:00,17986.08,1878701.79,"## For Health Insurance
+- **Coverage Limit:** ₹10,00,000
+- **Hospital Network:** Network B
+- **Cashless Available:** Yes
+- **Waiting Period:** 2 months
+- **Includes Maternity:** No
+- **Critical Illness Cover:** Yes
+- **Deductibles:** ₹10,000
+"
+POL3216,USR1072,Car,Under Review,14-02-2019 00:00,17-12-2025 00:00,48305.11,369898.72,"## For Car Insurance
+- **Vehicle Type:** SUV
+- **Vehicle Model:** Swift 456
+- **Registration Number:** MH-12-AB-4567
+- **Manufacture Year:** 2019
+- **Insured Declared Value (IDV):** ₹7,00,000
+- **Driver Age:** 34
+- **Accident History:** 1 claim
+- **Third Party Cover:** Yes
+- **Add-ons:** Zero Depreciation, Engine Protect
+"
+POL3217,USR1072,Travel,Pending,03-06-2018 00:00,13-08-2025 00:00,13305.57,733212.33,"## For Travel Insurance
+- **Travel Region:** International
+- **Trip Duration:** 14 days
+- **Coverage Type:** Individual
+- **Baggage Loss Cover:** Yes
+- **Flight Delay Cover:** Yes
+- **Medical Emergency Cover:** Yes
+"
+POL3218,USR1072,Health,Cancelled,02-02-2019 00:00,18-07-2025 00:00,48562.61,376665.56,"## For Health Insurance
+- **Coverage Limit:** ₹10,00,000
+- **Hospital Network:** Network B
+- **Cashless Available:** Yes
+- **Waiting Period:** 2 months
+- **Includes Maternity:** No
+- **Critical Illness Cover:** Yes
+- **Deductibles:** ₹10,000
+"
+POL3219,USR1073,Business,Cancelled,14-03-2017 00:00,30-05-2026 00:00,27947.19,1259467.34,"## For Business Insurance
+- **Business Type:** Retail
+- **Annual Revenue:** 1M–10M
+- **Employee Count:** 50
+- **Property Cover:** Yes
+- **Liability Cover:** Yes
+- **Cyber Attack Cover:** No
+"
+POL3220,USR1073,Pet,Expired,14-02-2018 00:00,03-05-2027 00:00,19534.05,955891.99,"## For Pet Insurance
+- **Pet Type:** Dog
+- **Breed:** Golden Retriever
+- **Pet Age:** 5 years
+- **Vet Visits Covered:** Yes
+- **Accident/Illness Cover:** Yes
+- **Vaccination Coverage:** Yes
+"
+POL3222,USR1074,Pet,Cancelled,25-03-2016 00:00,11-08-2026 00:00,24049.52,1796410.89,"## For Pet Insurance
+- **Pet Type:** Dog
+- **Breed:** Golden Retriever
+- **Pet Age:** 5 years
+- **Vet Visits Covered:** Yes
+- **Accident/Illness Cover:** Yes
+- **Vaccination Coverage:** Yes
+"
+POL3225,USR1075,Travel,Cancelled,04-04-2020 00:00,01-04-2025 00:00,44304.71,378390.9,"## For Travel Insurance
+- **Travel Region:** International
+- **Trip Duration:** 14 days
+- **Coverage Type:** Individual
+- **Baggage Loss Cover:** Yes
+- **Flight Delay Cover:** Yes
+- **Medical Emergency Cover:** Yes
+"
+POL3226,USR1075,Car,Active,08-09-2023 00:00,10-02-2027 00:00,13903.15,190769.57,"## For Car Insurance
+- **Vehicle Type:** SUV
+- **Vehicle Model:** Swift 456
+- **Registration Number:** MH-12-AB-4567
+- **Manufacture Year:** 2019
+- **Insured Declared Value (IDV):** ₹7,00,000
+- **Driver Age:** 34
+- **Accident History:** 1 claim
+- **Third Party Cover:** Yes
+- **Add-ons:** Zero Depreciation, Engine Protect
+"
+POL3228,USR1076,Car,Pending,29-01-2024 00:00,03-01-2025 00:00,31740.79,1406277.59,"## For Car Insurance
+- **Vehicle Type:** SUV
+- **Vehicle Model:** Swift 456
+- **Registration Number:** MH-12-AB-4567
+- **Manufacture Year:** 2019
+- **Insured Declared Value (IDV):** ₹7,00,000
+- **Driver Age:** 34
+- **Accident History:** 1 claim
+- **Third Party Cover:** Yes
+- **Add-ons:** Zero Depreciation, Engine Protect
+"
+POL3231,USR1077,Travel,Expired,07-10-2019 00:00,09-07-2025 00:00,47867.4,1204755.98,"## For Travel Insurance
+- **Travel Region:** International
+- **Trip Duration:** 14 days
+- **Coverage Type:** Individual
+- **Baggage Loss Cover:** Yes
+- **Flight Delay Cover:** Yes
+- **Medical Emergency Cover:** Yes
+"
+POL3234,USR1078,Car,Under Review,24-02-2016 00:00,09-09-2024 00:00,9341.54,412858.98,"## For Car Insurance
+- **Vehicle Type:** SUV
+- **Vehicle Model:** Swift 456
+- **Registration Number:** MH-12-AB-4567
+- **Manufacture Year:** 2019
+- **Insured Declared Value (IDV):** ₹7,00,000
+- **Driver Age:** 34
+- **Accident History:** 1 claim
+- **Third Party Cover:** Yes
+- **Add-ons:** Zero Depreciation, Engine Protect
+"
+POL3235,USR1078,Health,Pending,06-03-2016 00:00,06-06-2025 00:00,12812.57,602776.03,"## For Health Insurance
+- **Coverage Limit:** ₹10,00,000
+- **Hospital Network:** Network B
+- **Cashless Available:** Yes
+- **Waiting Period:** 2 months
+- **Includes Maternity:** No
+- **Critical Illness Cover:** Yes
+- **Deductibles:** ₹10,000
+"
+POL3236,USR1078,Car,Pending,23-09-2016 00:00,21-03-2026 00:00,749.82,74769.56,"## For Car Insurance
+- **Vehicle Type:** SUV
+- **Vehicle Model:** Swift 456
+- **Registration Number:** MH-12-AB-4567
+- **Manufacture Year:** 2019
+- **Insured Declared Value (IDV):** ₹7,00,000
+- **Driver Age:** 34
+- **Accident History:** 1 claim
+- **Third Party Cover:** Yes
+- **Add-ons:** Zero Depreciation, Engine Protect
+"
+POL3237,USR1079,Car,Cancelled,15-12-2017 00:00,24-08-2025 00:00,29586.03,1682303.46,"## For Car Insurance
+- **Vehicle Type:** SUV
+- **Vehicle Model:** Swift 456
+- **Registration Number:** MH-12-AB-4567
+- **Manufacture Year:** 2019
+- **Insured Declared Value (IDV):** ₹7,00,000
+- **Driver Age:** 34
+- **Accident History:** 1 claim
+- **Third Party Cover:** Yes
+- **Add-ons:** Zero Depreciation, Engine Protect
+"
+POL3238,USR1079,Car,Pending,29-05-2017 00:00,10-05-2026 00:00,39452.38,1151897.89,"## For Car Insurance
+- **Vehicle Type:** SUV
+- **Vehicle Model:** Swift 456
+- **Registration Number:** MH-12-AB-4567
+- **Manufacture Year:** 2019
+- **Insured Declared Value (IDV):** ₹7,00,000
+- **Driver Age:** 34
+- **Accident History:** 1 claim
+- **Third Party Cover:** Yes
+- **Add-ons:** Zero Depreciation, Engine Protect
+"
+POL3239,USR1079,Business,Active,29-06-2018 00:00,30-03-2025 00:00,3295.6,549724.13,"## For Business Insurance
+- **Business Type:** Retail
+- **Annual Revenue:** 1M–10M
+- **Employee Count:** 50
+- **Property Cover:** Yes
+- **Liability Cover:** Yes
+- **Cyber Attack Cover:** No
+"
+POL3240,USR1080,Health,Under Review,07-05-2021 00:00,23-04-2025 00:00,750.96,805899.43,"## For Health Insurance
+- **Coverage Limit:** ₹10,00,000
+- **Hospital Network:** Network B
+- **Cashless Available:** Yes
+- **Waiting Period:** 2 months
+- **Includes Maternity:** No
+- **Critical Illness Cover:** Yes
+- **Deductibles:** ₹10,000
+"
+POL3243,USR1081,Car,Pending,18-02-2023 00:00,09-03-2026 00:00,23243.37,1974692.66,"## For Car Insurance
+- **Vehicle Type:** SUV
+- **Vehicle Model:** Swift 456
+- **Registration Number:** MH-12-AB-4567
+- **Manufacture Year:** 2019
+- **Insured Declared Value (IDV):** ₹7,00,000
+- **Driver Age:** 34
+- **Accident History:** 1 claim
+- **Third Party Cover:** Yes
+- **Add-ons:** Zero Depreciation, Engine Protect
+"
+POL3244,USR1081,Business,Pending,16-06-2023 00:00,08-12-2026 00:00,14501.25,1512603.9,"## For Business Insurance
+- **Business Type:** Retail
+- **Annual Revenue:** 1M–10M
+- **Employee Count:** 50
+- **Property Cover:** Yes
+- **Liability Cover:** Yes
+- **Cyber Attack Cover:** No
+"
+POL3246,USR1082,Health,Under Review,25-02-2024 00:00,30-03-2025 00:00,4009.59,1567169.58,"## For Health Insurance
+- **Coverage Limit:** ₹10,00,000
+- **Hospital Network:** Network B
+- **Cashless Available:** Yes
+- **Waiting Period:** 2 months
+- **Includes Maternity:** No
+- **Critical Illness Cover:** Yes
+- **Deductibles:** ₹10,000
+"
+POL3247,USR1082,Business,Cancelled,29-05-2023 00:00,26-01-2026 00:00,4813.96,1408918.37,"## For Business Insurance
+- **Business Type:** Retail
+- **Annual Revenue:** 1M–10M
+- **Employee Count:** 50
+- **Property Cover:** Yes
+- **Liability Cover:** Yes
+- **Cyber Attack Cover:** No
+"
+POL3249,USR1083,Business,Under Review,06-01-2022 00:00,06-06-2026 00:00,35186.43,446437.47,"## For Business Insurance
+- **Business Type:** Retail
+- **Annual Revenue:** 1M–10M
+- **Employee Count:** 50
+- **Property Cover:** Yes
+- **Liability Cover:** Yes
+- **Cyber Attack Cover:** No
+"
+POL3252,USR1084,Car,Pending,24-04-2017 00:00,16-08-2025 00:00,49241.22,1140093.75,"## For Car Insurance
+- **Vehicle Type:** SUV
+- **Vehicle Model:** Swift 456
+- **Registration Number:** MH-12-AB-4567
+- **Manufacture Year:** 2019
+- **Insured Declared Value (IDV):** ₹7,00,000
+- **Driver Age:** 34
+- **Accident History:** 1 claim
+- **Third Party Cover:** Yes
+- **Add-ons:** Zero Depreciation, Engine Protect
+"
+POL3253,USR1084,Car,Under Review,20-05-2020 00:00,15-04-2025 00:00,27816.7,1239222.49,"## For Car Insurance
+- **Vehicle Type:** SUV
+- **Vehicle Model:** Swift 456
+- **Registration Number:** MH-12-AB-4567
+- **Manufacture Year:** 2019
+- **Insured Declared Value (IDV):** ₹7,00,000
+- **Driver Age:** 34
+- **Accident History:** 1 claim
+- **Third Party Cover:** Yes
+- **Add-ons:** Zero Depreciation, Engine Protect
+"
+POL3255,USR1085,Pet,Active,10-03-2022 00:00,29-04-2027 00:00,27970.17,579183.95,"## For Pet Insurance
+- **Pet Type:** Dog
+- **Breed:** Golden Retriever
+- **Pet Age:** 5 years
+- **Vet Visits Covered:** Yes
+- **Accident/Illness Cover:** Yes
+- **Vaccination Coverage:** Yes
+"
+POL3256,USR1085,Pet,Active,04-08-2015 00:00,19-03-2027 00:00,32501.29,994894.62,"## For Pet Insurance
+- **Pet Type:** Dog
+- **Breed:** Golden Retriever
+- **Pet Age:** 5 years
+- **Vet Visits Covered:** Yes
+- **Accident/Illness Cover:** Yes
+- **Vaccination Coverage:** Yes
+"
+POL3257,USR1085,Car,Under Review,24-08-2016 00:00,10-09-2026 00:00,41857.31,803830.72,"## For Car Insurance
+- **Vehicle Type:** SUV
+- **Vehicle Model:** Swift 456
+- **Registration Number:** MH-12-AB-4567
+- **Manufacture Year:** 2019
+- **Insured Declared Value (IDV):** ₹7,00,000
+- **Driver Age:** 34
+- **Accident History:** 1 claim
+- **Third Party Cover:** Yes
+- **Add-ons:** Zero Depreciation, Engine Protect
+"
+POL3258,USR1086,Car,Cancelled,29-01-2019 00:00,29-03-2025 00:00,29500.08,721677.94,"## For Car Insurance
+- **Vehicle Type:** SUV
+- **Vehicle Model:** Swift 456
+- **Registration Number:** MH-12-AB-4567
+- **Manufacture Year:** 2019
+- **Insured Declared Value (IDV):** ₹7,00,000
+- **Driver Age:** 34
+- **Accident History:** 1 claim
+- **Third Party Cover:** Yes
+- **Add-ons:** Zero Depreciation, Engine Protect
+"
+POL3259,USR1086,Travel,Pending,21-01-2022 00:00,04-04-2025 00:00,46463.91,1074810.25,"## For Travel Insurance
+- **Travel Region:** International
+- **Trip Duration:** 14 days
+- **Coverage Type:** Individual
+- **Baggage Loss Cover:** Yes
+- **Flight Delay Cover:** Yes
+- **Medical Emergency Cover:** Yes
+"
+POL3260,USR1086,Home,Active,12-05-2021 00:00,10-08-2024 00:00,36930.45,860281.06,"## For Home Insurance
+- **Property Type:** Apartment
+- **Property Value:** ₹50,00,000
+- **Year Built:** 2015
+- **Natural Disaster Cover:** Yes
+- **Theft Cover:** Yes
+- **Structure & Contents:** Combined
+"
+POL3261,USR1087,Life,Expired,24-09-2019 00:00,15-11-2024 00:00,36083.93,1115577.64,"## For Life Insurance
+- **Policy Term (Years):** 20
+- **Sum Assured:** ₹25,00,000
+- **Payment Term:** Yearly
+- **Nominee Name:** John Doe
+- **Medical Exam Required:** Yes
+- **Smoker Status:** Non-Smoker
+"
+POL3262,USR1087,Travel,Cancelled,25-05-2018 00:00,15-01-2026 00:00,21226.53,1468205.38,"## For Travel Insurance
+- **Travel Region:** International
+- **Trip Duration:** 14 days
+- **Coverage Type:** Individual
+- **Baggage Loss Cover:** Yes
+- **Flight Delay Cover:** Yes
+- **Medical Emergency Cover:** Yes
+"
+POL3263,USR1087,Life,Expired,24-08-2016 00:00,20-12-2024 00:00,47483.31,375982.26,"## For Life Insurance
+- **Policy Term (Years):** 20
+- **Sum Assured:** ₹25,00,000
+- **Payment Term:** Yearly
+- **Nominee Name:** John Doe
+- **Medical Exam Required:** Yes
+- **Smoker Status:** Non-Smoker
+"
+POL3264,USR1088,Pet,Expired,25-10-2018 00:00,08-07-2025 00:00,38415.97,766622.42,"## For Pet Insurance
+- **Pet Type:** Dog
+- **Breed:** Golden Retriever
+- **Pet Age:** 5 years
+- **Vet Visits Covered:** Yes
+- **Accident/Illness Cover:** Yes
+- **Vaccination Coverage:** Yes
+"
+POL3265,USR1088,Home,Pending,29-11-2022 00:00,26-08-2026 00:00,30244.35,1078818.68,"## For Home Insurance
+- **Property Type:** Apartment
+- **Property Value:** ₹50,00,000
+- **Year Built:** 2015
+- **Natural Disaster Cover:** Yes
+- **Theft Cover:** Yes
+- **Structure & Contents:** Combined
+"
+POL3266,USR1088,Car,Active,27-12-2019 00:00,04-12-2024 00:00,36797.02,475129.56,"## For Car Insurance
+- **Vehicle Type:** SUV
+- **Vehicle Model:** Swift 456
+- **Registration Number:** MH-12-AB-4567
+- **Manufacture Year:** 2019
+- **Insured Declared Value (IDV):** ₹7,00,000
+- **Driver Age:** 34
+- **Accident History:** 1 claim
+- **Third Party Cover:** Yes
+- **Add-ons:** Zero Depreciation, Engine Protect
+"
+POL3267,USR1089,Life,Pending,01-05-2021 00:00,04-02-2025 00:00,29455.62,1816876.08,"## For Life Insurance
+- **Policy Term (Years):** 20
+- **Sum Assured:** ₹25,00,000
+- **Payment Term:** Yearly
+- **Nominee Name:** John Doe
+- **Medical Exam Required:** Yes
+- **Smoker Status:** Non-Smoker
+"
+POL3268,USR1089,Health,Expired,01-01-2024 00:00,31-07-2026 00:00,28864.96,1554189.45,"## For Health Insurance
+- **Coverage Limit:** ₹10,00,000
+- **Hospital Network:** Network B
+- **Cashless Available:** Yes
+- **Waiting Period:** 2 months
+- **Includes Maternity:** No
+- **Critical Illness Cover:** Yes
+- **Deductibles:** ₹10,000
+"
+POL3270,USR1090,Health,Pending,31-10-2021 00:00,24-11-2024 00:00,40476.3,904923.74,"## For Health Insurance
+- **Coverage Limit:** ₹10,00,000
+- **Hospital Network:** Network B
+- **Cashless Available:** Yes
+- **Waiting Period:** 2 months
+- **Includes Maternity:** No
+- **Critical Illness Cover:** Yes
+- **Deductibles:** ₹10,000
+"
+POL3271,USR1090,Health,Active,29-02-2024 00:00,17-01-2027 00:00,6494.05,1012639.56,"## For Health Insurance
+- **Coverage Limit:** ₹10,00,000
+- **Hospital Network:** Network B
+- **Cashless Available:** Yes
+- **Waiting Period:** 2 months
+- **Includes Maternity:** No
+- **Critical Illness Cover:** Yes
+- **Deductibles:** ₹10,000
+"
+POL3272,USR1090,Travel,Cancelled,15-10-2020 00:00,13-10-2025 00:00,41403.73,919361.43,"## For Travel Insurance
+- **Travel Region:** International
+- **Trip Duration:** 14 days
+- **Coverage Type:** Individual
+- **Baggage Loss Cover:** Yes
+- **Flight Delay Cover:** Yes
+- **Medical Emergency Cover:** Yes
+"
+POL3273,USR1091,Home,Active,22-08-2018 00:00,07-04-2025 00:00,18918.46,1461964.64,"## For Home Insurance
+- **Property Type:** Apartment
+- **Property Value:** ₹50,00,000
+- **Year Built:** 2015
+- **Natural Disaster Cover:** Yes
+- **Theft Cover:** Yes
+- **Structure & Contents:** Combined
+"
+POL3274,USR1091,Home,Cancelled,06-11-2021 00:00,30-12-2025 00:00,35223.19,46530.35,"## For Home Insurance
+- **Property Type:** Apartment
+- **Property Value:** ₹50,00,000
+- **Year Built:** 2015
+- **Natural Disaster Cover:** Yes
+- **Theft Cover:** Yes
+- **Structure & Contents:** Combined
+"
+POL3276,USR1092,Home,Cancelled,28-07-2019 00:00,03-06-2026 00:00,49727.72,1682528.1,"## For Home Insurance
+- **Property Type:** Apartment
+- **Property Value:** ₹50,00,000
+- **Year Built:** 2015
+- **Natural Disaster Cover:** Yes
+- **Theft Cover:** Yes
+- **Structure & Contents:** Combined
+"
+POL3277,USR1092,Business,Under Review,01-09-2016 00:00,05-02-2025 00:00,1168.16,1575622.42,"## For Business Insurance
+- **Business Type:** Retail
+- **Annual Revenue:** 1M–10M
+- **Employee Count:** 50
+- **Property Cover:** Yes
+- **Liability Cover:** Yes
+- **Cyber Attack Cover:** No
+"
+POL3278,USR1092,Health,Under Review,08-09-2023 00:00,03-10-2025 00:00,7270.54,368414.29,"## For Health Insurance
+- **Coverage Limit:** ₹10,00,000
+- **Hospital Network:** Network B
+- **Cashless Available:** Yes
+- **Waiting Period:** 2 months
+- **Includes Maternity:** No
+- **Critical Illness Cover:** Yes
+- **Deductibles:** ₹10,000
+"
+POL3279,USR1093,Health,Cancelled,19-01-2017 00:00,20-12-2025 00:00,35756.41,1750742.31,"## For Health Insurance
+- **Coverage Limit:** ₹10,00,000
+- **Hospital Network:** Network B
+- **Cashless Available:** Yes
+- **Waiting Period:** 2 months
+- **Includes Maternity:** No
+- **Critical Illness Cover:** Yes
+- **Deductibles:** ₹10,000
+"
+POL3282,USR1094,Life,Active,11-10-2020 00:00,16-02-2026 00:00,28947.45,999545.74,"## For Life Insurance
+- **Policy Term (Years):** 20
+- **Sum Assured:** ₹25,00,000
+- **Payment Term:** Yearly
+- **Nominee Name:** John Doe
+- **Medical Exam Required:** Yes
+- **Smoker Status:** Non-Smoker
+"
+POL3283,USR1094,Car,Active,07-02-2022 00:00,04-04-2025 00:00,10971.44,426297.28,"## For Car Insurance
+- **Vehicle Type:** SUV
+- **Vehicle Model:** Swift 456
+- **Registration Number:** MH-12-AB-4567
+- **Manufacture Year:** 2019
+- **Insured Declared Value (IDV):** ₹7,00,000
+- **Driver Age:** 34
+- **Accident History:** 1 claim
+- **Third Party Cover:** Yes
+- **Add-ons:** Zero Depreciation, Engine Protect
+"
+POL3284,USR1094,Travel,Pending,25-03-2024 00:00,08-02-2027 00:00,15899.35,1019625.51,"## For Travel Insurance
+- **Travel Region:** International
+- **Trip Duration:** 14 days
+- **Coverage Type:** Individual
+- **Baggage Loss Cover:** Yes
+- **Flight Delay Cover:** Yes
+- **Medical Emergency Cover:** Yes
+"
+POL3285,USR1095,Pet,Expired,04-03-2024 00:00,31-03-2026 00:00,38899.23,302632.2,"## For Pet Insurance
+- **Pet Type:** Dog
+- **Breed:** Golden Retriever
+- **Pet Age:** 5 years
+- **Vet Visits Covered:** Yes
+- **Accident/Illness Cover:** Yes
+- **Vaccination Coverage:** Yes
+"
+POL3286,USR1095,Life,Cancelled,09-12-2023 00:00,04-02-2026 00:00,43249.49,1453598.79,"## For Life Insurance
+- **Policy Term (Years):** 20
+- **Sum Assured:** ₹25,00,000
+- **Payment Term:** Yearly
+- **Nominee Name:** John Doe
+- **Medical Exam Required:** Yes
+- **Smoker Status:** Non-Smoker
+"
+POL3288,USR1096,Travel,Active,11-04-2020 00:00,21-05-2025 00:00,618.36,1816101.72,"## For Travel Insurance
+- **Travel Region:** International
+- **Trip Duration:** 14 days
+- **Coverage Type:** Individual
+- **Baggage Loss Cover:** Yes
+- **Flight Delay Cover:** Yes
+- **Medical Emergency Cover:** Yes
+"
+POL3289,USR1096,Health,Active,20-02-2018 00:00,14-03-2027 00:00,13507.04,423501.85,"## For Health Insurance
+- **Coverage Limit:** ₹10,00,000
+- **Hospital Network:** Network B
+- **Cashless Available:** Yes
+- **Waiting Period:** 2 months
+- **Includes Maternity:** No
+- **Critical Illness Cover:** Yes
+- **Deductibles:** ₹10,000
+"
+POL3290,USR1096,Business,Cancelled,05-01-2022 00:00,05-01-2027 00:00,21779.6,899429.88,"## For Business Insurance
+- **Business Type:** Retail
+- **Annual Revenue:** 1M–10M
+- **Employee Count:** 50
+- **Property Cover:** Yes
+- **Liability Cover:** Yes
+- **Cyber Attack Cover:** No
+"
+POL3291,USR1097,Health,Under Review,23-11-2018 00:00,03-06-2025 00:00,2835.66,1156190.75,"## For Health Insurance
+- **Coverage Limit:** ₹10,00,000
+- **Hospital Network:** Network B
+- **Cashless Available:** Yes
+- **Waiting Period:** 2 months
+- **Includes Maternity:** No
+- **Critical Illness Cover:** Yes
+- **Deductibles:** ₹10,000
+"
+POL3292,USR1097,Home,Expired,04-07-2021 00:00,30-12-2025 00:00,3693.51,872448.23,"## For Home Insurance
+- **Property Type:** Apartment
+- **Property Value:** ₹50,00,000
+- **Year Built:** 2015
+- **Natural Disaster Cover:** Yes
+- **Theft Cover:** Yes
+- **Structure & Contents:** Combined
+"
+POL3293,USR1097,Business,Expired,08-02-2016 00:00,21-05-2026 00:00,43658.74,1239361.33,"## For Business Insurance
+- **Business Type:** Retail
+- **Annual Revenue:** 1M–10M
+- **Employee Count:** 50
+- **Property Cover:** Yes
+- **Liability Cover:** Yes
+- **Cyber Attack Cover:** No
+"
+POL3294,USR1098,Life,Under Review,26-07-2018 00:00,18-07-2026 00:00,12742.36,1412661.36,"## For Life Insurance
+- **Policy Term (Years):** 20
+- **Sum Assured:** ₹25,00,000
+- **Payment Term:** Yearly
+- **Nominee Name:** John Doe
+- **Medical Exam Required:** Yes
+- **Smoker Status:** Non-Smoker
+"
+POL3295,USR1098,Home,Active,09-11-2023 00:00,17-11-2026 00:00,18314.74,1748949.29,"## For Home Insurance
+- **Property Type:** Apartment
+- **Property Value:** ₹50,00,000
+- **Year Built:** 2015
+- **Natural Disaster Cover:** Yes
+- **Theft Cover:** Yes
+- **Structure & Contents:** Combined
+"
+POL3296,USR1098,Travel,Pending,24-10-2018 00:00,16-12-2025 00:00,29406.59,500999.24,"## For Travel Insurance
+- **Travel Region:** International
+- **Trip Duration:** 14 days
+- **Coverage Type:** Individual
+- **Baggage Loss Cover:** Yes
+- **Flight Delay Cover:** Yes
+- **Medical Emergency Cover:** Yes
+"
+POL3297,USR1099,Health,Cancelled,18-10-2019 00:00,21-02-2027 00:00,6625.99,1855210.65,"## For Health Insurance
+- **Coverage Limit:** ₹10,00,000
+- **Hospital Network:** Network B
+- **Cashless Available:** Yes
+- **Waiting Period:** 2 months
+- **Includes Maternity:** No
+- **Critical Illness Cover:** Yes
+- **Deductibles:** ₹10,000
+"
+POL3298,USR1099,Home,Expired,31-07-2018 00:00,16-09-2024 00:00,15568.47,977184.57,"## For Home Insurance
+- **Property Type:** Apartment
+- **Property Value:** ₹50,00,000
+- **Year Built:** 2015
+- **Natural Disaster Cover:** Yes
+- **Theft Cover:** Yes
+- **Structure & Contents:** Combined
+"
+POL3299,USR1099,Home,Pending,11-08-2020 00:00,03-04-2025 00:00,34445.85,938580.47,"## For Home Insurance
+- **Property Type:** Apartment
+- **Property Value:** ₹50,00,000
+- **Year Built:** 2015
+- **Natural Disaster Cover:** Yes
+- **Theft Cover:** Yes
+- **Structure & Contents:** Combined
+"
+POL3300,USR1100,Business,Under Review,10-04-2021 00:00,08-02-2026 00:00,40518.06,737277.26,"## For Business Insurance
+- **Business Type:** Retail
+- **Annual Revenue:** 1M–10M
+- **Employee Count:** 50
+- **Property Cover:** Yes
+- **Liability Cover:** Yes
+- **Cyber Attack Cover:** No
+"
+POL3303,USR1101,Home,Pending,23-09-2015 00:00,13-07-2025 00:00,5515.07,791885.91,"## For Home Insurance
+- **Property Type:** Apartment
+- **Property Value:** ₹50,00,000
+- **Year Built:** 2015
+- **Natural Disaster Cover:** Yes
+- **Theft Cover:** Yes
+- **Structure & Contents:** Combined
+"
+POL3306,USR1102,Pet,Cancelled,12-11-2021 00:00,22-09-2026 00:00,45341.85,197282.34,"## For Pet Insurance
+- **Pet Type:** Dog
+- **Breed:** Golden Retriever
+- **Pet Age:** 5 years
+- **Vet Visits Covered:** Yes
+- **Accident/Illness Cover:** Yes
+- **Vaccination Coverage:** Yes
+"
+POL3307,USR1102,Home,Expired,23-02-2024 00:00,12-04-2025 00:00,35745.73,1286392.8,"## For Home Insurance
+- **Property Type:** Apartment
+- **Property Value:** ₹50,00,000
+- **Year Built:** 2015
+- **Natural Disaster Cover:** Yes
+- **Theft Cover:** Yes
+- **Structure & Contents:** Combined
+"
+POL3308,USR1102,Car,Active,04-07-2017 00:00,12-02-2027 00:00,33721.64,1487419.3,"## For Car Insurance
+- **Vehicle Type:** SUV
+- **Vehicle Model:** Swift 456
+- **Registration Number:** MH-12-AB-4567
+- **Manufacture Year:** 2019
+- **Insured Declared Value (IDV):** ₹7,00,000
+- **Driver Age:** 34
+- **Accident History:** 1 claim
+- **Third Party Cover:** Yes
+- **Add-ons:** Zero Depreciation, Engine Protect
+"
+POL3309,USR1103,Home,Expired,14-12-2018 00:00,03-04-2027 00:00,31706.74,481445.92,"## For Home Insurance
+- **Property Type:** Apartment
+- **Property Value:** ₹50,00,000
+- **Year Built:** 2015
+- **Natural Disaster Cover:** Yes
+- **Theft Cover:** Yes
+- **Structure & Contents:** Combined
+"
+POL3312,USR1104,Travel,Cancelled,03-08-2020 00:00,30-06-2025 00:00,25733.29,1105559.89,"## For Travel Insurance
+- **Travel Region:** International
+- **Trip Duration:** 14 days
+- **Coverage Type:** Individual
+- **Baggage Loss Cover:** Yes
+- **Flight Delay Cover:** Yes
+- **Medical Emergency Cover:** Yes
+"
+POL3313,USR1104,Home,Active,11-04-2017 00:00,02-05-2027 00:00,39889.55,1423659.87,"## For Home Insurance
+- **Property Type:** Apartment
+- **Property Value:** ₹50,00,000
+- **Year Built:** 2015
+- **Natural Disaster Cover:** Yes
+- **Theft Cover:** Yes
+- **Structure & Contents:** Combined
+"
+POL3314,USR1104,Business,Cancelled,05-04-2023 00:00,30-06-2025 00:00,48734.15,1909071.14,"## For Business Insurance
+- **Business Type:** Retail
+- **Annual Revenue:** 1M–10M
+- **Employee Count:** 50
+- **Property Cover:** Yes
+- **Liability Cover:** Yes
+- **Cyber Attack Cover:** No
+"
+POL3315,USR1105,Travel,Under Review,15-08-2016 00:00,28-05-2027 00:00,9937.36,936433.76,"## For Travel Insurance
+- **Travel Region:** International
+- **Trip Duration:** 14 days
+- **Coverage Type:** Individual
+- **Baggage Loss Cover:** Yes
+- **Flight Delay Cover:** Yes
+- **Medical Emergency Cover:** Yes
+"
+POL3318,USR1106,Business,Active,24-02-2022 00:00,11-08-2024 00:00,21226.76,1058210.7,"## For Business Insurance
+- **Business Type:** Retail
+- **Annual Revenue:** 1M–10M
+- **Employee Count:** 50
+- **Property Cover:** Yes
+- **Liability Cover:** Yes
+- **Cyber Attack Cover:** No
+"
+POL3319,USR1106,Pet,Cancelled,17-12-2023 00:00,16-08-2026 00:00,36436.9,95118.75,"## For Pet Insurance
+- **Pet Type:** Dog
+- **Breed:** Golden Retriever
+- **Pet Age:** 5 years
+- **Vet Visits Covered:** Yes
+- **Accident/Illness Cover:** Yes
+- **Vaccination Coverage:** Yes
+"
+POL3321,USR1107,Business,Pending,05-03-2016 00:00,16-08-2024 00:00,24041.62,848300.41,"## For Business Insurance
+- **Business Type:** Retail
+- **Annual Revenue:** 1M–10M
+- **Employee Count:** 50
+- **Property Cover:** Yes
+- **Liability Cover:** Yes
+- **Cyber Attack Cover:** No
+"
+POL3322,USR1107,Travel,Cancelled,04-04-2022 00:00,06-07-2025 00:00,30829.01,1789205.74,"## For Travel Insurance
+- **Travel Region:** International
+- **Trip Duration:** 14 days
+- **Coverage Type:** Individual
+- **Baggage Loss Cover:** Yes
+- **Flight Delay Cover:** Yes
+- **Medical Emergency Cover:** Yes
+"
+POL3324,USR1108,Travel,Expired,07-05-2021 00:00,22-04-2026 00:00,45749.87,446391.49,"## For Travel Insurance
+- **Travel Region:** International
+- **Trip Duration:** 14 days
+- **Coverage Type:** Individual
+- **Baggage Loss Cover:** Yes
+- **Flight Delay Cover:** Yes
+- **Medical Emergency Cover:** Yes
+"
+POL3325,USR1108,Travel,Cancelled,05-11-2015 00:00,04-02-2025 00:00,23850.99,1185296.54,"## For Travel Insurance
+- **Travel Region:** International
+- **Trip Duration:** 14 days
+- **Coverage Type:** Individual
+- **Baggage Loss Cover:** Yes
+- **Flight Delay Cover:** Yes
+- **Medical Emergency Cover:** Yes
+"
+POL3326,USR1108,Car,Cancelled,07-08-2017 00:00,01-06-2026 00:00,32391.25,1006819.21,"## For Car Insurance
+- **Vehicle Type:** SUV
+- **Vehicle Model:** Swift 456
+- **Registration Number:** MH-12-AB-4567
+- **Manufacture Year:** 2019
+- **Insured Declared Value (IDV):** ₹7,00,000
+- **Driver Age:** 34
+- **Accident History:** 1 claim
+- **Third Party Cover:** Yes
+- **Add-ons:** Zero Depreciation, Engine Protect
+"
+POL3327,USR1109,Car,Active,07-01-2024 00:00,16-09-2025 00:00,48375,1555405.35,"## For Car Insurance
+- **Vehicle Type:** SUV
+- **Vehicle Model:** Swift 456
+- **Registration Number:** MH-12-AB-4567
+- **Manufacture Year:** 2019
+- **Insured Declared Value (IDV):** ₹7,00,000
+- **Driver Age:** 34
+- **Accident History:** 1 claim
+- **Third Party Cover:** Yes
+- **Add-ons:** Zero Depreciation, Engine Protect
+"
+POL3330,USR1110,Business,Pending,06-08-2021 00:00,09-06-2025 00:00,20442.7,569945.33,"## For Business Insurance
+- **Business Type:** Retail
+- **Annual Revenue:** 1M–10M
+- **Employee Count:** 50
+- **Property Cover:** Yes
+- **Liability Cover:** Yes
+- **Cyber Attack Cover:** No
+"
+POL3331,USR1110,Travel,Active,15-01-2023 00:00,18-01-2026 00:00,38010.77,1074079.49,"## For Travel Insurance
+- **Travel Region:** International
+- **Trip Duration:** 14 days
+- **Coverage Type:** Individual
+- **Baggage Loss Cover:** Yes
+- **Flight Delay Cover:** Yes
+- **Medical Emergency Cover:** Yes
+"
+POL3333,USR1111,Car,Active,03-08-2016 00:00,31-07-2024 00:00,45400.13,1108784.67,"## For Car Insurance
+- **Vehicle Type:** SUV
+- **Vehicle Model:** Swift 456
+- **Registration Number:** MH-12-AB-4567
+- **Manufacture Year:** 2019
+- **Insured Declared Value (IDV):** ₹7,00,000
+- **Driver Age:** 34
+- **Accident History:** 1 claim
+- **Third Party Cover:** Yes
+- **Add-ons:** Zero Depreciation, Engine Protect
+"
+POL3334,USR1111,Life,Expired,21-01-2020 00:00,06-04-2026 00:00,6485.67,482156.01,"## For Life Insurance
+- **Policy Term (Years):** 20
+- **Sum Assured:** ₹25,00,000
+- **Payment Term:** Yearly
+- **Nominee Name:** John Doe
+- **Medical Exam Required:** Yes
+- **Smoker Status:** Non-Smoker
+"
+POL3335,USR1111,Life,Pending,03-04-2020 00:00,28-07-2026 00:00,27439.02,29981.76,"## For Life Insurance
+- **Policy Term (Years):** 20
+- **Sum Assured:** ₹25,00,000
+- **Payment Term:** Yearly
+- **Nominee Name:** John Doe
+- **Medical Exam Required:** Yes
+- **Smoker Status:** Non-Smoker
+"
+POL3336,USR1112,Life,Cancelled,27-09-2021 00:00,05-04-2027 00:00,29184.44,811900.13,"## For Life Insurance
+- **Policy Term (Years):** 20
+- **Sum Assured:** ₹25,00,000
+- **Payment Term:** Yearly
+- **Nominee Name:** John Doe
+- **Medical Exam Required:** Yes
+- **Smoker Status:** Non-Smoker
+"
+POL3337,USR1112,Travel,Cancelled,13-05-2016 00:00,03-05-2025 00:00,24103.53,309900.12,"## For Travel Insurance
+- **Travel Region:** International
+- **Trip Duration:** 14 days
+- **Coverage Type:** Individual
+- **Baggage Loss Cover:** Yes
+- **Flight Delay Cover:** Yes
+- **Medical Emergency Cover:** Yes
+"
+POL3339,USR1113,Car,Expired,16-11-2022 00:00,07-03-2027 00:00,39796.07,214263.32,"## For Car Insurance
+- **Vehicle Type:** SUV
+- **Vehicle Model:** Swift 456
+- **Registration Number:** MH-12-AB-4567
+- **Manufacture Year:** 2019
+- **Insured Declared Value (IDV):** ₹7,00,000
+- **Driver Age:** 34
+- **Accident History:** 1 claim
+- **Third Party Cover:** Yes
+- **Add-ons:** Zero Depreciation, Engine Protect
+"
+POL3340,USR1113,Life,Cancelled,21-01-2020 00:00,06-06-2024 00:00,8495.82,1947071.09,"## For Life Insurance
+- **Policy Term (Years):** 20
+- **Sum Assured:** ₹25,00,000
+- **Payment Term:** Yearly
+- **Nominee Name:** John Doe
+- **Medical Exam Required:** Yes
+- **Smoker Status:** Non-Smoker
+"
+POL3341,USR1113,Travel,Active,06-08-2019 00:00,06-05-2027 00:00,45394.44,1241659.95,"## For Travel Insurance
+- **Travel Region:** International
+- **Trip Duration:** 14 days
+- **Coverage Type:** Individual
+- **Baggage Loss Cover:** Yes
+- **Flight Delay Cover:** Yes
+- **Medical Emergency Cover:** Yes
+"
+POL3342,USR1114,Home,Active,04-06-2017 00:00,15-03-2027 00:00,35541.53,348608.15,"## For Home Insurance
+- **Property Type:** Apartment
+- **Property Value:** ₹50,00,000
+- **Year Built:** 2015
+- **Natural Disaster Cover:** Yes
+- **Theft Cover:** Yes
+- **Structure & Contents:** Combined
+"
+POL3343,USR1114,Health,Cancelled,07-04-2017 00:00,15-04-2027 00:00,34436.32,722007.82,"## For Health Insurance
+- **Coverage Limit:** ₹10,00,000
+- **Hospital Network:** Network B
+- **Cashless Available:** Yes
+- **Waiting Period:** 2 months
+- **Includes Maternity:** No
+- **Critical Illness Cover:** Yes
+- **Deductibles:** ₹10,000
+"
+POL3344,USR1114,Pet,Cancelled,07-08-2018 00:00,09-10-2025 00:00,42143.39,1556162.13,"## For Pet Insurance
+- **Pet Type:** Dog
+- **Breed:** Golden Retriever
+- **Pet Age:** 5 years
+- **Vet Visits Covered:** Yes
+- **Accident/Illness Cover:** Yes
+- **Vaccination Coverage:** Yes
+"
+POL3345,USR1115,Home,Under Review,18-06-2023 00:00,22-11-2024 00:00,4197.02,1754934.28,"## For Home Insurance
+- **Property Type:** Apartment
+- **Property Value:** ₹50,00,000
+- **Year Built:** 2015
+- **Natural Disaster Cover:** Yes
+- **Theft Cover:** Yes
+- **Structure & Contents:** Combined
+"
+POL3346,USR1115,Car,Pending,25-09-2017 00:00,22-11-2026 00:00,12717.81,1900457.53,"## For Car Insurance
+- **Vehicle Type:** SUV
+- **Vehicle Model:** Swift 456
+- **Registration Number:** MH-12-AB-4567
+- **Manufacture Year:** 2019
+- **Insured Declared Value (IDV):** ₹7,00,000
+- **Driver Age:** 34
+- **Accident History:** 1 claim
+- **Third Party Cover:** Yes
+- **Add-ons:** Zero Depreciation, Engine Protect
+"
+POL3347,USR1115,Life,Pending,13-06-2022 00:00,28-05-2025 00:00,43414.67,978443.35,"## For Life Insurance
+- **Policy Term (Years):** 20
+- **Sum Assured:** ₹25,00,000
+- **Payment Term:** Yearly
+- **Nominee Name:** John Doe
+- **Medical Exam Required:** Yes
+- **Smoker Status:** Non-Smoker
+"
+POL3348,USR1116,Business,Under Review,15-05-2023 00:00,21-03-2027 00:00,4413.77,1260423.28,"## For Business Insurance
+- **Business Type:** Retail
+- **Annual Revenue:** 1M–10M
+- **Employee Count:** 50
+- **Property Cover:** Yes
+- **Liability Cover:** Yes
+- **Cyber Attack Cover:** No
+"
+POL3349,USR1116,Life,Expired,20-05-2023 00:00,25-04-2027 00:00,18918.87,1972439.69,"## For Life Insurance
+- **Policy Term (Years):** 20
+- **Sum Assured:** ₹25,00,000
+- **Payment Term:** Yearly
+- **Nominee Name:** John Doe
+- **Medical Exam Required:** Yes
+- **Smoker Status:** Non-Smoker
+"
+POL3351,USR1117,Car,Active,21-06-2015 00:00,05-03-2026 00:00,33188.83,530913.61,"## For Car Insurance
+- **Vehicle Type:** SUV
+- **Vehicle Model:** Swift 456
+- **Registration Number:** MH-12-AB-4567
+- **Manufacture Year:** 2019
+- **Insured Declared Value (IDV):** ₹7,00,000
+- **Driver Age:** 34
+- **Accident History:** 1 claim
+- **Third Party Cover:** Yes
+- **Add-ons:** Zero Depreciation, Engine Protect
+"
+POL3352,USR1117,Business,Cancelled,05-11-2023 00:00,18-02-2026 00:00,42094.2,661898.44,"## For Business Insurance
+- **Business Type:** Retail
+- **Annual Revenue:** 1M–10M
+- **Employee Count:** 50
+- **Property Cover:** Yes
+- **Liability Cover:** Yes
+- **Cyber Attack Cover:** No
+"
+POL3353,USR1117,Car,Expired,11-03-2021 00:00,18-07-2025 00:00,24492.88,1353579.92,"## For Car Insurance
+- **Vehicle Type:** SUV
+- **Vehicle Model:** Swift 456
+- **Registration Number:** MH-12-AB-4567
+- **Manufacture Year:** 2019
+- **Insured Declared Value (IDV):** ₹7,00,000
+- **Driver Age:** 34
+- **Accident History:** 1 claim
+- **Third Party Cover:** Yes
+- **Add-ons:** Zero Depreciation, Engine Protect
+"
+POL3354,USR1118,Health,Cancelled,04-11-2015 00:00,08-05-2026 00:00,4932.83,1192628.97,"## For Health Insurance
+- **Coverage Limit:** ₹10,00,000
+- **Hospital Network:** Network B
+- **Cashless Available:** Yes
+- **Waiting Period:** 2 months
+- **Includes Maternity:** No
+- **Critical Illness Cover:** Yes
+- **Deductibles:** ₹10,000
+"
+POL3355,USR1118,Car,Expired,01-08-2016 00:00,18-10-2024 00:00,26559.81,906997.19,"## For Car Insurance
+- **Vehicle Type:** SUV
+- **Vehicle Model:** Swift 456
+- **Registration Number:** MH-12-AB-4567
+- **Manufacture Year:** 2019
+- **Insured Declared Value (IDV):** ₹7,00,000
+- **Driver Age:** 34
+- **Accident History:** 1 claim
+- **Third Party Cover:** Yes
+- **Add-ons:** Zero Depreciation, Engine Protect
+"
+POL3357,USR1119,Pet,Expired,04-10-2017 00:00,09-02-2026 00:00,35280.27,1949997.41,"## For Pet Insurance
+- **Pet Type:** Dog
+- **Breed:** Golden Retriever
+- **Pet Age:** 5 years
+- **Vet Visits Covered:** Yes
+- **Accident/Illness Cover:** Yes
+- **Vaccination Coverage:** Yes
+"
+POL3360,USR1120,Life,Expired,20-09-2016 00:00,23-04-2027 00:00,18736.07,1229040.12,"## For Life Insurance
+- **Policy Term (Years):** 20
+- **Sum Assured:** ₹25,00,000
+- **Payment Term:** Yearly
+- **Nominee Name:** John Doe
+- **Medical Exam Required:** Yes
+- **Smoker Status:** Non-Smoker
+"
+POL3361,USR1120,Home,Active,13-08-2018 00:00,19-05-2026 00:00,45633.12,413000.69,"## For Home Insurance
+- **Property Type:** Apartment
+- **Property Value:** ₹50,00,000
+- **Year Built:** 2015
+- **Natural Disaster Cover:** Yes
+- **Theft Cover:** Yes
+- **Structure & Contents:** Combined
+"
+POL3362,USR1120,Health,Expired,23-01-2017 00:00,09-11-2025 00:00,14795.77,1709610.96,"## For Health Insurance
+- **Coverage Limit:** ₹10,00,000
+- **Hospital Network:** Network B
+- **Cashless Available:** Yes
+- **Waiting Period:** 2 months
+- **Includes Maternity:** No
+- **Critical Illness Cover:** Yes
+- **Deductibles:** ₹10,000
+"
+POL3363,USR1121,Business,Cancelled,27-09-2022 00:00,09-12-2025 00:00,35694.73,1639195.26,"## For Business Insurance
+- **Business Type:** Retail
+- **Annual Revenue:** 1M–10M
+- **Employee Count:** 50
+- **Property Cover:** Yes
+- **Liability Cover:** Yes
+- **Cyber Attack Cover:** No
+"
+POL3364,USR1121,Business,Pending,08-03-2019 00:00,07-05-2027 00:00,8195.47,147985.64,"## For Business Insurance
+- **Business Type:** Retail
+- **Annual Revenue:** 1M–10M
+- **Employee Count:** 50
+- **Property Cover:** Yes
+- **Liability Cover:** Yes
+- **Cyber Attack Cover:** No
+"
+POL3366,USR1122,Home,Under Review,24-11-2022 00:00,17-08-2025 00:00,36391.92,1365496.17,"## For Home Insurance
+- **Property Type:** Apartment
+- **Property Value:** ₹50,00,000
+- **Year Built:** 2015
+- **Natural Disaster Cover:** Yes
+- **Theft Cover:** Yes
+- **Structure & Contents:** Combined
+"
+POL3367,USR1122,Car,Pending,06-01-2023 00:00,01-09-2026 00:00,7900.32,554678.33,"## For Car Insurance
+- **Vehicle Type:** SUV
+- **Vehicle Model:** Swift 456
+- **Registration Number:** MH-12-AB-4567
+- **Manufacture Year:** 2019
+- **Insured Declared Value (IDV):** ₹7,00,000
+- **Driver Age:** 34
+- **Accident History:** 1 claim
+- **Third Party Cover:** Yes
+- **Add-ons:** Zero Depreciation, Engine Protect
+"
+POL3369,USR1123,Life,Pending,24-03-2017 00:00,02-07-2025 00:00,10198.25,110931.53,"## For Life Insurance
+- **Policy Term (Years):** 20
+- **Sum Assured:** ₹25,00,000
+- **Payment Term:** Yearly
+- **Nominee Name:** John Doe
+- **Medical Exam Required:** Yes
+- **Smoker Status:** Non-Smoker
+"
+POL3370,USR1123,Health,Cancelled,22-12-2023 00:00,18-02-2025 00:00,48342.23,1499887.04,"## For Health Insurance
+- **Coverage Limit:** ₹10,00,000
+- **Hospital Network:** Network B
+- **Cashless Available:** Yes
+- **Waiting Period:** 2 months
+- **Includes Maternity:** No
+- **Critical Illness Cover:** Yes
+- **Deductibles:** ₹10,000
+"
+POL3371,USR1123,Travel,Cancelled,19-09-2018 00:00,19-04-2026 00:00,22500.34,217806.05,"## For Travel Insurance
+- **Travel Region:** International
+- **Trip Duration:** 14 days
+- **Coverage Type:** Individual
+- **Baggage Loss Cover:** Yes
+- **Flight Delay Cover:** Yes
+- **Medical Emergency Cover:** Yes
+"
+POL3372,USR1124,Travel,Pending,18-07-2020 00:00,31-08-2024 00:00,40424.26,273452.78,"## For Travel Insurance
+- **Travel Region:** International
+- **Trip Duration:** 14 days
+- **Coverage Type:** Individual
+- **Baggage Loss Cover:** Yes
+- **Flight Delay Cover:** Yes
+- **Medical Emergency Cover:** Yes
+"
+POL3373,USR1124,Home,Pending,17-09-2021 00:00,08-08-2025 00:00,28975.61,1782015.14,"## For Home Insurance
+- **Property Type:** Apartment
+- **Property Value:** ₹50,00,000
+- **Year Built:** 2015
+- **Natural Disaster Cover:** Yes
+- **Theft Cover:** Yes
+- **Structure & Contents:** Combined
+"
+POL3374,USR1124,Travel,Cancelled,26-03-2023 00:00,10-10-2024 00:00,18242.78,1963412.17,"## For Travel Insurance
+- **Travel Region:** International
+- **Trip Duration:** 14 days
+- **Coverage Type:** Individual
+- **Baggage Loss Cover:** Yes
+- **Flight Delay Cover:** Yes
+- **Medical Emergency Cover:** Yes
+"
+POL3375,USR1125,Home,Under Review,27-10-2018 00:00,12-12-2026 00:00,9740.23,336671.74,"## For Home Insurance
+- **Property Type:** Apartment
+- **Property Value:** ₹50,00,000
+- **Year Built:** 2015
+- **Natural Disaster Cover:** Yes
+- **Theft Cover:** Yes
+- **Structure & Contents:** Combined
+"
+POL3378,USR1126,Home,Active,23-04-2020 00:00,08-11-2024 00:00,12802.24,553782.23,"## For Home Insurance
+- **Property Type:** Apartment
+- **Property Value:** ₹50,00,000
+- **Year Built:** 2015
+- **Natural Disaster Cover:** Yes
+- **Theft Cover:** Yes
+- **Structure & Contents:** Combined
+"
+POL3379,USR1126,Health,Active,02-02-2019 00:00,10-03-2025 00:00,15221.8,1620763.19,"## For Health Insurance
+- **Coverage Limit:** ₹10,00,000
+- **Hospital Network:** Network B
+- **Cashless Available:** Yes
+- **Waiting Period:** 2 months
+- **Includes Maternity:** No
+- **Critical Illness Cover:** Yes
+- **Deductibles:** ₹10,000
+"
+POL3381,USR1127,Life,Active,24-09-2016 00:00,12-07-2025 00:00,24933.3,1536577.45,"## For Life Insurance
+- **Policy Term (Years):** 20
+- **Sum Assured:** ₹25,00,000
+- **Payment Term:** Yearly
+- **Nominee Name:** John Doe
+- **Medical Exam Required:** Yes
+- **Smoker Status:** Non-Smoker
+"
+POL3384,USR1128,Travel,Cancelled,14-11-2018 00:00,26-08-2025 00:00,34327.53,181617.03,"## For Travel Insurance
+- **Travel Region:** International
+- **Trip Duration:** 14 days
+- **Coverage Type:** Individual
+- **Baggage Loss Cover:** Yes
+- **Flight Delay Cover:** Yes
+- **Medical Emergency Cover:** Yes
+"
+POL3385,USR1128,Travel,Cancelled,14-09-2019 00:00,17-09-2026 00:00,27066.61,1128410.7,"## For Travel Insurance
+- **Travel Region:** International
+- **Trip Duration:** 14 days
+- **Coverage Type:** Individual
+- **Baggage Loss Cover:** Yes
+- **Flight Delay Cover:** Yes
+- **Medical Emergency Cover:** Yes
+"
+POL3386,USR1128,Health,Expired,10-03-2021 00:00,28-10-2025 00:00,21584.43,1552080.68,"## For Health Insurance
+- **Coverage Limit:** ₹10,00,000
+- **Hospital Network:** Network B
+- **Cashless Available:** Yes
+- **Waiting Period:** 2 months
+- **Includes Maternity:** No
+- **Critical Illness Cover:** Yes
+- **Deductibles:** ₹10,000
+"
+POL3387,USR1129,Pet,Under Review,12-06-2021 00:00,28-10-2026 00:00,17681.76,1596471.37,"## For Pet Insurance
+- **Pet Type:** Dog
+- **Breed:** Golden Retriever
+- **Pet Age:** 5 years
+- **Vet Visits Covered:** Yes
+- **Accident/Illness Cover:** Yes
+- **Vaccination Coverage:** Yes
+"
+POL3388,USR1129,Car,Expired,07-04-2017 00:00,24-10-2024 00:00,7627.08,548498.33,"## For Car Insurance
+- **Vehicle Type:** SUV
+- **Vehicle Model:** Swift 456
+- **Registration Number:** MH-12-AB-4567
+- **Manufacture Year:** 2019
+- **Insured Declared Value (IDV):** ₹7,00,000
+- **Driver Age:** 34
+- **Accident History:** 1 claim
+- **Third Party Cover:** Yes
+- **Add-ons:** Zero Depreciation, Engine Protect
+"
+POL3389,USR1129,Car,Cancelled,29-05-2023 00:00,16-07-2024 00:00,48030.25,207017.58,"## For Car Insurance
+- **Vehicle Type:** SUV
+- **Vehicle Model:** Swift 456
+- **Registration Number:** MH-12-AB-4567
+- **Manufacture Year:** 2019
+- **Insured Declared Value (IDV):** ₹7,00,000
+- **Driver Age:** 34
+- **Accident History:** 1 claim
+- **Third Party Cover:** Yes
+- **Add-ons:** Zero Depreciation, Engine Protect
+"
+POL3390,USR1130,Business,Pending,21-11-2021 00:00,12-06-2025 00:00,1892.63,1107737.63,"## For Business Insurance
+- **Business Type:** Retail
+- **Annual Revenue:** 1M–10M
+- **Employee Count:** 50
+- **Property Cover:** Yes
+- **Liability Cover:** Yes
+- **Cyber Attack Cover:** No
+"
+POL3391,USR1130,Car,Pending,30-07-2018 00:00,26-03-2026 00:00,5189.47,41816.25,"## For Car Insurance
+- **Vehicle Type:** SUV
+- **Vehicle Model:** Swift 456
+- **Registration Number:** MH-12-AB-4567
+- **Manufacture Year:** 2019
+- **Insured Declared Value (IDV):** ₹7,00,000
+- **Driver Age:** 34
+- **Accident History:** 1 claim
+- **Third Party Cover:** Yes
+- **Add-ons:** Zero Depreciation, Engine Protect
+"
+POL3392,USR1130,Car,Expired,26-03-2021 00:00,26-02-2026 00:00,33294.16,1354663.9,"## For Car Insurance
+- **Vehicle Type:** SUV
+- **Vehicle Model:** Swift 456
+- **Registration Number:** MH-12-AB-4567
+- **Manufacture Year:** 2019
+- **Insured Declared Value (IDV):** ₹7,00,000
+- **Driver Age:** 34
+- **Accident History:** 1 claim
+- **Third Party Cover:** Yes
+- **Add-ons:** Zero Depreciation, Engine Protect
+"
+POL3393,USR1131,Business,Under Review,01-02-2022 00:00,29-07-2024 00:00,25904.77,1418126.09,"## For Business Insurance
+- **Business Type:** Retail
+- **Annual Revenue:** 1M–10M
+- **Employee Count:** 50
+- **Property Cover:** Yes
+- **Liability Cover:** Yes
+- **Cyber Attack Cover:** No
+"
+POL3394,USR1131,Life,Expired,24-12-2016 00:00,15-07-2024 00:00,9807.13,493882.29,"## For Life Insurance
+- **Policy Term (Years):** 20
+- **Sum Assured:** ₹25,00,000
+- **Payment Term:** Yearly
+- **Nominee Name:** John Doe
+- **Medical Exam Required:** Yes
+- **Smoker Status:** Non-Smoker
+"
+POL3396,USR1132,Pet,Pending,14-05-2023 00:00,01-03-2025 00:00,22267.06,1423083.71,"## For Pet Insurance
+- **Pet Type:** Dog
+- **Breed:** Golden Retriever
+- **Pet Age:** 5 years
+- **Vet Visits Covered:** Yes
+- **Accident/Illness Cover:** Yes
+- **Vaccination Coverage:** Yes
+"
+POL3397,USR1132,Health,Cancelled,16-01-2021 00:00,30-10-2026 00:00,16854.41,844290.33,"## For Health Insurance
+- **Coverage Limit:** ₹10,00,000
+- **Hospital Network:** Network B
+- **Cashless Available:** Yes
+- **Waiting Period:** 2 months
+- **Includes Maternity:** No
+- **Critical Illness Cover:** Yes
+- **Deductibles:** ₹10,000
+"
+POL3398,USR1132,Pet,Pending,28-03-2016 00:00,16-02-2025 00:00,41293.5,1161991.6,"## For Pet Insurance
+- **Pet Type:** Dog
+- **Breed:** Golden Retriever
+- **Pet Age:** 5 years
+- **Vet Visits Covered:** Yes
+- **Accident/Illness Cover:** Yes
+- **Vaccination Coverage:** Yes
+"
+POL3399,USR1133,Car,Expired,13-07-2018 00:00,29-08-2024 00:00,17315.87,1486632.86,"## For Car Insurance
+- **Vehicle Type:** SUV
+- **Vehicle Model:** Swift 456
+- **Registration Number:** MH-12-AB-4567
+- **Manufacture Year:** 2019
+- **Insured Declared Value (IDV):** ₹7,00,000
+- **Driver Age:** 34
+- **Accident History:** 1 claim
+- **Third Party Cover:** Yes
+- **Add-ons:** Zero Depreciation, Engine Protect
+"
+POL3402,USR1134,Home,Pending,02-11-2016 00:00,28-09-2025 00:00,19547.25,330516.81,"## For Home Insurance
+- **Property Type:** Apartment
+- **Property Value:** ₹50,00,000
+- **Year Built:** 2015
+- **Natural Disaster Cover:** Yes
+- **Theft Cover:** Yes
+- **Structure & Contents:** Combined
+"
+POL3405,USR1135,Health,Expired,10-03-2016 00:00,13-04-2027 00:00,27310.52,371133.61,"## For Health Insurance
+- **Coverage Limit:** ₹10,00,000
+- **Hospital Network:** Network B
+- **Cashless Available:** Yes
+- **Waiting Period:** 2 months
+- **Includes Maternity:** No
+- **Critical Illness Cover:** Yes
+- **Deductibles:** ₹10,000
+"
+POL3408,USR1136,Health,Under Review,22-01-2023 00:00,14-03-2027 00:00,20219.24,992824.8,"## For Health Insurance
+- **Coverage Limit:** ₹10,00,000
+- **Hospital Network:** Network B
+- **Cashless Available:** Yes
+- **Waiting Period:** 2 months
+- **Includes Maternity:** No
+- **Critical Illness Cover:** Yes
+- **Deductibles:** ₹10,000
+"
+POL3409,USR1136,Health,Active,17-07-2023 00:00,11-05-2027 00:00,5945.4,882013.72,"## For Health Insurance
+- **Coverage Limit:** ₹10,00,000
+- **Hospital Network:** Network B
+- **Cashless Available:** Yes
+- **Waiting Period:** 2 months
+- **Includes Maternity:** No
+- **Critical Illness Cover:** Yes
+- **Deductibles:** ₹10,000
+"
+POL3411,USR1137,Pet,Expired,25-11-2020 00:00,15-08-2026 00:00,27585.61,1016015.16,"## For Pet Insurance
+- **Pet Type:** Dog
+- **Breed:** Golden Retriever
+- **Pet Age:** 5 years
+- **Vet Visits Covered:** Yes
+- **Accident/Illness Cover:** Yes
+- **Vaccination Coverage:** Yes
+"
+POL3412,USR1137,Travel,Pending,07-03-2017 00:00,25-12-2026 00:00,41130.78,293184.75,"## For Travel Insurance
+- **Travel Region:** International
+- **Trip Duration:** 14 days
+- **Coverage Type:** Individual
+- **Baggage Loss Cover:** Yes
+- **Flight Delay Cover:** Yes
+- **Medical Emergency Cover:** Yes
+"
+POL3413,USR1137,Car,Under Review,23-06-2019 00:00,23-06-2024 00:00,26857.12,107514.4,"## For Car Insurance
+- **Vehicle Type:** SUV
+- **Vehicle Model:** Swift 456
+- **Registration Number:** MH-12-AB-4567
+- **Manufacture Year:** 2019
+- **Insured Declared Value (IDV):** ₹7,00,000
+- **Driver Age:** 34
+- **Accident History:** 1 claim
+- **Third Party Cover:** Yes
+- **Add-ons:** Zero Depreciation, Engine Protect
+"
+POL3414,USR1138,Car,Expired,19-08-2017 00:00,25-03-2025 00:00,31022.98,1066527.53,"## For Car Insurance
+- **Vehicle Type:** SUV
+- **Vehicle Model:** Swift 456
+- **Registration Number:** MH-12-AB-4567
+- **Manufacture Year:** 2019
+- **Insured Declared Value (IDV):** ₹7,00,000
+- **Driver Age:** 34
+- **Accident History:** 1 claim
+- **Third Party Cover:** Yes
+- **Add-ons:** Zero Depreciation, Engine Protect
+"
+POL3415,USR1138,Pet,Expired,13-01-2021 00:00,11-10-2025 00:00,3483.09,1899704.93,"## For Pet Insurance
+- **Pet Type:** Dog
+- **Breed:** Golden Retriever
+- **Pet Age:** 5 years
+- **Vet Visits Covered:** Yes
+- **Accident/Illness Cover:** Yes
+- **Vaccination Coverage:** Yes
+"
+POL3417,USR1139,Travel,Active,16-04-2016 00:00,30-03-2026 00:00,28540.99,1213299.53,"## For Travel Insurance
+- **Travel Region:** International
+- **Trip Duration:** 14 days
+- **Coverage Type:** Individual
+- **Baggage Loss Cover:** Yes
+- **Flight Delay Cover:** Yes
+- **Medical Emergency Cover:** Yes
+"
+POL3418,USR1139,Home,Expired,02-08-2021 00:00,06-05-2026 00:00,37191.68,1097090.86,"## For Home Insurance
+- **Property Type:** Apartment
+- **Property Value:** ₹50,00,000
+- **Year Built:** 2015
+- **Natural Disaster Cover:** Yes
+- **Theft Cover:** Yes
+- **Structure & Contents:** Combined
+"
+POL3419,USR1139,Travel,Under Review,04-02-2018 00:00,31-03-2025 00:00,1585.83,148950.02,"## For Travel Insurance
+- **Travel Region:** International
+- **Trip Duration:** 14 days
+- **Coverage Type:** Individual
+- **Baggage Loss Cover:** Yes
+- **Flight Delay Cover:** Yes
+- **Medical Emergency Cover:** Yes
+"
+POL3420,USR1140,Health,Active,06-04-2018 00:00,09-09-2024 00:00,40015.75,1466411.97,"## For Health Insurance
+- **Coverage Limit:** ₹10,00,000
+- **Hospital Network:** Network B
+- **Cashless Available:** Yes
+- **Waiting Period:** 2 months
+- **Includes Maternity:** No
+- **Critical Illness Cover:** Yes
+- **Deductibles:** ₹10,000
+"
+POL3421,USR1140,Pet,Active,04-06-2022 00:00,13-11-2026 00:00,15869.09,205965.14,"## For Pet Insurance
+- **Pet Type:** Dog
+- **Breed:** Golden Retriever
+- **Pet Age:** 5 years
+- **Vet Visits Covered:** Yes
+- **Accident/Illness Cover:** Yes
+- **Vaccination Coverage:** Yes
+"
+POL3423,USR1141,Home,Under Review,19-01-2021 00:00,12-09-2025 00:00,35764.67,1163468.25,"## For Home Insurance
+- **Property Type:** Apartment
+- **Property Value:** ₹50,00,000
+- **Year Built:** 2015
+- **Natural Disaster Cover:** Yes
+- **Theft Cover:** Yes
+- **Structure & Contents:** Combined
+"
+POL3426,USR1142,Business,Active,04-05-2019 00:00,07-03-2026 00:00,10467.65,1702438.62,"## For Business Insurance
+- **Business Type:** Retail
+- **Annual Revenue:** 1M–10M
+- **Employee Count:** 50
+- **Property Cover:** Yes
+- **Liability Cover:** Yes
+- **Cyber Attack Cover:** No
+"
+POL3427,USR1142,Travel,Under Review,05-11-2015 00:00,16-11-2026 00:00,46687.92,212301.84,"## For Travel Insurance
+- **Travel Region:** International
+- **Trip Duration:** 14 days
+- **Coverage Type:** Individual
+- **Baggage Loss Cover:** Yes
+- **Flight Delay Cover:** Yes
+- **Medical Emergency Cover:** Yes
+"
+POL3429,USR1143,Health,Cancelled,19-06-2022 00:00,30-04-2025 00:00,46709.45,303990.12,"## For Health Insurance
+- **Coverage Limit:** ₹10,00,000
+- **Hospital Network:** Network B
+- **Cashless Available:** Yes
+- **Waiting Period:** 2 months
+- **Includes Maternity:** No
+- **Critical Illness Cover:** Yes
+- **Deductibles:** ₹10,000
+"
+POL3430,USR1143,Pet,Expired,26-03-2020 00:00,01-06-2025 00:00,25713.37,410418.97,"## For Pet Insurance
+- **Pet Type:** Dog
+- **Breed:** Golden Retriever
+- **Pet Age:** 5 years
+- **Vet Visits Covered:** Yes
+- **Accident/Illness Cover:** Yes
+- **Vaccination Coverage:** Yes
+"
+POL3432,USR1144,Car,Under Review,02-03-2016 00:00,23-01-2025 00:00,34343.32,480150.8,"## For Car Insurance
+- **Vehicle Type:** SUV
+- **Vehicle Model:** Swift 456
+- **Registration Number:** MH-12-AB-4567
+- **Manufacture Year:** 2019
+- **Insured Declared Value (IDV):** ₹7,00,000
+- **Driver Age:** 34
+- **Accident History:** 1 claim
+- **Third Party Cover:** Yes
+- **Add-ons:** Zero Depreciation, Engine Protect
+"
+POL3433,USR1144,Car,Cancelled,09-11-2017 00:00,27-10-2024 00:00,14863.68,19674.37,"## For Car Insurance
+- **Vehicle Type:** SUV
+- **Vehicle Model:** Swift 456
+- **Registration Number:** MH-12-AB-4567
+- **Manufacture Year:** 2019
+- **Insured Declared Value (IDV):** ₹7,00,000
+- **Driver Age:** 34
+- **Accident History:** 1 claim
+- **Third Party Cover:** Yes
+- **Add-ons:** Zero Depreciation, Engine Protect
+"
+POL3435,USR1145,Home,Pending,03-10-2015 00:00,12-01-2026 00:00,5530.37,478291.75,"## For Home Insurance
+- **Property Type:** Apartment
+- **Property Value:** ₹50,00,000
+- **Year Built:** 2015
+- **Natural Disaster Cover:** Yes
+- **Theft Cover:** Yes
+- **Structure & Contents:** Combined
+"
+POL3436,USR1145,Home,Cancelled,28-03-2017 00:00,03-02-2027 00:00,16009.86,373477.08,"## For Home Insurance
+- **Property Type:** Apartment
+- **Property Value:** ₹50,00,000
+- **Year Built:** 2015
+- **Natural Disaster Cover:** Yes
+- **Theft Cover:** Yes
+- **Structure & Contents:** Combined
+"
+POL3437,USR1145,Home,Under Review,16-02-2018 00:00,06-10-2026 00:00,15905.57,1231969.08,"## For Home Insurance
+- **Property Type:** Apartment
+- **Property Value:** ₹50,00,000
+- **Year Built:** 2015
+- **Natural Disaster Cover:** Yes
+- **Theft Cover:** Yes
+- **Structure & Contents:** Combined
+"
+POL3438,USR1146,Pet,Active,27-10-2022 00:00,03-12-2025 00:00,22527.65,1224171.03,"## For Pet Insurance
+- **Pet Type:** Dog
+- **Breed:** Golden Retriever
+- **Pet Age:** 5 years
+- **Vet Visits Covered:** Yes
+- **Accident/Illness Cover:** Yes
+- **Vaccination Coverage:** Yes
+"
+POL3441,USR1147,Home,Under Review,19-11-2016 00:00,17-12-2024 00:00,49114.94,1744798.9,"## For Home Insurance
+- **Property Type:** Apartment
+- **Property Value:** ₹50,00,000
+- **Year Built:** 2015
+- **Natural Disaster Cover:** Yes
+- **Theft Cover:** Yes
+- **Structure & Contents:** Combined
+"
+POL3444,USR1148,Pet,Under Review,25-09-2018 00:00,05-07-2025 00:00,15589.67,633330.9,"## For Pet Insurance
+- **Pet Type:** Dog
+- **Breed:** Golden Retriever
+- **Pet Age:** 5 years
+- **Vet Visits Covered:** Yes
+- **Accident/Illness Cover:** Yes
+- **Vaccination Coverage:** Yes
+"
+POL3445,USR1148,Pet,Pending,29-05-2020 00:00,02-03-2026 00:00,18879.69,451310.96,"## For Pet Insurance
+- **Pet Type:** Dog
+- **Breed:** Golden Retriever
+- **Pet Age:** 5 years
+- **Vet Visits Covered:** Yes
+- **Accident/Illness Cover:** Yes
+- **Vaccination Coverage:** Yes
+"
+POL3446,USR1148,Business,Under Review,10-03-2021 00:00,26-01-2026 00:00,8377.35,1100529.2,"## For Business Insurance
+- **Business Type:** Retail
+- **Annual Revenue:** 1M–10M
+- **Employee Count:** 50
+- **Property Cover:** Yes
+- **Liability Cover:** Yes
+- **Cyber Attack Cover:** No
+"
+POL3447,USR1149,Car,Pending,27-02-2021 00:00,03-04-2027 00:00,15102.53,1176948.32,"## For Car Insurance
+- **Vehicle Type:** SUV
+- **Vehicle Model:** Swift 456
+- **Registration Number:** MH-12-AB-4567
+- **Manufacture Year:** 2019
+- **Insured Declared Value (IDV):** ₹7,00,000
+- **Driver Age:** 34
+- **Accident History:** 1 claim
+- **Third Party Cover:** Yes
+- **Add-ons:** Zero Depreciation, Engine Protect
+"
+POL3448,USR1149,Life,Pending,25-11-2016 00:00,04-08-2026 00:00,49592.36,1682643.88,"## For Life Insurance
+- **Policy Term (Years):** 20
+- **Sum Assured:** ₹25,00,000
+- **Payment Term:** Yearly
+- **Nominee Name:** John Doe
+- **Medical Exam Required:** Yes
+- **Smoker Status:** Non-Smoker
+"
+POL3449,USR1149,Business,Pending,01-04-2019 00:00,16-12-2025 00:00,13334.84,1128603.74,"## For Business Insurance
+- **Business Type:** Retail
+- **Annual Revenue:** 1M–10M
+- **Employee Count:** 50
+- **Property Cover:** Yes
+- **Liability Cover:** Yes
+- **Cyber Attack Cover:** No
+"
+POL3450,USR1150,Life,Pending,17-02-2016 00:00,22-05-2027 00:00,39927.55,281693.92,"## For Life Insurance
+- **Policy Term (Years):** 20
+- **Sum Assured:** ₹25,00,000
+- **Payment Term:** Yearly
+- **Nominee Name:** John Doe
+- **Medical Exam Required:** Yes
+- **Smoker Status:** Non-Smoker
+"
+POL3451,USR1150,Business,Cancelled,11-08-2022 00:00,21-02-2027 00:00,28530.02,1338869.26,"## For Business Insurance
+- **Business Type:** Retail
+- **Annual Revenue:** 1M–10M
+- **Employee Count:** 50
+- **Property Cover:** Yes
+- **Liability Cover:** Yes
+- **Cyber Attack Cover:** No
+"
+POL3453,USR1151,Home,Expired,21-07-2016 00:00,29-10-2026 00:00,49323.04,580003.92,"## For Home Insurance
+- **Property Type:** Apartment
+- **Property Value:** ₹50,00,000
+- **Year Built:** 2015
+- **Natural Disaster Cover:** Yes
+- **Theft Cover:** Yes
+- **Structure & Contents:** Combined
+"
+POL3454,USR1151,Business,Under Review,25-07-2019 00:00,26-02-2026 00:00,40126.9,42765.37,"## For Business Insurance
+- **Business Type:** Retail
+- **Annual Revenue:** 1M–10M
+- **Employee Count:** 50
+- **Property Cover:** Yes
+- **Liability Cover:** Yes
+- **Cyber Attack Cover:** No
+"
+POL3455,USR1151,Home,Active,17-10-2022 00:00,06-11-2024 00:00,44999.3,272854.46,"## For Home Insurance
+- **Property Type:** Apartment
+- **Property Value:** ₹50,00,000
+- **Year Built:** 2015
+- **Natural Disaster Cover:** Yes
+- **Theft Cover:** Yes
+- **Structure & Contents:** Combined
+"
+POL3456,USR1152,Home,Cancelled,07-09-2016 00:00,05-06-2026 00:00,32338.43,1065305.61,"## For Home Insurance
+- **Property Type:** Apartment
+- **Property Value:** ₹50,00,000
+- **Year Built:** 2015
+- **Natural Disaster Cover:** Yes
+- **Theft Cover:** Yes
+- **Structure & Contents:** Combined
+"
+POL3457,USR1152,Travel,Pending,04-02-2016 00:00,16-08-2025 00:00,4347.67,491619.71,"## For Travel Insurance
+- **Travel Region:** International
+- **Trip Duration:** 14 days
+- **Coverage Type:** Individual
+- **Baggage Loss Cover:** Yes
+- **Flight Delay Cover:** Yes
+- **Medical Emergency Cover:** Yes
+"
+POL3458,USR1152,Pet,Expired,07-01-2018 00:00,02-12-2026 00:00,17558.19,1773601.97,"## For Pet Insurance
+- **Pet Type:** Dog
+- **Breed:** Golden Retriever
+- **Pet Age:** 5 years
+- **Vet Visits Covered:** Yes
+- **Accident/Illness Cover:** Yes
+- **Vaccination Coverage:** Yes
+"
+POL3459,USR1153,Home,Under Review,13-02-2016 00:00,25-06-2024 00:00,29235.95,1832726.16,"## For Home Insurance
+- **Property Type:** Apartment
+- **Property Value:** ₹50,00,000
+- **Year Built:** 2015
+- **Natural Disaster Cover:** Yes
+- **Theft Cover:** Yes
+- **Structure & Contents:** Combined
+"
+POL3460,USR1153,Life,Under Review,20-03-2016 00:00,15-09-2024 00:00,29627.35,353059.44,"## For Life Insurance
+- **Policy Term (Years):** 20
+- **Sum Assured:** ₹25,00,000
+- **Payment Term:** Yearly
+- **Nominee Name:** John Doe
+- **Medical Exam Required:** Yes
+- **Smoker Status:** Non-Smoker
+"
+POL3462,USR1154,Pet,Under Review,21-09-2018 00:00,19-10-2024 00:00,1349.22,1327536.29,"## For Pet Insurance
+- **Pet Type:** Dog
+- **Breed:** Golden Retriever
+- **Pet Age:** 5 years
+- **Vet Visits Covered:** Yes
+- **Accident/Illness Cover:** Yes
+- **Vaccination Coverage:** Yes
+"
+POL3463,USR1154,Pet,Cancelled,07-01-2022 00:00,20-12-2025 00:00,25698.64,1084471.03,"## For Pet Insurance
+- **Pet Type:** Dog
+- **Breed:** Golden Retriever
+- **Pet Age:** 5 years
+- **Vet Visits Covered:** Yes
+- **Accident/Illness Cover:** Yes
+- **Vaccination Coverage:** Yes
+"
+POL3465,USR1155,Home,Expired,05-01-2022 00:00,13-08-2025 00:00,17620.31,151466.8,"## For Home Insurance
+- **Property Type:** Apartment
+- **Property Value:** ₹50,00,000
+- **Year Built:** 2015
+- **Natural Disaster Cover:** Yes
+- **Theft Cover:** Yes
+- **Structure & Contents:** Combined
+"
+POL3466,USR1155,Pet,Expired,15-08-2018 00:00,10-04-2025 00:00,15705.25,1336329.97,"## For Pet Insurance
+- **Pet Type:** Dog
+- **Breed:** Golden Retriever
+- **Pet Age:** 5 years
+- **Vet Visits Covered:** Yes
+- **Accident/Illness Cover:** Yes
+- **Vaccination Coverage:** Yes
+"
+POL3468,USR1156,Home,Expired,21-09-2017 00:00,23-04-2027 00:00,18219.9,36040.45,"## For Home Insurance
+- **Property Type:** Apartment
+- **Property Value:** ₹50,00,000
+- **Year Built:** 2015
+- **Natural Disaster Cover:** Yes
+- **Theft Cover:** Yes
+- **Structure & Contents:** Combined
+"
+POL3469,USR1156,Home,Cancelled,11-03-2020 00:00,16-01-2026 00:00,46787.42,1969772.88,"## For Home Insurance
+- **Property Type:** Apartment
+- **Property Value:** ₹50,00,000
+- **Year Built:** 2015
+- **Natural Disaster Cover:** Yes
+- **Theft Cover:** Yes
+- **Structure & Contents:** Combined
+"
+POL3471,USR1157,Pet,Active,17-12-2021 00:00,15-11-2026 00:00,24086.66,585613.89,"## For Pet Insurance
+- **Pet Type:** Dog
+- **Breed:** Golden Retriever
+- **Pet Age:** 5 years
+- **Vet Visits Covered:** Yes
+- **Accident/Illness Cover:** Yes
+- **Vaccination Coverage:** Yes
+"
+POL3472,USR1157,Health,Cancelled,10-07-2023 00:00,28-12-2025 00:00,29550.93,602057.24,"## For Health Insurance
+- **Coverage Limit:** ₹10,00,000
+- **Hospital Network:** Network B
+- **Cashless Available:** Yes
+- **Waiting Period:** 2 months
+- **Includes Maternity:** No
+- **Critical Illness Cover:** Yes
+- **Deductibles:** ₹10,000
+"
+POL3473,USR1157,Car,Cancelled,13-05-2024 00:00,21-12-2025 00:00,24356.28,1869190.01,"## For Car Insurance
+- **Vehicle Type:** SUV
+- **Vehicle Model:** Swift 456
+- **Registration Number:** MH-12-AB-4567
+- **Manufacture Year:** 2019
+- **Insured Declared Value (IDV):** ₹7,00,000
+- **Driver Age:** 34
+- **Accident History:** 1 claim
+- **Third Party Cover:** Yes
+- **Add-ons:** Zero Depreciation, Engine Protect
+"
+POL3474,USR1158,Pet,Expired,07-10-2022 00:00,01-06-2025 00:00,1644.5,1470871.44,"## For Pet Insurance
+- **Pet Type:** Dog
+- **Breed:** Golden Retriever
+- **Pet Age:** 5 years
+- **Vet Visits Covered:** Yes
+- **Accident/Illness Cover:** Yes
+- **Vaccination Coverage:** Yes
+"
+POL3475,USR1158,Car,Pending,16-07-2015 00:00,25-12-2025 00:00,49750.28,1797159.9,"## For Car Insurance
+- **Vehicle Type:** SUV
+- **Vehicle Model:** Swift 456
+- **Registration Number:** MH-12-AB-4567
+- **Manufacture Year:** 2019
+- **Insured Declared Value (IDV):** ₹7,00,000
+- **Driver Age:** 34
+- **Accident History:** 1 claim
+- **Third Party Cover:** Yes
+- **Add-ons:** Zero Depreciation, Engine Protect
+"
+POL3476,USR1158,Health,Active,26-12-2020 00:00,19-09-2024 00:00,45727.29,10088.14,"## For Health Insurance
+- **Coverage Limit:** ₹10,00,000
+- **Hospital Network:** Network B
+- **Cashless Available:** Yes
+- **Waiting Period:** 2 months
+- **Includes Maternity:** No
+- **Critical Illness Cover:** Yes
+- **Deductibles:** ₹10,000
+"
+POL3477,USR1159,Travel,Pending,31-05-2016 00:00,15-10-2026 00:00,5001.04,1806747.82,"## For Travel Insurance
+- **Travel Region:** International
+- **Trip Duration:** 14 days
+- **Coverage Type:** Individual
+- **Baggage Loss Cover:** Yes
+- **Flight Delay Cover:** Yes
+- **Medical Emergency Cover:** Yes
+"
+POL3480,USR1160,Health,Cancelled,04-06-2022 00:00,13-03-2027 00:00,5252.31,1187465.53,"## For Health Insurance
+- **Coverage Limit:** ₹10,00,000
+- **Hospital Network:** Network B
+- **Cashless Available:** Yes
+- **Waiting Period:** 2 months
+- **Includes Maternity:** No
+- **Critical Illness Cover:** Yes
+- **Deductibles:** ₹10,000
+"
+POL3481,USR1160,Pet,Under Review,13-03-2018 00:00,30-09-2026 00:00,19582.73,700746.14,"## For Pet Insurance
+- **Pet Type:** Dog
+- **Breed:** Golden Retriever
+- **Pet Age:** 5 years
+- **Vet Visits Covered:** Yes
+- **Accident/Illness Cover:** Yes
+- **Vaccination Coverage:** Yes
+"
+POL3482,USR1160,Business,Under Review,12-07-2018 00:00,29-01-2025 00:00,1282.51,243895.17,"## For Business Insurance
+- **Business Type:** Retail
+- **Annual Revenue:** 1M–10M
+- **Employee Count:** 50
+- **Property Cover:** Yes
+- **Liability Cover:** Yes
+- **Cyber Attack Cover:** No
+"
+POL3483,USR1161,Travel,Pending,30-04-2024 00:00,06-09-2024 00:00,9052.44,1121678.92,"## For Travel Insurance
+- **Travel Region:** International
+- **Trip Duration:** 14 days
+- **Coverage Type:** Individual
+- **Baggage Loss Cover:** Yes
+- **Flight Delay Cover:** Yes
+- **Medical Emergency Cover:** Yes
+"
+POL3484,USR1161,Health,Cancelled,19-03-2024 00:00,24-10-2026 00:00,16102.82,1685147,"## For Health Insurance
+- **Coverage Limit:** ₹10,00,000
+- **Hospital Network:** Network B
+- **Cashless Available:** Yes
+- **Waiting Period:** 2 months
+- **Includes Maternity:** No
+- **Critical Illness Cover:** Yes
+- **Deductibles:** ₹10,000
+"
+POL3485,USR1161,Health,Cancelled,19-02-2023 00:00,16-06-2026 00:00,29822.06,102115.24,"## For Health Insurance
+- **Coverage Limit:** ₹10,00,000
+- **Hospital Network:** Network B
+- **Cashless Available:** Yes
+- **Waiting Period:** 2 months
+- **Includes Maternity:** No
+- **Critical Illness Cover:** Yes
+- **Deductibles:** ₹10,000
+"
+POL3486,USR1162,Life,Expired,14-05-2020 00:00,17-05-2027 00:00,46320.48,418568.59,"## For Life Insurance
+- **Policy Term (Years):** 20
+- **Sum Assured:** ₹25,00,000
+- **Payment Term:** Yearly
+- **Nominee Name:** John Doe
+- **Medical Exam Required:** Yes
+- **Smoker Status:** Non-Smoker
+"
+POL3489,USR1163,Business,Under Review,12-08-2017 00:00,11-09-2025 00:00,34248.92,1751881.84,"## For Business Insurance
+- **Business Type:** Retail
+- **Annual Revenue:** 1M–10M
+- **Employee Count:** 50
+- **Property Cover:** Yes
+- **Liability Cover:** Yes
+- **Cyber Attack Cover:** No
+"
+POL3490,USR1163,Home,Cancelled,10-04-2016 00:00,12-05-2026 00:00,44589.58,1393054.68,"## For Home Insurance
+- **Property Type:** Apartment
+- **Property Value:** ₹50,00,000
+- **Year Built:** 2015
+- **Natural Disaster Cover:** Yes
+- **Theft Cover:** Yes
+- **Structure & Contents:** Combined
+"
+POL3492,USR1164,Travel,Pending,20-01-2019 00:00,04-10-2026 00:00,6765.33,1982582.19,"## For Travel Insurance
+- **Travel Region:** International
+- **Trip Duration:** 14 days
+- **Coverage Type:** Individual
+- **Baggage Loss Cover:** Yes
+- **Flight Delay Cover:** Yes
+- **Medical Emergency Cover:** Yes
+"
+POL3493,USR1164,Health,Expired,24-06-2018 00:00,14-10-2025 00:00,28263.79,1228606.12,"## For Health Insurance
+- **Coverage Limit:** ₹10,00,000
+- **Hospital Network:** Network B
+- **Cashless Available:** Yes
+- **Waiting Period:** 2 months
+- **Includes Maternity:** No
+- **Critical Illness Cover:** Yes
+- **Deductibles:** ₹10,000
+"
+POL3495,USR1165,Business,Under Review,21-03-2022 00:00,15-11-2025 00:00,9499,1111543.2,"## For Business Insurance
+- **Business Type:** Retail
+- **Annual Revenue:** 1M–10M
+- **Employee Count:** 50
+- **Property Cover:** Yes
+- **Liability Cover:** Yes
+- **Cyber Attack Cover:** No
+"
+POL3496,USR1165,Pet,Active,29-01-2018 00:00,29-12-2025 00:00,23982.32,1963772.96,"## For Pet Insurance
+- **Pet Type:** Dog
+- **Breed:** Golden Retriever
+- **Pet Age:** 5 years
+- **Vet Visits Covered:** Yes
+- **Accident/Illness Cover:** Yes
+- **Vaccination Coverage:** Yes
+"
+POL3497,USR1165,Business,Active,21-09-2023 00:00,16-05-2026 00:00,27060.84,595224.96,"## For Business Insurance
+- **Business Type:** Retail
+- **Annual Revenue:** 1M–10M
+- **Employee Count:** 50
+- **Property Cover:** Yes
+- **Liability Cover:** Yes
+- **Cyber Attack Cover:** No
+"
+POL3498,USR1166,Life,Under Review,26-11-2019 00:00,05-02-2025 00:00,43261.27,1158341.84,"## For Life Insurance
+- **Policy Term (Years):** 20
+- **Sum Assured:** ₹25,00,000
+- **Payment Term:** Yearly
+- **Nominee Name:** John Doe
+- **Medical Exam Required:** Yes
+- **Smoker Status:** Non-Smoker
+"
+POL3499,USR1166,Home,Expired,31-03-2023 00:00,08-11-2026 00:00,42242.16,1455620.22,"## For Home Insurance
+- **Property Type:** Apartment
+- **Property Value:** ₹50,00,000
+- **Year Built:** 2015
+- **Natural Disaster Cover:** Yes
+- **Theft Cover:** Yes
+- **Structure & Contents:** Combined
+"
+POL3501,USR1167,Business,Active,05-03-2024 00:00,18-04-2026 00:00,28138.85,777624.04,"## For Business Insurance
+- **Business Type:** Retail
+- **Annual Revenue:** 1M–10M
+- **Employee Count:** 50
+- **Property Cover:** Yes
+- **Liability Cover:** Yes
+- **Cyber Attack Cover:** No
+"
+POL3502,USR1167,Life,Cancelled,21-01-2017 00:00,21-10-2024 00:00,9565.48,118365.46,"## For Life Insurance
+- **Policy Term (Years):** 20
+- **Sum Assured:** ₹25,00,000
+- **Payment Term:** Yearly
+- **Nominee Name:** John Doe
+- **Medical Exam Required:** Yes
+- **Smoker Status:** Non-Smoker
+"
+POL3504,USR1168,Life,Active,25-05-2020 00:00,11-07-2024 00:00,17663.78,757161.12,"## For Life Insurance
+- **Policy Term (Years):** 20
+- **Sum Assured:** ₹25,00,000
+- **Payment Term:** Yearly
+- **Nominee Name:** John Doe
+- **Medical Exam Required:** Yes
+- **Smoker Status:** Non-Smoker
+"
+POL3505,USR1168,Life,Cancelled,18-02-2023 00:00,24-02-2026 00:00,28533.06,451570.37,"## For Life Insurance
+- **Policy Term (Years):** 20
+- **Sum Assured:** ₹25,00,000
+- **Payment Term:** Yearly
+- **Nominee Name:** John Doe
+- **Medical Exam Required:** Yes
+- **Smoker Status:** Non-Smoker
+"
+POL3507,USR1169,Pet,Under Review,15-03-2020 00:00,06-02-2027 00:00,42026.64,1663360.5,"## For Pet Insurance
+- **Pet Type:** Dog
+- **Breed:** Golden Retriever
+- **Pet Age:** 5 years
+- **Vet Visits Covered:** Yes
+- **Accident/Illness Cover:** Yes
+- **Vaccination Coverage:** Yes
+"
+POL3508,USR1169,Business,Active,21-03-2018 00:00,11-05-2027 00:00,49067.93,1877000.45,"## For Business Insurance
+- **Business Type:** Retail
+- **Annual Revenue:** 1M–10M
+- **Employee Count:** 50
+- **Property Cover:** Yes
+- **Liability Cover:** Yes
+- **Cyber Attack Cover:** No
+"
+POL3509,USR1169,Travel,Active,24-04-2017 00:00,06-04-2027 00:00,1401.79,1455233.78,"## For Travel Insurance
+- **Travel Region:** International
+- **Trip Duration:** 14 days
+- **Coverage Type:** Individual
+- **Baggage Loss Cover:** Yes
+- **Flight Delay Cover:** Yes
+- **Medical Emergency Cover:** Yes
+"
+POL3510,USR1170,Travel,Expired,12-01-2024 00:00,12-06-2025 00:00,45151.91,311800.63,"## For Travel Insurance
+- **Travel Region:** International
+- **Trip Duration:** 14 days
+- **Coverage Type:** Individual
+- **Baggage Loss Cover:** Yes
+- **Flight Delay Cover:** Yes
+- **Medical Emergency Cover:** Yes
+"
+POL3513,USR1171,Car,Active,19-07-2019 00:00,30-03-2027 00:00,27066.93,435474.72,"## For Car Insurance
+- **Vehicle Type:** SUV
+- **Vehicle Model:** Swift 456
+- **Registration Number:** MH-12-AB-4567
+- **Manufacture Year:** 2019
+- **Insured Declared Value (IDV):** ₹7,00,000
+- **Driver Age:** 34
+- **Accident History:** 1 claim
+- **Third Party Cover:** Yes
+- **Add-ons:** Zero Depreciation, Engine Protect
+"
+POL3514,USR1171,Life,Active,16-08-2016 00:00,31-07-2024 00:00,6370.36,162404.41,"## For Life Insurance
+- **Policy Term (Years):** 20
+- **Sum Assured:** ₹25,00,000
+- **Payment Term:** Yearly
+- **Nominee Name:** John Doe
+- **Medical Exam Required:** Yes
+- **Smoker Status:** Non-Smoker
+"
+POL3516,USR1172,Travel,Under Review,14-04-2018 00:00,23-10-2026 00:00,607.63,507954.15,"## For Travel Insurance
+- **Travel Region:** International
+- **Trip Duration:** 14 days
+- **Coverage Type:** Individual
+- **Baggage Loss Cover:** Yes
+- **Flight Delay Cover:** Yes
+- **Medical Emergency Cover:** Yes
+"
+POL3517,USR1172,Pet,Expired,01-11-2019 00:00,10-10-2025 00:00,30524.83,643290.8,"## For Pet Insurance
+- **Pet Type:** Dog
+- **Breed:** Golden Retriever
+- **Pet Age:** 5 years
+- **Vet Visits Covered:** Yes
+- **Accident/Illness Cover:** Yes
+- **Vaccination Coverage:** Yes
+"
+POL3518,USR1172,Pet,Expired,03-03-2020 00:00,11-05-2026 00:00,23444.1,585576.36,"## For Pet Insurance
+- **Pet Type:** Dog
+- **Breed:** Golden Retriever
+- **Pet Age:** 5 years
+- **Vet Visits Covered:** Yes
+- **Accident/Illness Cover:** Yes
+- **Vaccination Coverage:** Yes
+"
+POL3519,USR1173,Life,Pending,24-08-2023 00:00,09-12-2025 00:00,13295.9,70627.95,"## For Life Insurance
+- **Policy Term (Years):** 20
+- **Sum Assured:** ₹25,00,000
+- **Payment Term:** Yearly
+- **Nominee Name:** John Doe
+- **Medical Exam Required:** Yes
+- **Smoker Status:** Non-Smoker
+"
+POL3522,USR1174,Pet,Active,04-10-2017 00:00,18-01-2025 00:00,39904.56,1762046.61,"## For Pet Insurance
+- **Pet Type:** Dog
+- **Breed:** Golden Retriever
+- **Pet Age:** 5 years
+- **Vet Visits Covered:** Yes
+- **Accident/Illness Cover:** Yes
+- **Vaccination Coverage:** Yes
+"
+POL3523,USR1174,Pet,Under Review,23-02-2022 00:00,22-11-2026 00:00,41880.34,1154649.2,"## For Pet Insurance
+- **Pet Type:** Dog
+- **Breed:** Golden Retriever
+- **Pet Age:** 5 years
+- **Vet Visits Covered:** Yes
+- **Accident/Illness Cover:** Yes
+- **Vaccination Coverage:** Yes
+"
+POL3524,USR1174,Life,Expired,24-02-2016 00:00,17-09-2026 00:00,43639.37,1928551,"## For Life Insurance
+- **Policy Term (Years):** 20
+- **Sum Assured:** ₹25,00,000
+- **Payment Term:** Yearly
+- **Nominee Name:** John Doe
+- **Medical Exam Required:** Yes
+- **Smoker Status:** Non-Smoker
+"
+POL3525,USR1175,Health,Active,12-06-2019 00:00,09-12-2026 00:00,37766.7,121395.38,"## For Health Insurance
+- **Coverage Limit:** ₹10,00,000
+- **Hospital Network:** Network B
+- **Cashless Available:** Yes
+- **Waiting Period:** 2 months
+- **Includes Maternity:** No
+- **Critical Illness Cover:** Yes
+- **Deductibles:** ₹10,000
+"
+POL3526,USR1175,Business,Active,07-03-2024 00:00,31-10-2024 00:00,28847.23,1317251.88,"## For Business Insurance
+- **Business Type:** Retail
+- **Annual Revenue:** 1M–10M
+- **Employee Count:** 50
+- **Property Cover:** Yes
+- **Liability Cover:** Yes
+- **Cyber Attack Cover:** No
+"
+POL3528,USR1176,Travel,Under Review,02-02-2020 00:00,24-10-2025 00:00,34808.3,1505193.35,"## For Travel Insurance
+- **Travel Region:** International
+- **Trip Duration:** 14 days
+- **Coverage Type:** Individual
+- **Baggage Loss Cover:** Yes
+- **Flight Delay Cover:** Yes
+- **Medical Emergency Cover:** Yes
+"
+POL3529,USR1176,Home,Pending,08-08-2022 00:00,13-10-2026 00:00,25100.98,751218.02,"## For Home Insurance
+- **Property Type:** Apartment
+- **Property Value:** ₹50,00,000
+- **Year Built:** 2015
+- **Natural Disaster Cover:** Yes
+- **Theft Cover:** Yes
+- **Structure & Contents:** Combined
+"
+POL3530,USR1176,Pet,Pending,05-05-2019 00:00,04-04-2026 00:00,12849.32,1544994.61,"## For Pet Insurance
+- **Pet Type:** Dog
+- **Breed:** Golden Retriever
+- **Pet Age:** 5 years
+- **Vet Visits Covered:** Yes
+- **Accident/Illness Cover:** Yes
+- **Vaccination Coverage:** Yes
+"
+POL3531,USR1177,Life,Under Review,23-04-2016 00:00,09-06-2026 00:00,26032.59,1775495.94,"## For Life Insurance
+- **Policy Term (Years):** 20
+- **Sum Assured:** ₹25,00,000
+- **Payment Term:** Yearly
+- **Nominee Name:** John Doe
+- **Medical Exam Required:** Yes
+- **Smoker Status:** Non-Smoker
+"
+POL3532,USR1177,Business,Active,27-04-2020 00:00,25-08-2025 00:00,34037.76,145179.55,"## For Business Insurance
+- **Business Type:** Retail
+- **Annual Revenue:** 1M–10M
+- **Employee Count:** 50
+- **Property Cover:** Yes
+- **Liability Cover:** Yes
+- **Cyber Attack Cover:** No
+"
+POL3534,USR1178,Travel,Cancelled,14-03-2021 00:00,31-05-2027 00:00,17981.21,1779565.94,"## For Travel Insurance
+- **Travel Region:** International
+- **Trip Duration:** 14 days
+- **Coverage Type:** Individual
+- **Baggage Loss Cover:** Yes
+- **Flight Delay Cover:** Yes
+- **Medical Emergency Cover:** Yes
+"
+POL3537,USR1179,Car,Expired,23-04-2022 00:00,30-05-2027 00:00,47106.55,259962.39,"## For Car Insurance
+- **Vehicle Type:** SUV
+- **Vehicle Model:** Swift 456
+- **Registration Number:** MH-12-AB-4567
+- **Manufacture Year:** 2019
+- **Insured Declared Value (IDV):** ₹7,00,000
+- **Driver Age:** 34
+- **Accident History:** 1 claim
+- **Third Party Cover:** Yes
+- **Add-ons:** Zero Depreciation, Engine Protect
+"
+POL3540,USR1180,Health,Under Review,01-09-2015 00:00,08-04-2027 00:00,33762.05,925706.81,"## For Health Insurance
+- **Coverage Limit:** ₹10,00,000
+- **Hospital Network:** Network B
+- **Cashless Available:** Yes
+- **Waiting Period:** 2 months
+- **Includes Maternity:** No
+- **Critical Illness Cover:** Yes
+- **Deductibles:** ₹10,000
+"
+POL3541,USR1180,Health,Under Review,25-02-2017 00:00,17-03-2026 00:00,2548.79,1555461.92,"## For Health Insurance
+- **Coverage Limit:** ₹10,00,000
+- **Hospital Network:** Network B
+- **Cashless Available:** Yes
+- **Waiting Period:** 2 months
+- **Includes Maternity:** No
+- **Critical Illness Cover:** Yes
+- **Deductibles:** ₹10,000
+"
+POL3543,USR1181,Travel,Pending,30-05-2022 00:00,22-12-2024 00:00,31452.89,441466.18,"## For Travel Insurance
+- **Travel Region:** International
+- **Trip Duration:** 14 days
+- **Coverage Type:** Individual
+- **Baggage Loss Cover:** Yes
+- **Flight Delay Cover:** Yes
+- **Medical Emergency Cover:** Yes
+"
+POL3546,USR1182,Pet,Active,26-02-2016 00:00,15-06-2026 00:00,32996.18,578198.18,"## For Pet Insurance
+- **Pet Type:** Dog
+- **Breed:** Golden Retriever
+- **Pet Age:** 5 years
+- **Vet Visits Covered:** Yes
+- **Accident/Illness Cover:** Yes
+- **Vaccination Coverage:** Yes
+"
+POL3547,USR1182,Life,Under Review,09-11-2023 00:00,28-08-2026 00:00,34225.88,1000420.92,"## For Life Insurance
+- **Policy Term (Years):** 20
+- **Sum Assured:** ₹25,00,000
+- **Payment Term:** Yearly
+- **Nominee Name:** John Doe
+- **Medical Exam Required:** Yes
+- **Smoker Status:** Non-Smoker
+"
+POL3548,USR1182,Health,Expired,09-02-2017 00:00,21-05-2025 00:00,34224.17,734471.26,"## For Health Insurance
+- **Coverage Limit:** ₹10,00,000
+- **Hospital Network:** Network B
+- **Cashless Available:** Yes
+- **Waiting Period:** 2 months
+- **Includes Maternity:** No
+- **Critical Illness Cover:** Yes
+- **Deductibles:** ₹10,000
+"
+POL3549,USR1183,Pet,Under Review,29-07-2020 00:00,24-05-2027 00:00,37677.35,325784.56,"## For Pet Insurance
+- **Pet Type:** Dog
+- **Breed:** Golden Retriever
+- **Pet Age:** 5 years
+- **Vet Visits Covered:** Yes
+- **Accident/Illness Cover:** Yes
+- **Vaccination Coverage:** Yes
+"
+POL3552,USR1184,Pet,Expired,20-10-2021 00:00,22-04-2025 00:00,29929.04,271079.09,"## For Pet Insurance
+- **Pet Type:** Dog
+- **Breed:** Golden Retriever
+- **Pet Age:** 5 years
+- **Vet Visits Covered:** Yes
+- **Accident/Illness Cover:** Yes
+- **Vaccination Coverage:** Yes
+"
+POL3553,USR1184,Business,Expired,04-09-2022 00:00,29-08-2026 00:00,26512.5,1092927.12,"## For Business Insurance
+- **Business Type:** Retail
+- **Annual Revenue:** 1M–10M
+- **Employee Count:** 50
+- **Property Cover:** Yes
+- **Liability Cover:** Yes
+- **Cyber Attack Cover:** No
+"
+POL3554,USR1184,Pet,Expired,17-08-2021 00:00,17-01-2027 00:00,1504.69,1934967.12,"## For Pet Insurance
+- **Pet Type:** Dog
+- **Breed:** Golden Retriever
+- **Pet Age:** 5 years
+- **Vet Visits Covered:** Yes
+- **Accident/Illness Cover:** Yes
+- **Vaccination Coverage:** Yes
+"
+POL3555,USR1185,Business,Active,30-10-2016 00:00,08-05-2026 00:00,38050.33,1484244.47,"## For Business Insurance
+- **Business Type:** Retail
+- **Annual Revenue:** 1M–10M
+- **Employee Count:** 50
+- **Property Cover:** Yes
+- **Liability Cover:** Yes
+- **Cyber Attack Cover:** No
+"
+POL3558,USR1186,Home,Under Review,06-07-2018 00:00,11-11-2026 00:00,5528.52,1896663.44,"## For Home Insurance
+- **Property Type:** Apartment
+- **Property Value:** ₹50,00,000
+- **Year Built:** 2015
+- **Natural Disaster Cover:** Yes
+- **Theft Cover:** Yes
+- **Structure & Contents:** Combined
+"
+POL3559,USR1186,Pet,Expired,27-07-2020 00:00,15-07-2024 00:00,36378.86,1574390.09,"## For Pet Insurance
+- **Pet Type:** Dog
+- **Breed:** Golden Retriever
+- **Pet Age:** 5 years
+- **Vet Visits Covered:** Yes
+- **Accident/Illness Cover:** Yes
+- **Vaccination Coverage:** Yes
+"
+POL3561,USR1187,Home,Active,22-08-2016 00:00,17-07-2024 00:00,3784.02,1518200.57,"## For Home Insurance
+- **Property Type:** Apartment
+- **Property Value:** ₹50,00,000
+- **Year Built:** 2015
+- **Natural Disaster Cover:** Yes
+- **Theft Cover:** Yes
+- **Structure & Contents:** Combined
+"
+POL3564,USR1188,Life,Expired,02-08-2020 00:00,23-01-2027 00:00,7151.6,962973.6,"## For Life Insurance
+- **Policy Term (Years):** 20
+- **Sum Assured:** ₹25,00,000
+- **Payment Term:** Yearly
+- **Nominee Name:** John Doe
+- **Medical Exam Required:** Yes
+- **Smoker Status:** Non-Smoker
+"
+POL3565,USR1188,Travel,Expired,09-06-2021 00:00,27-12-2025 00:00,29646.45,107986.37,"## For Travel Insurance
+- **Travel Region:** International
+- **Trip Duration:** 14 days
+- **Coverage Type:** Individual
+- **Baggage Loss Cover:** Yes
+- **Flight Delay Cover:** Yes
+- **Medical Emergency Cover:** Yes
+"
+POL3566,USR1188,Business,Cancelled,25-01-2016 00:00,17-03-2027 00:00,28102.67,90376.66,"## For Business Insurance
+- **Business Type:** Retail
+- **Annual Revenue:** 1M–10M
+- **Employee Count:** 50
+- **Property Cover:** Yes
+- **Liability Cover:** Yes
+- **Cyber Attack Cover:** No
+"
+POL3567,USR1189,Life,Expired,30-11-2022 00:00,15-02-2027 00:00,10738.12,1081023.05,"## For Life Insurance
+- **Policy Term (Years):** 20
+- **Sum Assured:** ₹25,00,000
+- **Payment Term:** Yearly
+- **Nominee Name:** John Doe
+- **Medical Exam Required:** Yes
+- **Smoker Status:** Non-Smoker
+"
+POL3570,USR1190,Health,Pending,19-08-2022 00:00,20-04-2025 00:00,11007.14,77807.94,"## For Health Insurance
+- **Coverage Limit:** ₹10,00,000
+- **Hospital Network:** Network B
+- **Cashless Available:** Yes
+- **Waiting Period:** 2 months
+- **Includes Maternity:** No
+- **Critical Illness Cover:** Yes
+- **Deductibles:** ₹10,000
+"
+POL3571,USR1190,Travel,Under Review,27-09-2015 00:00,24-08-2024 00:00,13932.98,1038920.15,"## For Travel Insurance
+- **Travel Region:** International
+- **Trip Duration:** 14 days
+- **Coverage Type:** Individual
+- **Baggage Loss Cover:** Yes
+- **Flight Delay Cover:** Yes
+- **Medical Emergency Cover:** Yes
+"
+POL3572,USR1190,Travel,Under Review,22-05-2018 00:00,17-12-2025 00:00,3715.52,249321.55,"## For Travel Insurance
+- **Travel Region:** International
+- **Trip Duration:** 14 days
+- **Coverage Type:** Individual
+- **Baggage Loss Cover:** Yes
+- **Flight Delay Cover:** Yes
+- **Medical Emergency Cover:** Yes
+"
+POL3573,USR1191,Life,Cancelled,31-01-2017 00:00,02-03-2027 00:00,45074.43,467931.54,"## For Life Insurance
+- **Policy Term (Years):** 20
+- **Sum Assured:** ₹25,00,000
+- **Payment Term:** Yearly
+- **Nominee Name:** John Doe
+- **Medical Exam Required:** Yes
+- **Smoker Status:** Non-Smoker
+"
+POL3574,USR1191,Business,Cancelled,05-07-2018 00:00,26-10-2026 00:00,10467.51,754157.53,"## For Business Insurance
+- **Business Type:** Retail
+- **Annual Revenue:** 1M–10M
+- **Employee Count:** 50
+- **Property Cover:** Yes
+- **Liability Cover:** Yes
+- **Cyber Attack Cover:** No
+"
+POL3576,USR1192,Health,Expired,15-05-2017 00:00,27-01-2025 00:00,12811.79,761955.73,"## For Health Insurance
+- **Coverage Limit:** ₹10,00,000
+- **Hospital Network:** Network B
+- **Cashless Available:** Yes
+- **Waiting Period:** 2 months
+- **Includes Maternity:** No
+- **Critical Illness Cover:** Yes
+- **Deductibles:** ₹10,000
+"
+POL3579,USR1193,Pet,Cancelled,28-04-2023 00:00,21-07-2025 00:00,34671.79,789234.8,"## For Pet Insurance
+- **Pet Type:** Dog
+- **Breed:** Golden Retriever
+- **Pet Age:** 5 years
+- **Vet Visits Covered:** Yes
+- **Accident/Illness Cover:** Yes
+- **Vaccination Coverage:** Yes
+"
+POL3582,USR1194,Travel,Under Review,14-01-2017 00:00,07-09-2024 00:00,32711.4,1570951.07,"## For Travel Insurance
+- **Travel Region:** International
+- **Trip Duration:** 14 days
+- **Coverage Type:** Individual
+- **Baggage Loss Cover:** Yes
+- **Flight Delay Cover:** Yes
+- **Medical Emergency Cover:** Yes
+"
+POL3585,USR1195,Car,Expired,25-07-2020 00:00,03-11-2026 00:00,40062.47,1519859.19,"## For Car Insurance
+- **Vehicle Type:** SUV
+- **Vehicle Model:** Swift 456
+- **Registration Number:** MH-12-AB-4567
+- **Manufacture Year:** 2019
+- **Insured Declared Value (IDV):** ₹7,00,000
+- **Driver Age:** 34
+- **Accident History:** 1 claim
+- **Third Party Cover:** Yes
+- **Add-ons:** Zero Depreciation, Engine Protect
+"
+POL3586,USR1195,Business,Under Review,31-08-2018 00:00,02-04-2027 00:00,34999.91,1942760.77,"## For Business Insurance
+- **Business Type:** Retail
+- **Annual Revenue:** 1M–10M
+- **Employee Count:** 50
+- **Property Cover:** Yes
+- **Liability Cover:** Yes
+- **Cyber Attack Cover:** No
+"
+POL3587,USR1195,Travel,Active,05-06-2020 00:00,10-03-2025 00:00,39518.43,190811.66,"## For Travel Insurance
+- **Travel Region:** International
+- **Trip Duration:** 14 days
+- **Coverage Type:** Individual
+- **Baggage Loss Cover:** Yes
+- **Flight Delay Cover:** Yes
+- **Medical Emergency Cover:** Yes
+"
+POL3588,USR1196,Pet,Pending,17-12-2018 00:00,27-02-2027 00:00,47132.33,1404445.65,"## For Pet Insurance
+- **Pet Type:** Dog
+- **Breed:** Golden Retriever
+- **Pet Age:** 5 years
+- **Vet Visits Covered:** Yes
+- **Accident/Illness Cover:** Yes
+- **Vaccination Coverage:** Yes
+"
+POL3589,USR1196,Car,Cancelled,06-07-2016 00:00,23-11-2025 00:00,28668.64,524185.28,"## For Car Insurance
+- **Vehicle Type:** SUV
+- **Vehicle Model:** Swift 456
+- **Registration Number:** MH-12-AB-4567
+- **Manufacture Year:** 2019
+- **Insured Declared Value (IDV):** ₹7,00,000
+- **Driver Age:** 34
+- **Accident History:** 1 claim
+- **Third Party Cover:** Yes
+- **Add-ons:** Zero Depreciation, Engine Protect
+"
+POL3590,USR1196,Travel,Cancelled,27-10-2020 00:00,06-04-2025 00:00,2079.01,294096.92,"## For Travel Insurance
+- **Travel Region:** International
+- **Trip Duration:** 14 days
+- **Coverage Type:** Individual
+- **Baggage Loss Cover:** Yes
+- **Flight Delay Cover:** Yes
+- **Medical Emergency Cover:** Yes
+"
+POL3591,USR1197,Life,Under Review,07-01-2017 00:00,14-03-2026 00:00,22809.98,272548.41,"## For Life Insurance
+- **Policy Term (Years):** 20
+- **Sum Assured:** ₹25,00,000
+- **Payment Term:** Yearly
+- **Nominee Name:** John Doe
+- **Medical Exam Required:** Yes
+- **Smoker Status:** Non-Smoker
+"
+POL3592,USR1197,Life,Expired,27-01-2021 00:00,21-09-2026 00:00,28960.4,1140042.47,"## For Life Insurance
+- **Policy Term (Years):** 20
+- **Sum Assured:** ₹25,00,000
+- **Payment Term:** Yearly
+- **Nominee Name:** John Doe
+- **Medical Exam Required:** Yes
+- **Smoker Status:** Non-Smoker
+"
+POL3594,USR1198,Business,Cancelled,15-10-2022 00:00,16-11-2024 00:00,17065.75,1079801.47,"## For Business Insurance
+- **Business Type:** Retail
+- **Annual Revenue:** 1M–10M
+- **Employee Count:** 50
+- **Property Cover:** Yes
+- **Liability Cover:** Yes
+- **Cyber Attack Cover:** No
+"
+POL3597,USR1199,Car,Under Review,13-04-2016 00:00,20-05-2027 00:00,18948.34,1938302.13,"## For Car Insurance
+- **Vehicle Type:** SUV
+- **Vehicle Model:** Swift 456
+- **Registration Number:** MH-12-AB-4567
+- **Manufacture Year:** 2019
+- **Insured Declared Value (IDV):** ₹7,00,000
+- **Driver Age:** 34
+- **Accident History:** 1 claim
+- **Third Party Cover:** Yes
+- **Add-ons:** Zero Depreciation, Engine Protect
+"
+POL3598,USR1199,Pet,Expired,24-02-2019 00:00,19-12-2026 00:00,31883.17,1314082.51,"## For Pet Insurance
+- **Pet Type:** Dog
+- **Breed:** Golden Retriever
+- **Pet Age:** 5 years
+- **Vet Visits Covered:** Yes
+- **Accident/Illness Cover:** Yes
+- **Vaccination Coverage:** Yes
+"
+POL3599,USR1199,Home,Expired,08-11-2015 00:00,08-02-2025 00:00,28056.89,504525.46,"## For Home Insurance
+- **Property Type:** Apartment
+- **Property Value:** ₹50,00,000
+- **Year Built:** 2015
+- **Natural Disaster Cover:** Yes
+- **Theft Cover:** Yes
+- **Structure & Contents:** Combined
+"
+POL3600,USR1200,Home,Under Review,08-11-2015 00:00,08-02-2025 00:00,28057.89,504565.46,"## For Home Insurance
+- **Property Type:** Apartment
+- **Property Value:** ₹50,00,000
+- **Year Built:** 2015
+- **Natural Disaster Cover:** Yes
+- **Theft Cover:** Yes
+- **Structure & Contents:** Combined
+"
+POL3601,USR1201,Car,Pending,01-06-2023 00:00,01-06-2026 00:00,18500,850000,"## For Car Insurance
+- **Vehicle Type:** SUV
+- **Vehicle Model:** Swift 456
+- **Registration Number:** MH-12-AB-4567
+- **Manufacture Year:** 2019
+- **Insured Declared Value (IDV):** ₹7,00,000
+- **Driver Age:** 34
+- **Accident History:** 1 claim
+- **Third Party Cover:** Yes
+- **Add-ons:** Zero Depreciation, Engine Protect
+"
+POL3602,USR1201,Travel,Under Review,10-04-2023 00:00,10-04-2024 00:00,8750,500000,"## For Travel Insurance
+- **Travel Region:** International
+- **Trip Duration:** 14 days
+- **Coverage Type:** Individual
+- **Baggage Loss Cover:** Yes
+- **Flight Delay Cover:** Yes
+- **Medical Emergency Cover:** Yes
+"
+POL3603,USR1201,Health,Active,15-05-2023 00:00,15-05-2025 00:00,24500,1200000,"## For Health Insurance
+- **Coverage Limit:** ₹10,00,000
+- **Hospital Network:** Network B
+- **Cashless Available:** Yes
+- **Waiting Period:** 2 months
+- **Includes Maternity:** No
+- **Critical Illness Cover:** Yes
+- **Deductibles:** ₹10,000
+"
+POL3604,USR1202,Home,Active,15-03-2021 00:00,15-03-2024 00:00,28750,2000000,"## For Home Insurance
+- **Property Type:** Apartment
+- **Property Value:** ₹50,00,000
+- **Year Built:** 2015
+- **Natural Disaster Cover:** Yes
+- **Theft Cover:** Yes
+- **Structure & Contents:** Combined
+"
+POL3605,USR1202,Life,Expired,20-11-2022 00:00,20-11-2025 00:00,32000,1500000,"## For Life Insurance
+- **Policy Term (Years):** 20
+- **Sum Assured:** ₹25,00,000
+- **Payment Term:** Yearly
+- **Nominee Name:** John Doe
+- **Medical Exam Required:** Yes
+- **Smoker Status:** Non-Smoker
+"
+POL3606,USR1202,Pet,Cancelled,05-01-2023 00:00,05-01-2025 00:00,6500,300000,"## For Pet Insurance
+- **Pet Type:** Dog
+- **Breed:** Golden Retriever
+- **Pet Age:** 5 years
+- **Vet Visits Covered:** Yes
+- **Accident/Illness Cover:** Yes
+- **Vaccination Coverage:** Yes
+"
+POL3607,USR1203,Business,Under Review,01-07-2023 00:00,01-07-2026 00:00,45000,2500000,"## For Business Insurance
+- **Business Type:** Retail
+- **Annual Revenue:** 1M–10M
+- **Employee Count:** 50
+- **Property Cover:** Yes
+- **Liability Cover:** Yes
+- **Cyber Attack Cover:** No
+"
+POL3608,USR1203,Travel,Pending,10-03-2023 00:00,10-03-2025 00:00,12500,750000,"## For Travel Insurance
+- **Travel Region:** International
+- **Trip Duration:** 14 days
+- **Coverage Type:** Individual
+- **Baggage Loss Cover:** Yes
+- **Flight Delay Cover:** Yes
+- **Medical Emergency Cover:** Yes
+"
+POL3609,USR1203,Health,Active,05-08-2023 00:00,05-08-2026 00:00,19800,950000,"## For Health Insurance
+- **Coverage Limit:** ₹10,00,000
+- **Hospital Network:** Network B
+- **Cashless Available:** Yes
+- **Waiting Period:** 2 months
+- **Includes Maternity:** No
+- **Critical Illness Cover:** Yes
+- **Deductibles:** ₹10,000
+"
+POL3610,USR1204,Home,Expired,15-02-2023 00:00,15-02-2026 00:00,22500,1100000,"## For Home Insurance
+- **Property Type:** Apartment
+- **Property Value:** ₹50,00,000
+- **Year Built:** 2015
+- **Natural Disaster Cover:** Yes
+- **Theft Cover:** Yes
+- **Structure & Contents:** Combined
+"
+POL3611,USR1204,Pet,Pending,01-12-2020 00:00,01-12-2023 00:00,27500,1250000,"## For Pet Insurance
+- **Pet Type:** Dog
+- **Breed:** Golden Retriever
+- **Pet Age:** 5 years
+- **Vet Visits Covered:** Yes
+- **Accident/Illness Cover:** Yes
+- **Vaccination Coverage:** Yes
+"
+POL3612,USR1204,Life,Active,01-09-2023 00:00,01-09-2026 00:00,7200,350000,"## For Life Insurance
+- **Policy Term (Years):** 20
+- **Sum Assured:** ₹25,00,000
+- **Payment Term:** Yearly
+- **Nominee Name:** John Doe
+- **Medical Exam Required:** Yes
+- **Smoker Status:** Non-Smoker
+"
+POL3613,USR1205,Business,Cancelled,10-06-2022 00:00,10-06-2027 00:00,35000,3000000,"## For Business Insurance
+- **Business Type:** Retail
+- **Annual Revenue:** 1M–10M
+- **Employee Count:** 50
+- **Property Cover:** Yes
+- **Liability Cover:** Yes
+- **Cyber Attack Cover:** No
+"
+POL3614,USR1205,Travel,Under Review,15-01-2023 00:00,15-01-2026 00:00,42000,1800000,"## For Travel Insurance
+- **Travel Region:** International
+- **Trip Duration:** 14 days
+- **Coverage Type:** Individual
+- **Baggage Loss Cover:** Yes
+- **Flight Delay Cover:** Yes
+- **Medical Emergency Cover:** Yes
+"
+POL3615,USR1205,Health,Active,20-05-2023 00:00,20-11-2024 00:00,9500,600000,"## For Health Insurance
+- **Coverage Limit:** ₹10,00,000
+- **Hospital Network:** Network B
+- **Cashless Available:** Yes
+- **Waiting Period:** 2 months
+- **Includes Maternity:** No
+- **Critical Illness Cover:** Yes
+- **Deductibles:** ₹10,000
+"
+POL3616,USR1206,Car,Pending,01-04-2023 00:00,01-04-2026 00:00,21000,1000000,"## For Car Insurance
+- **Vehicle Type:** SUV
+- **Vehicle Model:** Swift 456
+- **Registration Number:** MH-12-AB-4567
+- **Manufacture Year:** 2019
+- **Insured Declared Value (IDV):** ₹7,00,000
+- **Driver Age:** 34
+- **Accident History:** 1 claim
+- **Third Party Cover:** Yes
+- **Add-ons:** Zero Depreciation, Engine Protect
+"
+POL3617,USR1206,Home,Under Review,10-07-2023 00:00,10-07-2026 00:00,19500,900000,"## For Home Insurance
+- **Property Type:** Apartment
+- **Property Value:** ₹50,00,000
+- **Year Built:** 2015
+- **Natural Disaster Cover:** Yes
+- **Theft Cover:** Yes
+- **Structure & Contents:** Combined
+"
+POL3618,USR1206,Business,Expired,05-03-2023 00:00,05-03-2026 00:00,30500,1400000,"## For Business Insurance
+- **Business Type:** Retail
+- **Annual Revenue:** 1M–10M
+- **Employee Count:** 50
+- **Property Cover:** Yes
+- **Liability Cover:** Yes
+- **Cyber Attack Cover:** No
+"

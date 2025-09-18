@@ -214,7 +214,7 @@ LANGCHAIN_TRACING_V2=true
 LANGCHAIN_API_KEY='your-langsmith-api-key'
 LANGCHAIN_PROJECT='insurance-helpdesk'
 ```
-
+---
 ### 5. Database Setup
 
 #### PostgreSQL Tables

@@ -19,5 +19,5 @@ langchain_groq
 langgraph
 langgraph-checkpoint-sqlite==2.0.10
 langsmith
-"langgraph-cli[inmem]"
+langgraph-cli[inmem]
 requests

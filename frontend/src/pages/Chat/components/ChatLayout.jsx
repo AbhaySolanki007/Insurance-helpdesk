@@ -11,6 +11,7 @@ function ChatLayout() {
   const [showChatHistory, setShowChatHistory] = useState(false);
   const [showMyRequests, setShowMyRequests] = useState(false);
   const [showPolicy, setShowPolicy] = useState(false);
+  const [showFileUpload, setShowFileUpload] = useState(false);
   const [selectedChat, setSelectedChat] = useState(null);
   const [isViewingHistoryDetail, setIsViewingHistoryDetail] = useState(false);
   const [chatSession, setChatSession] = useState(0);
@@ -45,6 +46,7 @@ function ChatLayout() {
     setShowChatHistory(false);
     setShowMyRequests(false);
     setShowPolicy(false);
+    setShowFileUpload(false);
     setSelectedChat(null);
     setIsViewingHistoryDetail(false);
     setChatSession(s => s + 1);
@@ -56,6 +58,7 @@ function ChatLayout() {
     setShowChat(false);
     setShowChatHistory(false);
     setShowMyRequests(false);
+    setShowFileUpload(false);
     setIsViewingHistoryDetail(false);
     navigate(`/chat/policy`, { replace: true });
   };
@@ -65,6 +68,7 @@ function ChatLayout() {
     setShowChatHistory(false);
     setShowMyRequests(false);
     setShowPolicy(false);
+    setShowFileUpload(false);
     setSelectedChat(null);
     setIsViewingHistoryDetail(false);
     navigate(`/chat`, { replace: true });
@@ -75,6 +79,7 @@ function ChatLayout() {
     setShowChat(false);
     setShowMyRequests(false);
     setShowPolicy(false);
+    setShowFileUpload(false);
     setIsViewingHistoryDetail(false);
     navigate(`/chat/history`, { replace: true });
   };
@@ -84,8 +89,19 @@ function ChatLayout() {
     setShowChat(false);
     setShowChatHistory(false);
     setShowPolicy(false);
+    setShowFileUpload(false);
     setIsViewingHistoryDetail(false);
     navigate(`/chat/requests`, { replace: true });
+  };
+
+  const handleFileUploadClick = () => {
+    setShowFileUpload(true);
+    setShowChat(false);
+    setShowChatHistory(false);
+    setShowMyRequests(false);
+    setShowPolicy(false);
+    setIsViewingHistoryDetail(false);
+    navigate(`/chat/upload`, { replace: true });
   };
 
   const handleSelectChat = (chat) => {
@@ -94,6 +110,7 @@ function ChatLayout() {
     setShowChatHistory(false);
     setShowMyRequests(false);
     setShowPolicy(false);
+    setShowFileUpload(false);
     setIsViewingHistoryDetail(true);
     navigate(`/chat`, { replace: true });
   };
@@ -108,12 +125,14 @@ function ChatLayout() {
       setShowChat(false);
       setShowChatHistory(false);
       setShowMyRequests(false);
+      setShowFileUpload(false);
       setIsViewingHistoryDetail(false);
     } else if (location.pathname.endsWith('/history')) {
       setShowPolicy(false);
       setShowChatHistory(true);
       setShowChat(false);
       setShowMyRequests(false);
+      setShowFileUpload(false);
       setIsViewingHistoryDetail(false);
       setSelectedChat(null);
     } else if (location.pathname.endsWith('/requests')) {
@@ -121,12 +140,21 @@ function ChatLayout() {
       setShowMyRequests(true);
       setShowChat(false);
       setShowChatHistory(false);
+      setShowFileUpload(false);
+      setIsViewingHistoryDetail(false);
+    } else if (location.pathname.endsWith('/upload')) {
+      setShowPolicy(false);
+      setShowMyRequests(false);
+      setShowChat(false);
+      setShowChatHistory(false);
+      setShowFileUpload(true);
       setIsViewingHistoryDetail(false);
     } else if (location.pathname === `/chat`) {
       setShowPolicy(false);
       setShowChat(true);
       setShowChatHistory(false);
       setShowMyRequests(false);
+      setShowFileUpload(false);
       setIsViewingHistoryDetail(false);
     }
   }, [location.pathname]);
@@ -141,10 +169,12 @@ function ChatLayout() {
         handlePolicyClick={handlePolicyClick}
         handleChatHistoryClick={handleChatHistoryClick}
         handleMyRequestsClick={handleMyRequestsClick}
+        handleFileUploadClick={handleFileUploadClick}
         showChat={showChat}
         showChatHistory={showChatHistory}
         showMyRequests={showMyRequests}
         showPolicy={showPolicy}
+        showFileUpload={showFileUpload}
         isL2Panel={isL2Panel}
         setIsL2Panel={setIsL2Panel}
         toggle={toggle}
@@ -166,6 +196,19 @@ function ChatLayout() {
           <MyRequests />
         ) : showPolicy ? (
           <Policy />
+        ) : showFileUpload ? (
+          <Outlet context={{ 
+            selectedLanguage,
+            isL2Panel,
+            setIsL2Panel,
+            showChat,
+            showChatHistory,
+            theme,
+            isSidebarOpen,
+            selectedChat,
+            handleSelectChat,
+            chatSession,
+          }} />
         ) : (
           <Outlet context={{ 
             selectedLanguage,

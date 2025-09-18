@@ -82,7 +82,7 @@ const Hero = () => {
 
   const handleButtonClick = () => {
     if (userId && userName) {
-      navigate(`/chat/${userId}`);
+      navigate(`/chat`);
     } else {
       navigate('/login');
     }

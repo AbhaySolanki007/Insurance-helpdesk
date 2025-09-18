@@ -4,7 +4,7 @@ function WelcomeScreen({ setManualInput, textareaRef }) {
   return (
     <div className="flex flex-col items-center justify-center min-h-[calc(100vh-64px-8rem)] text-center px-4 mt-10">
       <h2 className="text-4xl font-bold mb-3 bg-gradient-to-r from-[#9333EA] to-[#3B82F6] text-transparent bg-clip-text leading-relaxed">
-        Welcome to Cywarden Assistant
+        Welcome to QuantumEra
       </h2>
       <p className="text-[#94A3B8] max-w-md mb-8">
         Your AI-powered insurance guide. Ask me anything about your policies, claims, or general insurance inquiries.

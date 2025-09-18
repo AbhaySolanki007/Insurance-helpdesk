@@ -14,6 +14,7 @@ import ChatView from './pages/Chat/components/ChatView';
 import ChatHistory from './pages/Chat/components/ChatHistory';
 import Policy from './pages/Chat/components/Policy';
 import MyRequests from './pages/Chat/components/MyRequests';
+import FileUpload from './pages/Chat/components/FileUpload';
 
 // Create a layout component that includes the navbar and background
 const RootLayout = ({ theme, toggleTheme, themePreference, updateThemePreference }) => {
@@ -127,6 +128,7 @@ function App() {
           <Route path="history" element={<ChatHistory />} />
           <Route path="policy" element={<Policy />} />
           <Route path="requests" element={<MyRequests />} />
+          <Route path="upload" element={<FileUpload />} />
         </Route>
         <Route path="profile" element={<Profile />} />
         <Route path="video" element={<Video />} />

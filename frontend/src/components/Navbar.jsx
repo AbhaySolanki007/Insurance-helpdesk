@@ -94,8 +94,8 @@ const Navbar = ({ isSidebarOpen, currentTheme, toggleTheme }) => {
         <div className="flex items-center gap-4">
           <Link to="/" className="flex items-center">
             <img
-              className="h-8 w-auto transition-all duration-300"
-              src={isChatsSection ? (isSidebarOpen ? "/cywardenLogoWhite.png" : "/Globe.png") : (isHomePage || currentTheme === 'dark') ? "/cywardenLogoWhite.png" : "/cywarden-logo.png"}
+              className="h-15 w-auto transition-all duration-300"
+              src={isChatsSection ? (isSidebarOpen ? "/dummy_logo.png" : "/dummy_logo.png") : (isHomePage || currentTheme === 'dark') ? "/dummy_logo.png" : "/dummy_logo.png"}
               alt="cywarden"
             />
           </Link>

@@ -83,7 +83,7 @@ const Login = () => {
                 <h1 className="text-5xl lg:text-6xl font-bold text-slate-900 dark:text-gray-100 mb-6 leading-tight">
                   Welcome to
                   <span className="block bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent">
-                    Cywarden Support
+                    QuantumEra
                   </span>
                 </h1>
                 <p className="text-xl text-slate-600 dark:text-gray-400 leading-relaxed max-w-lg">

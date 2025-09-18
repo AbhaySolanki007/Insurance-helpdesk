@@ -1,4 +1,4 @@
-import { ChevronDown, MessageSquare, FileText, Globe, ClipboardList } from "lucide-react";
+import { ChevronDown, MessageSquare, FileText, Globe, ClipboardList, FileUp} from "lucide-react";
 import { useEffect } from "react";
 
 function Sidebar({
@@ -9,10 +9,12 @@ function Sidebar({
   handlePolicyClick,
   handleChatHistoryClick,
   handleMyRequestsClick,
+  handleFileUploadClick,
   showChat,
   showChatHistory,
   showMyRequests,
   showPolicy,
+  showFileUpload,
   isL2Panel,
   setIsL2Panel,
   toggle,
@@ -176,6 +178,30 @@ function Sidebar({
               </>
             ) : (
               <ClipboardList size={20} />
+            )}
+          </button>
+
+          {/* File upload button */}
+          <button
+            onClick={handleFileUploadClick}
+            className={`w-full flex items-center ${
+              isSidebarOpen ? 'justify-start pl-6' : 'justify-center'
+            } ${
+              showFileUpload
+                ? 'bg-gray-200 dark:bg-white/10 text-gray-900 dark:text-white'
+                : 'text-gray-600 hover:bg-gray-200 dark:text-gray-400 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white'
+            } transition-colors p-3 rounded-full`}
+            title="File Upload"
+          >
+            {isSidebarOpen ? (
+              <>
+                <div className="flex items-center gap-6">
+                  <FileUp size={20} />
+                  <span className="font-medium">File Upload</span>
+                </div>
+              </>
+            ) : (
+              <FileUp size={20} />
             )}
           </button>
         </div>

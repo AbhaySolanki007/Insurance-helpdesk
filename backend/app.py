@@ -63,6 +63,7 @@ from psycopg2.extras import RealDictCursor
 
 
 import config
+from config import SUPABASE_CLIENT, USE_SUPABASE, FLASK_SECRET_KEY
 from ai.Level1_agent import create_l1_agent_executor
 from ai.Level2_agent import create_level2_agent_executor
 from ai.Langgraph_module.graph_compiler import compile_graph
@@ -75,7 +76,7 @@ from services import ticket_service
 
 # Initialize Flask app
 app = Flask(__name__)
-app.secret_key = config.FLASK_SECRET_KEY
+app.secret_key = FLASK_SECRET_KEY
 
 CORS(
     app,
@@ -183,73 +184,145 @@ def login():
     email = data.get("email").strip()
     password = data.get("password").strip()
 
-    conn = None
     try:
-        conn = DB_POOL.getconn()
-        cur = conn.cursor(cursor_factory=RealDictCursor)
-
-        query = "SELECT user_id, name, email, passwords FROM users WHERE email = %s"
-        cur.execute(query, (email,))
-        user = cur.fetchone()
-
-        if not user:
-            print(f"[ERROR] User not found for email: {email}")
-            return jsonify({"message": "Invalid credentials"}), 401
-
-        stored_password = user.get("passwords")
-        if stored_password is None:
-            print(f"[ERROR] No password set for user: {email}")
-            return jsonify({"message": "Password not set for this user"}), 401
-
-        if password == stored_password:
-            print("[SUCCESS] Login successful.")
-            user_id_to_clear = user["user_id"]
-
-            # 1. Reset PostgreSQL history on successful login
-            print(f"[INFO] Clearing PostgreSQL history for user_id: {user_id_to_clear}")
-            cur.execute(
-                "UPDATE users SET history = '[]' WHERE user_id = %s",
-                (user_id_to_clear,),
+        if USE_SUPABASE:
+            # ========== SUPABASE CODE START ==========
+            # Use Supabase client for authentication
+            result = (
+                SUPABASE_CLIENT.table("users")
+                .select("user_id, name, email, passwords")
+                .eq("email", email)
+                .execute()
             )
-            conn.commit()
 
-            # 2. ADDED: Reset LangGraph checkpoint for the user to ensure a fresh start.
-            try:
+            if not result.data:
+                print(f"[ERROR] User not found for email: {email}")
+                return jsonify({"message": "Invalid credentials"}), 401
+
+            user = result.data[0]
+            stored_password = user.get("passwords")
+
+            if stored_password is None:
+                print(f"[ERROR] No password set for user: {email}")
+                return jsonify({"message": "Password not set for this user"}), 401
+
+            if password == stored_password:
+                print("[SUCCESS] Login successful.")
+                user_id_to_clear = user["user_id"]
+
+                # 1. Reset Supabase history on successful login
                 print(
-                    f"[INFO] Clearing LangGraph checkpoint for thread_id: {user_id_to_clear}"
+                    f"[INFO] Clearing Supabase history for user_id: {user_id_to_clear}"
                 )
-                with sqlite_conn:
-                    sqlite_cursor = sqlite_conn.cursor()
-                    # The table is named 'checkpoints' and the key is 'thread_id'
-                    sqlite_cursor.execute(
-                        "DELETE FROM checkpoints WHERE thread_id = ?",
-                        (user_id_to_clear,),
+                SUPABASE_CLIENT.table("users").update({"history": "[]"}).eq(
+                    "user_id", user_id_to_clear
+                ).execute()
+
+                # 2. Reset LangGraph checkpoint for the user to ensure a fresh start.
+                try:
+                    print(
+                        f"[INFO] Clearing LangGraph checkpoint for thread_id: {user_id_to_clear}"
                     )
-                print(
-                    f"[SUCCESS] Cleared LangGraph checkpoint for thread_id: {user_id_to_clear}"
-                )
-            except sqlite3.Error as e:
-                # Log a warning but don't fail the login if the checkpoint can't be cleared
-                print(
-                    f"[WARNING] Could not clear LangGraph checkpoint for thread_id {user_id_to_clear}: {e}"
-                )
+                    with sqlite_conn:
+                        sqlite_cursor = sqlite_conn.cursor()
+                        sqlite_cursor.execute(
+                            "DELETE FROM checkpoints WHERE thread_id = ?",
+                            (user_id_to_clear,),
+                        )
+                    print(
+                        f"[SUCCESS] Cleared LangGraph checkpoint for thread_id: {user_id_to_clear}"
+                    )
+                except sqlite3.Error as e:
+                    print(
+                        f"[WARNING] Could not clear LangGraph checkpoint for thread_id {user_id_to_clear}: {e}"
+                    )
 
-            return (
-                jsonify(
-                    {
-                        "message": "Login successful",
-                        "user": {
-                            "user_id": user["user_id"],
-                            "name": user["name"],
-                            "email": user["email"],
-                        },
-                    }
-                ),
-                200,
-            )
+                return (
+                    jsonify(
+                        {
+                            "message": "Login successful",
+                            "user": {
+                                "user_id": user["user_id"],
+                                "name": user["name"],
+                                "email": user["email"],
+                            },
+                        }
+                    ),
+                    200,
+                )
+            else:
+                print("[ERROR] Password mismatch.")
+                return jsonify({"message": "Invalid credentials"}), 401
+            # ========== SUPABASE CODE END ==========
         else:
-            print("[ERROR] Password mismatch.")
-            return jsonify({"message": "Invalid credentials"}), 401
+            # ========== ORIGINAL POSTGRESQL CODE START ==========
+            # Use local PostgreSQL for authentication
+            conn = DB_POOL.getconn()
+            cur = conn.cursor(cursor_factory=RealDictCursor)
+
+            query = "SELECT user_id, name, email, passwords FROM users WHERE email = %s"
+            cur.execute(query, (email,))
+            user = cur.fetchone()
+
+            if not user:
+                print(f"[ERROR] User not found for email: {email}")
+                return jsonify({"message": "Invalid credentials"}), 401
+
+            stored_password = user.get("passwords")
+            if stored_password is None:
+                print(f"[ERROR] No password set for user: {email}")
+                return jsonify({"message": "Password not set for this user"}), 401
+
+            if password == stored_password:
+                print("[SUCCESS] Login successful.")
+                user_id_to_clear = user["user_id"]
+
+                # 1. Reset PostgreSQL history on successful login
+                print(
+                    f"[INFO] Clearing PostgreSQL history for user_id: {user_id_to_clear}"
+                )
+                cur.execute(
+                    "UPDATE users SET history = '[]' WHERE user_id = %s",
+                    (user_id_to_clear,),
+                )
+                conn.commit()
+
+                # 2. Reset LangGraph checkpoint for the user to ensure a fresh start.
+                try:
+                    print(
+                        f"[INFO] Clearing LangGraph checkpoint for thread_id: {user_id_to_clear}"
+                    )
+                    with sqlite_conn:
+                        sqlite_cursor = sqlite_conn.cursor()
+                        sqlite_cursor.execute(
+                            "DELETE FROM checkpoints WHERE thread_id = ?",
+                            (user_id_to_clear,),
+                        )
+                    print(
+                        f"[SUCCESS] Cleared LangGraph checkpoint for thread_id: {user_id_to_clear}"
+                    )
+                except sqlite3.Error as e:
+                    print(
+                        f"[WARNING] Could not clear LangGraph checkpoint for thread_id {user_id_to_clear}: {e}"
+                    )
+
+                return (
+                    jsonify(
+                        {
+                            "message": "Login successful",
+                            "user": {
+                                "user_id": user["user_id"],
+                                "name": user["name"],
+                                "email": user["email"],
+                            },
+                        }
+                    ),
+                    200,
+                )
+            else:
+                print("[ERROR] Password mismatch.")
+                return jsonify({"message": "Invalid credentials"}), 401
+            # ========== ORIGINAL POSTGRESQL CODE END ==========
 
     except Exception as e:
         print(f"[EXCEPTION] Login error: {str(e)}")
@@ -259,7 +332,7 @@ def login():
         return jsonify({"message": "An internal server error occurred."}), 500
 
     finally:
-        if conn:
+        if not USE_SUPABASE and "conn" in locals():
             DB_POOL.putconn(conn)
             print("[INFO] DB connection returned to pool.")
 
@@ -444,27 +517,50 @@ def logout():
 @app.route("/api/chat/history/<user_id>", methods=["GET"])
 def get_chat_history(user_id):
     print(f"\n🔍 [DEBUG] Fetching chat history for user_id: {user_id}")
-    conn = None
     try:
-        conn = DB_POOL.getconn()
-        cursor = conn.cursor(cursor_factory=RealDictCursor)
+        if USE_SUPABASE:
+            # ========== SUPABASE CODE START ==========
+            # Use Supabase client
+            result = (
+                SUPABASE_CLIENT.table("users")
+                .select("history")
+                .eq("user_id", user_id)
+                .execute()
+            )
 
-        # Get chat history from users table
-        query = "SELECT history FROM users WHERE user_id = %s"
-        print(f"📝 [DEBUG] Executing query: {query} with user_id: {user_id}")
+            if not result.data:
+                print(f"❌ [ERROR] No user found with user_id: {user_id}")
+                return jsonify({"error": "User not found"}), 404
 
-        cursor.execute(query, (user_id,))
-        result = cursor.fetchone()
+            history = (
+                eval(result.data[0]["history"]) if result.data[0]["history"] else []
+            )
+            print(f"✅ [SUCCESS] Retrieved history: {history}")
+            return jsonify({"history": history}), 200
+            # ========== SUPABASE CODE END ==========
+        else:
+            # ========== ORIGINAL POSTGRESQL CODE START ==========
+            # Use local PostgreSQL
+            conn = DB_POOL.getconn()
+            cursor = conn.cursor(cursor_factory=RealDictCursor)
 
-        print(f"📊 [DEBUG] Query result: {result}")
+            # Get chat history from users table
+            query = "SELECT history FROM users WHERE user_id = %s"
+            print(f"📝 [DEBUG] Executing query: {query} with user_id: {user_id}")
 
-        if not result:
-            print(f"❌ [ERROR] No user found with user_id: {user_id}")
-            return jsonify({"error": "User not found"}), 404
+            cursor.execute(query, (user_id,))
+            result = cursor.fetchone()
 
-        history = eval(result["history"]) if result["history"] else []
-        print(f"✅ [SUCCESS] Retrieved history: {history}")
-        return jsonify({"history": history}), 200
+            print(f"📊 [DEBUG] Query result: {result}")
+
+            if not result:
+                print(f"❌ [ERROR] No user found with user_id: {user_id}")
+                return jsonify({"error": "User not found"}), 404
+
+            history = eval(result["history"]) if result["history"] else []
+            print(f"✅ [SUCCESS] Retrieved history: {history}")
+            return jsonify({"history": history}), 200
+            # ========== ORIGINAL POSTGRESQL CODE END ==========
 
     except Exception as e:
         print(f"❌ [ERROR] Error fetching chat history: {str(e)}")
@@ -473,7 +569,7 @@ def get_chat_history(user_id):
         traceback.print_exc()
         return jsonify({"error": str(e)}), 500
     finally:
-        if conn:
+        if not USE_SUPABASE and "conn" in locals():
             DB_POOL.putconn(conn)
             print("🔄 [DEBUG] Database connection returned to pool")
 
@@ -481,38 +577,79 @@ def get_chat_history(user_id):
 @app.route("/api/user/policies/<user_id>", methods=["GET"])
 def get_user_policies(user_id):
     print(f"\n🔍 [DEBUG] Fetching policies for user_id: {user_id}")
-    conn = None
-    cursor = None
     try:
-        conn = DB_POOL.getconn()
-        cursor = conn.cursor(cursor_factory=RealDictCursor)
+        if USE_SUPABASE:
+            # ========== SUPABASE CODE START ==========
+            # Use Supabase client
+            # First check if user exists
+            user_result = (
+                SUPABASE_CLIENT.table("users")
+                .select("user_id")
+                .eq("user_id", user_id)
+                .execute()
+            )
 
-        # First check if user exists
-        cursor.execute("SELECT user_id FROM users WHERE user_id = %s", (user_id,))
-        user = cursor.fetchone()
+            if not user_result.data:
+                print(f"❌ [ERROR] User not found with user_id: {user_id}")
+                return jsonify({"error": "User not found"}), 404
 
-        if not user:
-            print(f"❌ [ERROR] User not found with user_id: {user_id}")
-            return jsonify({"error": "User not found"}), 404
+            # Get policy information
+            policies_result = (
+                SUPABASE_CLIENT.table("policies")
+                .select(
+                    "policy_id, policy_type, policy_status, markdown_format, issue_date, expiry_date, premium_amount, coverage_amount"
+                )
+                .eq("user_id", user_id)
+                .execute()
+            )
 
-        # Get policy information
-        query = """
-            SELECT policy_id, policy_type, policy_status, markdown_format, issue_date, expiry_date, premium_amount, coverage_amount
-            FROM policies 
-            WHERE user_id = %s
-        """
-        print(f"📝 [DEBUG] Executing query: {query} with user_id: {user_id}")
+            print(f"📊 [DEBUG] Query result: {policies_result.data}")
 
-        cursor.execute(query, (user_id,))
-        policies = cursor.fetchall()
+            if not policies_result.data:
+                print(f"ℹ️ [INFO] No policies found for user_id: {user_id}")
+                return (
+                    jsonify({"policies": []}),
+                    200,
+                )  # Return empty array instead of 404
 
-        print(f"📊 [DEBUG] Query result: {policies}")
+            return jsonify({"policies": policies_result.data}), 200
+            # ========== SUPABASE CODE END ==========
+        else:
+            # ========== ORIGINAL POSTGRESQL CODE START ==========
+            # Use local PostgreSQL
+            conn = DB_POOL.getconn()
+            cursor = conn.cursor(cursor_factory=RealDictCursor)
 
-        if not policies:
-            print(f"ℹ️ [INFO] No policies found for user_id: {user_id}")
-            return jsonify({"policies": []}), 200  # Return empty array instead of 404
+            # First check if user exists
+            cursor.execute("SELECT user_id FROM users WHERE user_id = %s", (user_id,))
+            user = cursor.fetchone()
 
-        return jsonify({"policies": policies}), 200
+            if not user:
+                print(f"❌ [ERROR] User not found with user_id: {user_id}")
+                return jsonify({"error": "User not found"}), 404
+
+            # Get policy information
+            query = """
+                SELECT policy_id, policy_type, policy_status, markdown_format, issue_date, expiry_date, premium_amount, coverage_amount
+                FROM policies 
+                WHERE user_id = %s
+            """
+            print(f"📝 [DEBUG] Executing query: {query} with user_id: {user_id}")
+
+            cursor.execute(query, (user_id,))
+            policies = cursor.fetchall()
+
+            print(f"📊 [DEBUG] Query result: {policies}")
+
+            if not policies:
+                print(f"ℹ️ [INFO] No policies found for user_id: {user_id}")
+                return (
+                    jsonify({"policies": []}),
+                    200,
+                )  # Return empty array instead of 404
+
+            return jsonify({"policies": policies}), 200
+            # ========== ORIGINAL POSTGRESQL CODE END ==========
 
     except Exception as e:
         print(f"❌ [ERROR] Error fetching policies: {str(e)}")
@@ -521,9 +658,7 @@ def get_user_policies(user_id):
         traceback.print_exc()
         return jsonify({"error": str(e)}), 500
     finally:
-        if cursor:
-            cursor.close()
-        if conn:
+        if not USE_SUPABASE and "conn" in locals():
             DB_POOL.putconn(conn)
             print("🔄 [DEBUG] Database connection returned to pool")
 

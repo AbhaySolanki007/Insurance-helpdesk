@@ -736,6 +736,100 @@ def background_metrics_caching():
         print(f"⚠️ [WARNING] The background metrics caching task failed: {e}")
 
 
+# ========== PDF UPLOAD ENDPOINTS START ==========
+@app.route("/api/upload/pdf", methods=["POST"])
+def upload_pdf():
+    """
+    Upload and process PDF documents for vector storage.
+    """
+    print("🔄 [INFO] Received PDF upload request")
+
+    try:
+        # Check if file is present
+        if "file" not in request.files:
+            return jsonify({"error": "No file provided"}), 400
+
+        file = request.files["file"]
+        if file.filename == "":
+            return jsonify({"error": "No file selected"}), 400
+
+        # Check if file is PDF
+        if not file.filename.lower().endswith(".pdf"):
+            return jsonify({"error": "Only PDF files are allowed"}), 400
+
+        # Get additional parameters
+        user_id = request.form.get("user_id")
+        document_type = request.form.get("document_type", "policy")
+        metadata = {}
+
+        # Add any additional metadata
+        for key, value in request.form.items():
+            if key not in ["user_id", "document_type"]:
+                metadata[key] = value
+
+        # Save file temporarily
+        import tempfile
+        import os
+        from uploads.pdf_processor import pdf_processor
+
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as temp_file:
+            file.save(temp_file.name)
+            temp_path = temp_file.name
+
+        try:
+            # Process PDF
+            result = pdf_processor.process_pdf(
+                pdf_path=temp_path,
+                filename=file.filename,
+                user_id=user_id,
+                document_type=document_type,
+                metadata=metadata,
+            )
+
+            if result["success"]:
+                print(f"✅ [SUCCESS] PDF processed successfully: {file.filename}")
+                return (
+                    jsonify(
+                        {
+                            "message": "PDF processed successfully",
+                            "document_id": result["document_id"],
+                            "chunk_count": result["chunk_count"],
+                            "text_length": result["text_length"],
+                            "filename": result["filename"],
+                            "document_type": result["document_type"],
+                        }
+                    ),
+                    200,
+                )
+            else:
+                print(
+                    f"❌ [ERROR] PDF processing failed: {result.get('error', 'Unknown error')}"
+                )
+                return (
+                    jsonify(
+                        {
+                            "error": f"PDF processing failed: {result.get('error', 'Unknown error')}"
+                        }
+                    ),
+                    500,
+                )
+
+        finally:
+            # Clean up temporary file
+            if os.path.exists(temp_path):
+                os.unlink(temp_path)
+
+    except Exception as e:
+        print(f"❌ [ERROR] PDF upload error: {str(e)}")
+        import traceback
+
+        traceback.print_exc()
+        return jsonify({"error": f"Upload failed: {str(e)}"}), 500
+
+
+# ========== PDF UPLOAD ENDPOINTS END ==========
+
+
 if __name__ == "__main__":
     # Initialize database
     init_db()

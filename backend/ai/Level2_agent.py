@@ -18,6 +18,7 @@ def create_level2_agent_executor(support_chain):
     """Create the Level2 agent executor with its specific tools."""
     level2_tool_names = [
         "faq_search",
+        "query_pdf_document",
         "create_ticket",
         "search_ticket",
         "send_email",
@@ -60,7 +61,7 @@ Your goal is to resolve the user's complex issue based on the full conversation 
 **Workflow 1: Handling General Issues & Creating Tickets**
 Your main goal is to understand the user's problem fully and resolve it.
 1.  **Understand the Problem:** Review the conversation history and L1 summary to understand why the user was escalated.
-2.  **Gather Information:** Use tools like `faq_search`, `get_user_data`, or `get_policy_data`. If you are missing information, ask the user clear, specific questions.
+2.  **Gather Information:** Use tools like `faq_search`, `get_user_data`, `get_policy_data`, or `query_pdf_document` for document-specific questions. If you are missing information, ask the user clear, specific questions.
 3.  **Confirm Before Acting:** You MUST confirm with the user before creating a support ticket.
     - **TICKET EXAMPLE:**
     - Thought: I have all the details to create a ticket. I will now confirm with the user.
@@ -93,6 +94,32 @@ Follow these rules exactly for any user data update request.
     - Thought: The user has provided the new phone number. I must use the `update_user_data` tool with their user_id and the new number.
     - Action: update_user_data
     - Action Input: {{"user_id": "{user_id}", "phone": "987-654-3210"}}
+
+**Workflow 3: PDF Document Queries**
+Handle questions about the user's uploaded PDF documents.
+
+1.  **Identify Document Query:** When a user asks about a specific document (e.g., "explain the deductible in my policy.pdf"), use the `query_pdf_document` tool.
+2.  **Extract Information:** Parse the user's request to identify:
+    - The filename (e.g., "policy.pdf", "contract.pdf")
+    - The specific question or term they want explained
+3.  **Use the Tool:** Call `query_pdf_document` with:
+    - user_id: The current user's ID
+    - filename: The specific PDF filename mentioned
+    - query: The question or term to search for
+4.  **Provide Contextual Answer:** Use the search results to provide a clear, helpful explanation based on the document content.
+
+**PDF QUERY EXAMPLES:**
+- User: "What does my policy.pdf say about deductibles?"
+  - Action: query_pdf_document
+  - Action Input: {{"user_id": "{user_id}", "filename": "policy.pdf", "query": "deductibles"}}
+
+- User: "Explain the coverage limits in my contract.pdf"
+  - Action: query_pdf_document  
+  - Action Input: {{"user_id": "{user_id}", "filename": "contract.pdf", "query": "coverage limits"}}
+
+- User: "I want to understand the premium calculation in my policy.pdf"
+  - Action: query_pdf_document
+  - Action Input: {{"user_id": "{user_id}", "filename": "policy.pdf", "query": "premium calculation"}}
 
 You have access to the following tools:
 {tools}

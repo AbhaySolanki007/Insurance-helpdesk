@@ -25,8 +25,10 @@ PORT = int(os.getenv("PORT", "8001"))
 # Vector Store Paths
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 FAQ_DB_PATH = os.getenv("FAQ_DB_PATH", os.path.join(BASE_DIR, "faq_database"))
+PDF_DB_PATH = os.getenv("PDF_DB_PATH", os.path.join(BASE_DIR, "uploads", "pdf_vectors"))
 
 FAQ_COLLECTION_NAME = os.getenv("FAQ_COLLECTION_NAME", "faq_collection")
+PDF_COLLECTION_NAME = os.getenv("PDF_COLLECTION_NAME", "pdf_documents")
 
 # Google API Scopes
 SCOPES = ["https://www.googleapis.com/auth/gmail.send"]

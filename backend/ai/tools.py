@@ -48,6 +48,16 @@ class UserUpdateInput(BaseModel):
     passwords: Optional[str] = Field(default=None, description="User's password")
 
 
+class PDFDocumentQueryInput(BaseModel):
+    user_id: str = Field(description="The user_id to search documents for")
+    filename: str = Field(
+        description="The specific PDF filename to search in (e.g., 'policy.pdf')"
+    )
+    query: str = Field(
+        description="The question or term to search for in the specified document"
+    )
+
+
 # Type variable for generic function typing
 T = TypeVar("T", bound=BaseModel)
 
@@ -64,6 +74,59 @@ def update_user_data_with_approval(user_id: str, updates: dict) -> str:
         "updates": updates,
         "user_id": user_id,
     }
+
+
+def query_specific_document(user_id: str, filename: str, query: str) -> str:
+    """
+    Search for information in a specific PDF document uploaded by the user.
+
+    Args:
+        user_id: The user ID to search documents for
+        filename: The specific PDF filename to search in
+        query: The question or term to search for
+
+    Returns:
+        Formatted response with relevant content from the specified document
+    """
+    try:
+        # Import here to avoid circular imports
+        import sys
+        import os
+
+        sys.path.append(os.path.join(os.path.dirname(__file__), "..", "uploads"))
+        from pdf_processor import pdf_processor
+
+        # Search the user's documents with filename filter
+        results = pdf_processor.search_documents(query=query, user_id=user_id, limit=5)
+
+        # Filter results to only include the specified filename
+        filtered_results = []
+        for result in results:
+            if result["metadata"].get("filename", "").lower() == filename.lower():
+                filtered_results.append(result)
+
+        if not filtered_results:
+            return f"No relevant information found in '{filename}' for the query: '{query}'. Please make sure the filename is correct and the document has been uploaded."
+
+        # Format the results
+        formatted_results = []
+        for i, result in enumerate(filtered_results, 1):
+            content = result["content"]
+            relevance = (
+                1 - result["distance"]
+            )  # Convert distance to relevance percentage
+
+            formatted_results.append(
+                f"**Section {i}** (Relevance: {relevance:.1%}):\n{content}\n"
+            )
+
+        return (
+            f"Found {len(filtered_results)} relevant sections in '{filename}':\n\n"
+            + "\n".join(formatted_results)
+        )
+
+    except Exception as e:
+        return f"Error searching in '{filename}': {str(e)}"
 
 
 def create_tool_wrapper(
@@ -166,6 +229,14 @@ def create_tools(support_chain, tool_names: List[str]):
                 lambda x: send_email(x.user_id, x.subject, x.body), EmailSendInput
             ),
             description="Use this ONLY for Level2 escalation. Send an email to the user.",
+        ),
+        "query_pdf_document": Tool(
+            name="query_pdf_document",
+            func=create_tool_wrapper(
+                lambda x: query_specific_document(x.user_id, x.filename, x.query),
+                PDFDocumentQueryInput,
+            ),
+            description="Use this to search for information in a specific PDF document uploaded by the user. Input requires user_id, filename (e.g., 'policy.pdf'), and query.",
         ),
     }
 

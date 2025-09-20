@@ -332,7 +332,7 @@ def login():
         return jsonify({"message": "An internal server error occurred."}), 500
 
     finally:
-        if not USE_SUPABASE and "conn" in locals():
+        if not config.USE_SUPABASE and "conn" in locals():
             DB_POOL.putconn(conn)
             print("[INFO] DB connection returned to pool.")
 
@@ -538,29 +538,29 @@ def get_chat_history(user_id):
             print(f"✅ [SUCCESS] Retrieved history: {history}")
             return jsonify({"history": history}), 200
             # ========== SUPABASE CODE END ==========
-        else:
-            # ========== ORIGINAL POSTGRESQL CODE START ==========
-            # Use local PostgreSQL
-            conn = DB_POOL.getconn()
-            cursor = conn.cursor(cursor_factory=RealDictCursor)
+        # else:
+        # # ========== ORIGINAL POSTGRESQL CODE START ==========
+        # # Use local PostgreSQL
+        # conn = DB_POOL.getconn()
+        # cursor = conn.cursor(cursor_factory=RealDictCursor)
 
-            # Get chat history from users table
-            query = "SELECT history FROM users WHERE user_id = %s"
-            print(f"📝 [DEBUG] Executing query: {query} with user_id: {user_id}")
+        # # Get chat history from users table
+        # query = "SELECT history FROM users WHERE user_id = %s"
+        # print(f"📝 [DEBUG] Executing query: {query} with user_id: {user_id}")
 
-            cursor.execute(query, (user_id,))
-            result = cursor.fetchone()
+        # cursor.execute(query, (user_id,))
+        # result = cursor.fetchone()
 
-            print(f"📊 [DEBUG] Query result: {result}")
+        # print(f"📊 [DEBUG] Query result: {result}")
 
-            if not result:
-                print(f"❌ [ERROR] No user found with user_id: {user_id}")
-                return jsonify({"error": "User not found"}), 404
+        # if not result:
+        #     print(f"❌ [ERROR] No user found with user_id: {user_id}")
+        #     return jsonify({"error": "User not found"}), 404
 
-            history = eval(result["history"]) if result["history"] else []
-            print(f"✅ [SUCCESS] Retrieved history: {history}")
-            return jsonify({"history": history}), 200
-            # ========== ORIGINAL POSTGRESQL CODE END ==========
+        # history = eval(result["history"]) if result["history"] else []
+        # print(f"✅ [SUCCESS] Retrieved history: {history}")
+        # return jsonify({"history": history}), 200
+        # # ========== ORIGINAL POSTGRESQL CODE END ==========
 
     except Exception as e:
         print(f"❌ [ERROR] Error fetching chat history: {str(e)}")
@@ -648,8 +648,8 @@ def get_user_policies(user_id):
                     200,
                 )  # Return empty array instead of 404
 
-            return jsonify({"policies": policies}), 200
-            # ========== ORIGINAL POSTGRESQL CODE END ==========
+        return jsonify({"policies": policies}), 200
+        # ========== ORIGINAL POSTGRESQL CODE END ==========
 
     except Exception as e:
         print(f"❌ [ERROR] Error fetching policies: {str(e)}")

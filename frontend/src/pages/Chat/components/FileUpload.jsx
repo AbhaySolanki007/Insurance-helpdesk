@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { Upload, X, File, CheckCircle, AlertCircle, Trash2 } from 'lucide-react';
 import Loader from '../../../components/Loader';
 import ErrorBox from '../../../components/ErrorBox';
@@ -10,6 +10,9 @@ const FileUpload = () => {
   const [uploadProgress, setUploadProgress] = useState({});
   const [uploadStatus, setUploadStatus] = useState({});
   const [error, setError] = useState(null);
+  const [documentType, setDocumentType] = useState('policy');
+  const [description, setDescription] = useState('');
+  const [userId, setUserId] = useState(null);
   const fileInputRef = useRef(null);
 
   // Supported file types
@@ -24,6 +27,14 @@ const FileUpload = () => {
 
   const maxFileSize = 10 * 1024 * 1024; // 10MB
   const maxFiles = 10;
+
+  // Get user ID from localStorage on component mount
+  useEffect(() => {
+    const storedUserId = localStorage.getItem('user_id');
+    if (storedUserId) {
+      setUserId(storedUserId);
+    }
+  }, []);
 
   const formatFileSize = (bytes) => {
     if (bytes === 0) return '0 Bytes';
@@ -90,7 +101,10 @@ const FileUpload = () => {
           name: file.name,
           size: file.size,
           type: file.type,
-          status: 'pending'
+          status: 'pending',
+          userId: userId,
+          documentType: documentType,
+          description: description
         });
       } else {
         errors.push(`${file.name}: ${fileErrors.join(', ')}`);
@@ -142,25 +156,38 @@ const FileUpload = () => {
     });
   };
 
-  const simulateUpload = async (file) => {
-    return new Promise((resolve, reject) => {
-      const duration = Math.random() * 3000 + 1000; // 1-4 seconds
-      const interval = 100;
-      let progress = 0;
+  const uploadFileToBackend = async (fileItem) => {
+    const formData = new FormData();
+    formData.append('file', fileItem.file);
+    
+    // Add optional parameters
+    if (fileItem.userId) {
+      formData.append('user_id', fileItem.userId);
+    }
+    if (fileItem.documentType) {
+      formData.append('document_type', fileItem.documentType);
+    }
+    if (fileItem.description) {
+      formData.append('description', fileItem.description);
+    }
 
-      const timer = setInterval(() => {
-        progress += (interval / duration) * 100;
-        if (progress >= 100) {
-          progress = 100;
-          clearInterval(timer);
-          resolve();
-        }
-        setUploadProgress(prev => ({
-          ...prev,
-          [file.id]: Math.round(progress)
-        }));
-      }, interval);
-    });
+    try {
+      const response = await fetch('http://localhost:8001/api/upload/pdf', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      return result;
+    } catch (error) {
+      console.error('Upload error:', error);
+      throw error;
+    }
   };
 
   const handleUpload = async () => {
@@ -177,21 +204,54 @@ const FileUpload = () => {
             [fileItem.id]: 'uploading'
           }));
 
-          // Simulate upload process
-          await simulateUpload(fileItem);
+          // Simulate progress for better UX
+          const progressInterval = setInterval(() => {
+            setUploadProgress(prev => {
+              const current = prev[fileItem.id] || 0;
+              if (current < 90) {
+                const increment = Math.random() * 10;
+                const newProgress = Math.min(current + increment, 90);
+                return { ...prev, [fileItem.id]: Math.round(newProgress) };
+              }
+              return prev;
+            });
+          }, 200);
 
-          setUploadStatus(prev => ({
-            ...prev,
-            [fileItem.id]: 'success'
-          }));
+          try {
+            // Upload to backend
+            const result = await uploadFileToBackend(fileItem);
+            
+            clearInterval(progressInterval);
+            setUploadProgress(prev => ({
+              ...prev,
+              [fileItem.id]: 100
+            }));
 
-          setFiles(prev => prev.map(f => 
-            f.id === fileItem.id ? { ...f, status: 'success' } : f
-          ));
+            setUploadStatus(prev => ({
+              ...prev,
+              [fileItem.id]: 'success'
+            }));
+
+            setFiles(prev => prev.map(f => 
+              f.id === fileItem.id ? { 
+                ...f, 
+                status: 'success',
+                documentId: result.document_id,
+                chunkCount: result.chunk_count,
+                textLength: result.text_length
+              } : f
+            ));
+
+            console.log('Upload successful:', result);
+          } catch (uploadError) {
+            clearInterval(progressInterval);
+            throw uploadError;
+          }
         }
       }
     } catch (err) {
-      setError('Upload failed. Please try again.');
+      console.error('Upload error:', err);
+      setError(err.message || 'Upload failed. Please try again.');
       setUploadStatus(prev => {
         const newStatus = { ...prev };
         files.forEach(f => {
@@ -227,6 +287,42 @@ const FileUpload = () => {
           <p className="text-gray-600 dark:text-gray-400">
             Upload documents, images, and other files to the system
           </p>
+        </div>
+
+        {/* Document Settings */}
+        <div className="mb-6 p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+            Document Settings
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Document Type
+              </label>
+              <select
+                value={documentType}
+                onChange={(e) => setDocumentType(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+              >
+                <option value="policy">Policy</option>
+                <option value="claim">Claim</option>
+                <option value="manual">Manual</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Description (Optional)
+              </label>
+              <input
+                type="text"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Brief description of the document"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+              />
+            </div>
+          </div>
         </div>
 
         {/* Upload Area */}
@@ -315,6 +411,16 @@ const FileUpload = () => {
                         <p className="text-xs text-gray-500 dark:text-gray-400">
                           {formatFileSize(fileItem.size)}
                         </p>
+                        {fileItem.documentId && (
+                          <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">
+                            ID: {fileItem.documentId}
+                          </p>
+                        )}
+                        {fileItem.chunkCount && (
+                          <p className="text-xs text-gray-500 dark:text-gray-400">
+                            {fileItem.chunkCount} chunks • {fileItem.textLength} chars
+                          </p>
+                        )}
                       </div>
                     </div>
 
@@ -329,17 +435,27 @@ const FileUpload = () => {
                             />
                           </div>
                           <span className="text-xs text-gray-500 dark:text-gray-400">
-                            {uploadProgress[fileItem.id] || 0}%
+                            {Math.round(uploadProgress[fileItem.id] || 0)}%
                           </span>
                         </div>
                       )}
 
                       {/* Status Icons */}
                       {uploadStatus[fileItem.id] === 'success' && (
-                        <CheckCircle className="w-5 h-5 text-green-500" />
+                        <div className="flex items-center space-x-2">
+                          <CheckCircle className="w-5 h-5 text-green-500" />
+                          <span className="text-xs text-green-600 dark:text-green-400">
+                            Uploaded
+                          </span>
+                        </div>
                       )}
                       {uploadStatus[fileItem.id] === 'error' && (
-                        <AlertCircle className="w-5 h-5 text-red-500" />
+                        <div className="flex items-center space-x-2">
+                          <AlertCircle className="w-5 h-5 text-red-500" />
+                          <span className="text-xs text-red-600 dark:text-red-400">
+                            Failed
+                          </span>
+                        </div>
                       )}
 
                       {/* Remove Button */}

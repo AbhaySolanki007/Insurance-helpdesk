@@ -1,0 +1,50 @@
+# Frontend files
+frontend/
+n8n/
+
+# Development files
+.git/
+.gitignore
+README.md
+*.md
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Test files
+Test/
+test_*.py
+*_test.py
+
+# Railway config files
+railway.json
+nixpacks.toml
+start.sh
+.railwayignore
+railway.env.template
+RAILWAY_DEPLOYMENT.md
+
+# Large files that aren't needed in production
+backend/uploads/pdf_vectors/
+backend/faq_database/
+backend/checkpoints.sqlite

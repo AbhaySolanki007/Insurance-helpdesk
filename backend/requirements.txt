@@ -3,8 +3,6 @@ gunicorn
 dotenv
 pandas
 langchain
-SpeechRecognition
-pyaudio
 flask_cors
 sentence-transformers
 google-auth-oauthlib

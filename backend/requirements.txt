@@ -15,7 +15,7 @@ langchain_google_genai
 langchain_community
 langchain_chroma
 jira
-psycopg2
+psycopg2-binary
 langchain_groq
 langgraph
 langgraph-checkpoint-sqlite==2.0.10

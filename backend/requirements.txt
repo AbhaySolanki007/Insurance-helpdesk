@@ -26,3 +26,4 @@ requests
 PyPDF2
 pdfplumber
 langchain-text-splitters
+supabase 

@@ -15,6 +15,12 @@ from langchain_google_genai import GoogleGenerativeAIEmbeddings
 import chromadb
 from langchain_chroma import Chroma
 import config
+import logging
+from sentence_transformers import SentenceTransformer
+
+# Set up logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 class PDFProcessor:
@@ -52,10 +58,8 @@ class PDFProcessor:
         # Ensure directory exists
         os.makedirs(pdf_db_path, exist_ok=True)
 
-        # Initialize Google AI embeddings
-        self.embeddings = GoogleGenerativeAIEmbeddings(
-            model="models/embedding-001", google_api_key=config.GOOGLE_API_KEY
-        )
+        # Initialize embeddings with fallback mechanism
+        self.embeddings = self._initialize_embeddings()
 
         # Initialize ChromaDB client
         self.client = chromadb.PersistentClient(path=pdf_db_path)
@@ -78,6 +82,47 @@ class PDFProcessor:
             length_function=len,
             separators=["\n\n", "\n", " ", ""],
         )
+
+    def _initialize_embeddings(self):
+        """Initialize SentenceTransformers embeddings with custom model path"""
+        try:
+            logger.info(
+                "Initializing SentenceTransformers embeddings for PDF processing..."
+            )
+
+            # Define custom model path
+            model_path = os.path.join(
+                os.path.dirname(os.path.dirname(__file__)), "ai", "Embedding_models"
+            )
+
+            # Use a lightweight, fast model with custom cache directory
+            model = SentenceTransformer("all-MiniLM-L6-v2", cache_folder=model_path)
+
+            # Create a wrapper class to make it compatible with ChromaDB
+            class SentenceTransformerEmbeddings:
+                def __init__(self, model):
+                    self.model = model
+
+                def embed_query(self, text):
+                    return self.model.encode(text).tolist()
+
+                def embed_documents(self, texts):
+                    return [self.model.encode(text).tolist() for text in texts]
+
+            embeddings = SentenceTransformerEmbeddings(model)
+            logger.info(
+                "✅ SentenceTransformers embeddings initialized successfully for PDF processing"
+            )
+            logger.info(f"📁 Model cached at: {model_path}")
+            return embeddings
+
+        except Exception as e:
+            logger.error(
+                f"❌ Failed to initialize SentenceTransformers embeddings for PDF processing: {e}"
+            )
+            raise Exception(
+                "Could not initialize SentenceTransformers embedding model for PDF processing"
+            )
         # ========== SUPABASE INTEGRATION END ==========
 
     def extract_text_from_pdf(self, pdf_path: str) -> str:

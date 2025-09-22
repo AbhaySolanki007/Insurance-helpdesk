@@ -33,11 +33,29 @@ def main():
     questions = []
     answers = []
     try:
-        # Initialize embeddings model
-        print("🧠 Initializing embeddings model...")
-        embeddings_model = GoogleGenerativeAIEmbeddings(
-            model="models/embedding-001", google_api_key=google_api_key
+        # Initialize SentenceTransformers embeddings model
+        print("🧠 Initializing SentenceTransformers embeddings model...")
+
+        # Define custom model path
+        model_path = os.path.join(
+            os.path.dirname(os.path.dirname(__file__)), "ai", "Embedding_models"
         )
+
+        # Use SentenceTransformers with custom cache directory
+        from sentence_transformers import SentenceTransformer
+
+        model = SentenceTransformer("all-MiniLM-L6-v2", cache_folder=model_path)
+
+        # Create wrapper for compatibility
+        class SentenceTransformerEmbeddings:
+            def __init__(self, model):
+                self.model = model
+
+            def embed_documents(self, texts):
+                return [self.model.encode(text).tolist() for text in texts]
+
+        embeddings_model = SentenceTransformerEmbeddings(model)
+        print(f"📁 Model cached at: {model_path}")
         with open(csv_path, mode="r", encoding="utf-8") as infile:
             reader = csv.reader(infile)
             header = next(reader)  # Skip header

@@ -9,3 +9,7 @@ __pycache__/
 *.pyc
 *.bin
 **/.langgraph_api/
+
+# Embedding models (large files, auto-downloaded)
+backend/ai/Embedding_models/
+**/Embedding_models/

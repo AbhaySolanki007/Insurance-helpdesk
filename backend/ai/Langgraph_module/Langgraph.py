@@ -1,12 +1,15 @@
 # 13.1. ai/Langgraph.py
 """Langgraph configuration for the support agent workflow."""
+import os
 import config
 import operator
 import uuid
 from typing import TypedDict, Annotated, List, Dict, Optional, Any
 from langchain_core.messages import BaseMessage, AIMessage, HumanMessage
 from langchain_google_genai import GoogleGenerativeAI
-from langchain_groq import ChatGroq
+
+# from langchain_groq import ChatGroq
+from langchain_openai import ChatOpenAI
 from utils.helpers import format_history_for_prompt, format_full_history_for_summary
 
 
@@ -85,7 +88,7 @@ def summarize_for_level2_node(state: AgentState):
     {history_text}
 
     Briefing Note:"""
-    llm = ChatGroq(model="llama3-70b-8192", groq_api_key=config.GROQ_API_KEY)
+    llm = ChatOpenAI(model="gpt-4o", openai_api_key=os.getenv("OPENAI_API_KEY_HR"))
     summary = llm.invoke(summary_prompt)
     return {
         "escalation_summary": summary,

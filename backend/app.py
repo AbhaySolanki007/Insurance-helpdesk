@@ -254,75 +254,75 @@ def login():
                 print("[ERROR] Password mismatch.")
                 return jsonify({"message": "Invalid credentials"}), 401
             # ========== SUPABASE CODE END ==========
-        else:
-            # ========== ORIGINAL POSTGRESQL CODE START ==========
-            # Use local PostgreSQL for authentication
-            conn = DB_POOL.getconn()
-            cur = conn.cursor(cursor_factory=RealDictCursor)
+        # else:
+        #     # ========== ORIGINAL POSTGRESQL CODE START ==========
+        #     # Use local PostgreSQL for authentication
+        #     conn = DB_POOL.getconn()
+        #     cur = conn.cursor(cursor_factory=RealDictCursor)
 
-            query = "SELECT user_id, name, email, passwords FROM users WHERE email = %s"
-            cur.execute(query, (email,))
-            user = cur.fetchone()
+        #     query = "SELECT user_id, name, email, passwords FROM users WHERE email = %s"
+        #     cur.execute(query, (email,))
+        #     user = cur.fetchone()
 
-            if not user:
-                print(f"[ERROR] User not found for email: {email}")
-                return jsonify({"message": "Invalid credentials"}), 401
+        #     if not user:
+        #         print(f"[ERROR] User not found for email: {email}")
+        #         return jsonify({"message": "Invalid credentials"}), 401
 
-            stored_password = user.get("passwords")
-            if stored_password is None:
-                print(f"[ERROR] No password set for user: {email}")
-                return jsonify({"message": "Password not set for this user"}), 401
+        #     stored_password = user.get("passwords")
+        #     if stored_password is None:
+        #         print(f"[ERROR] No password set for user: {email}")
+        #         return jsonify({"message": "Password not set for this user"}), 401
 
-            if password == stored_password:
-                print("[SUCCESS] Login successful.")
-                user_id_to_clear = user["user_id"]
+        #     if password == stored_password:
+        #         print("[SUCCESS] Login successful.")
+        #         user_id_to_clear = user["user_id"]
 
-                # 1. Reset PostgreSQL history on successful login
-                print(
-                    f"[INFO] Clearing PostgreSQL history for user_id: {user_id_to_clear}"
-                )
-                cur.execute(
-                    "UPDATE users SET history = '[]' WHERE user_id = %s",
-                    (user_id_to_clear,),
-                )
-                conn.commit()
+        #         # 1. Reset PostgreSQL history on successful login
+        #         print(
+        #             f"[INFO] Clearing PostgreSQL history for user_id: {user_id_to_clear}"
+        #         )
+        #         cur.execute(
+        #             "UPDATE users SET history = '[]' WHERE user_id = %s",
+        #             (user_id_to_clear,),
+        #         )
+        #         conn.commit()
 
-                # 2. Reset LangGraph checkpoint for the user to ensure a fresh start.
-                try:
-                    print(
-                        f"[INFO] Clearing LangGraph checkpoint for thread_id: {user_id_to_clear}"
-                    )
-                    with sqlite_conn:
-                        sqlite_cursor = sqlite_conn.cursor()
-                        sqlite_cursor.execute(
-                            "DELETE FROM checkpoints WHERE thread_id = ?",
-                            (user_id_to_clear,),
-                        )
-                    print(
-                        f"[SUCCESS] Cleared LangGraph checkpoint for thread_id: {user_id_to_clear}"
-                    )
-                except sqlite3.Error as e:
-                    print(
-                        f"[WARNING] Could not clear LangGraph checkpoint for thread_id {user_id_to_clear}: {e}"
-                    )
+        #         # 2. Reset LangGraph checkpoint for the user to ensure a fresh start.
+        #         try:
+        #             print(
+        #                 f"[INFO] Clearing LangGraph checkpoint for thread_id: {user_id_to_clear}"
+        #             )
+        #             with sqlite_conn:
+        #                 sqlite_cursor = sqlite_conn.cursor()
+        #                 sqlite_cursor.execute(
+        #                     "DELETE FROM checkpoints WHERE thread_id = ?",
+        #                     (user_id_to_clear,),
+        #                 )
+        #             print(
+        #                 f"[SUCCESS] Cleared LangGraph checkpoint for thread_id: {user_id_to_clear}"
+        #             )
+        #         except sqlite3.Error as e:
+        #             print(
+        #                 f"[WARNING] Could not clear LangGraph checkpoint for thread_id {user_id_to_clear}: {e}"
+        #             )
 
-                return (
-                    jsonify(
-                        {
-                            "message": "Login successful",
-                            "user": {
-                                "user_id": user["user_id"],
-                                "name": user["name"],
-                                "email": user["email"],
-                            },
-                        }
-                    ),
-                    200,
-                )
-            else:
-                print("[ERROR] Password mismatch.")
-                return jsonify({"message": "Invalid credentials"}), 401
-            # ========== ORIGINAL POSTGRESQL CODE END ==========
+        #         return (
+        #             jsonify(
+        #                 {
+        #                     "message": "Login successful",
+        #                     "user": {
+        #                         "user_id": user["user_id"],
+        #                         "name": user["name"],
+        #                         "email": user["email"],
+        #                     },
+        #                 }
+        #             ),
+        #             200,
+        #         )
+        #     else:
+        #         print("[ERROR] Password mismatch.")
+        #         return jsonify({"message": "Invalid credentials"}), 401
+        #     # ========== ORIGINAL POSTGRESQL CODE END ==========
 
     except Exception as e:
         print(f"[EXCEPTION] Login error: {str(e)}")
@@ -614,42 +614,42 @@ def get_user_policies(user_id):
 
             return jsonify({"policies": policies_result.data}), 200
             # ========== SUPABASE CODE END ==========
-        else:
-            # ========== ORIGINAL POSTGRESQL CODE START ==========
-            # Use local PostgreSQL
-            conn = DB_POOL.getconn()
-            cursor = conn.cursor(cursor_factory=RealDictCursor)
+        # else:
+        #     # ========== ORIGINAL POSTGRESQL CODE START ==========
+        #     # Use local PostgreSQL
+        #     conn = DB_POOL.getconn()
+        #     cursor = conn.cursor(cursor_factory=RealDictCursor)
 
-            # First check if user exists
-            cursor.execute("SELECT user_id FROM users WHERE user_id = %s", (user_id,))
-            user = cursor.fetchone()
+        #     # First check if user exists
+        #     cursor.execute("SELECT user_id FROM users WHERE user_id = %s", (user_id,))
+        #     user = cursor.fetchone()
 
-            if not user:
-                print(f"❌ [ERROR] User not found with user_id: {user_id}")
-                return jsonify({"error": "User not found"}), 404
+        #     if not user:
+        #         print(f"❌ [ERROR] User not found with user_id: {user_id}")
+        #         return jsonify({"error": "User not found"}), 404
 
-            # Get policy information
-            query = """
-                SELECT policy_id, policy_type, policy_status, markdown_format, issue_date, expiry_date, premium_amount, coverage_amount
-                FROM policies 
-                WHERE user_id = %s
-            """
-            print(f"📝 [DEBUG] Executing query: {query} with user_id: {user_id}")
+        #     # Get policy information
+        #     query = """
+        #         SELECT policy_id, policy_type, policy_status, markdown_format, issue_date, expiry_date, premium_amount, coverage_amount
+        #         FROM policies
+        #         WHERE user_id = %s
+        #     """
+        #     print(f"📝 [DEBUG] Executing query: {query} with user_id: {user_id}")
 
-            cursor.execute(query, (user_id,))
-            policies = cursor.fetchall()
+        #     cursor.execute(query, (user_id,))
+        #     policies = cursor.fetchall()
 
-            print(f"📊 [DEBUG] Query result: {policies}")
+        #     print(f"📊 [DEBUG] Query result: {policies}")
 
-            if not policies:
-                print(f"ℹ️ [INFO] No policies found for user_id: {user_id}")
-                return (
-                    jsonify({"policies": []}),
-                    200,
-                )  # Return empty array instead of 404
+        #     if not policies:
+        #         print(f"ℹ️ [INFO] No policies found for user_id: {user_id}")
+        #         return (
+        #             jsonify({"policies": []}),
+        #             200,
+        #         )  # Return empty array instead of 404
 
-        return jsonify({"policies": policies}), 200
-        # ========== ORIGINAL POSTGRESQL CODE END ==========
+        # return jsonify({"policies": policies}), 200
+        # # ========== ORIGINAL POSTGRESQL CODE END ==========
 
     except Exception as e:
         print(f"❌ [ERROR] Error fetching policies: {str(e)}")

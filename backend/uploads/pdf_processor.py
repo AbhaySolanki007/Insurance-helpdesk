@@ -7,6 +7,7 @@ Handles PDF text extraction, chunking, and vector storage.
 import os
 import uuid
 import hashlib
+import gc
 from typing import List, Dict, Any, Optional
 import PyPDF2
 import pdfplumber
@@ -244,19 +245,33 @@ class PDFProcessor:
 
             print(f"✅ Created {len(chunks)} text chunks")
 
+            # For very large documents, use smaller batch size to avoid memory issues
+            if len(chunks) > 20:
+                print(
+                    f"⚠️  Large document detected ({len(chunks)} chunks). Using smaller batch size for memory optimization."
+                )
+
             # Generate document ID
             doc_id = self.generate_document_id(filename, text)
 
-            # Prepare metadata
+            # Prepare metadata - filter out None values for ChromaDB compatibility
             doc_metadata = {
                 "filename": filename,
                 "document_type": document_type,
-                "user_id": user_id,
                 "total_chunks": len(chunks),
                 "text_length": len(text),
                 "upload_timestamp": str(uuid.uuid4()),  # Simple timestamp
-                **(metadata or {}),
             }
+
+            # Only add user_id if it's not None
+            if user_id is not None:
+                doc_metadata["user_id"] = user_id
+
+            # Add any additional metadata, filtering out None values
+            if metadata:
+                for key, value in metadata.items():
+                    if value is not None:
+                        doc_metadata[key] = value
 
             # Prepare data for ChromaDB
             chunk_ids = [f"{doc_id}_chunk_{i}" for i in range(len(chunks))]
@@ -265,12 +280,50 @@ class PDFProcessor:
                 for i in range(len(chunks))
             ]
 
-            # Store in ChromaDB
-            self.collection.add(
-                documents=chunks, metadatas=chunk_metadata, ids=chunk_ids
+            # Store in ChromaDB with batch processing to avoid memory issues
+            # Use smaller batch size for large documents
+            if len(chunks) > 20:
+                batch_size = 3  # Smaller batches for large documents
+            elif len(chunks) > 10:
+                batch_size = 4  # Medium batches for medium documents
+            else:
+                batch_size = 5  # Normal batches for small documents
+
+            total_batches = (len(chunks) + batch_size - 1) // batch_size
+
+            print(
+                f"📦 Processing {len(chunks)} chunks in {total_batches} batches of {batch_size}"
             )
 
-            print(f"✅ Successfully stored {len(chunks)} chunks in ChromaDB")
+            for batch_idx in range(total_batches):
+                start_idx = batch_idx * batch_size
+                end_idx = min(start_idx + batch_size, len(chunks))
+
+                batch_chunks = chunks[start_idx:end_idx]
+                batch_metadata = chunk_metadata[start_idx:end_idx]
+                batch_ids = chunk_ids[start_idx:end_idx]
+
+                try:
+                    self.collection.add(
+                        documents=batch_chunks, metadatas=batch_metadata, ids=batch_ids
+                    )
+                    print(
+                        f"✅ Batch {batch_idx + 1}/{total_batches}: Stored {len(batch_chunks)} chunks"
+                    )
+
+                    # Clear batch data to free memory
+                    del batch_chunks, batch_metadata, batch_ids
+
+                    # Force garbage collection between batches for large documents
+                    if len(chunks) > 15:
+                        gc.collect()
+
+                except Exception as batch_error:
+                    print(f"❌ Error in batch {batch_idx + 1}: {batch_error}")
+                    # Continue with next batch instead of failing completely
+                    continue
+
+            print(f"✅ Successfully processed all {len(chunks)} chunks in ChromaDB")
 
             return {
                 "success": True,
@@ -301,11 +354,11 @@ class PDFProcessor:
             List of relevant document chunks with metadata
         """
         try:
-            # Prepare where clause for filtering
+            # Prepare where clause for filtering - only add non-None values
             where_clause = {}
-            if user_id:
+            if user_id is not None:
                 where_clause["user_id"] = user_id
-            if document_type:
+            if document_type is not None:
                 where_clause["document_type"] = document_type
 
             # Search in ChromaDB

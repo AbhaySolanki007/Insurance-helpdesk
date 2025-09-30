@@ -8,7 +8,9 @@ import traceback
 from typing import List
 from langchain.agents import AgentExecutor, create_react_agent
 from langchain_google_genai import GoogleGenerativeAI
-from langchain_groq import ChatGroq
+
+# from langchain_groq import ChatGroq
+from langchain_openai import ChatOpenAI
 from langchain.prompts import PromptTemplate
 
 from ai.tools import create_tools
@@ -35,9 +37,16 @@ def create_level2_agent_executor(support_chain):
     #     max_retries=3,
     # )
 
-    llm = ChatGroq(
-        model="llama3-70b-8192",
-        groq_api_key=os.getenv("GROQ_API_KEY"),
+    # llm = ChatGroq(
+    #     model="llama3-70b-8192",
+    #     groq_api_key=os.getenv("GROQ_API_KEY"),
+    #     temperature=0.6,
+    #     max_retries=3,
+    # )
+
+    llm = ChatOpenAI(
+        model="gpt-4o",
+        openai_api_key=os.getenv("OPENAI_API_KEY_HR"),
         temperature=0.6,
         max_retries=3,
     )
@@ -96,30 +105,68 @@ Follow these rules exactly for any user data update request.
     - Action Input: {{"user_id": "{user_id}", "phone": "987-654-3210"}}
 
 **Workflow 3: PDF Document Queries**
-Handle questions about the user's uploaded PDF documents.
+Handle questions about the user's uploaded PDF documents using intelligent RAG.
 
-1.  **Identify Document Query:** When a user asks about a specific document (e.g., "explain the deductible in my policy.pdf"), use the `query_pdf_document` tool.
-2.  **Extract Information:** Parse the user's request to identify:
+1.  **Understand User Intent:** Analyze what the user is asking for:
+    - Are they asking for a summary/overview?
+    - Are they looking for specific information?
+    - Are they asking about particular concepts or terms?
+    - Do they want to understand the document's purpose?
+
+2.  **Extract Document Information:** Parse the user's request to identify:
     - The filename (e.g., "policy.pdf", "contract.pdf")
-    - The specific question or term they want explained
-3.  **Use the Tool:** Call `query_pdf_document` with:
-    - user_id: The current user's ID
+    - The user's natural question or request
+
+3.  **Use Intelligent RAG:** Call `query_pdf_document` with:
+    - user_id: The current user's ID (for tool compatibility)
     - filename: The specific PDF filename mentioned
-    - query: The question or term to search for
-4.  **Provide Contextual Answer:** Use the search results to provide a clear, helpful explanation based on the document content.
+    - query: Use the user's natural language query as-is (the semantic search will handle understanding)
+
+4.  **Analyze and Synthesize:** After getting results from the tool:
+    - Review the retrieved content sections
+    - Understand the relevance and context
+    - Synthesize a comprehensive response based on the user's intent
+
+5.  **CRITICAL - Response After Tool Usage:** After the `query_pdf_document` tool returns results, you MUST provide your response using the "Final Answer" format:
+    - Thought: [Brief reasoning about the tool results and user intent]
+    - Final Answer: [Your comprehensive response based on the PDF content and user's question]
+    - **NEVER** provide conversational responses without the proper format
 
 **PDF QUERY EXAMPLES:**
 - User: "What does my policy.pdf say about deductibles?"
   - Action: query_pdf_document
-  - Action Input: {{"user_id": "{user_id}", "filename": "policy.pdf", "query": "deductibles"}}
+  - Action Input: {{"user_id": "{user_id}", "filename": "policy.pdf", "query": "What does my policy.pdf say about deductibles?"}}
+  - **After tool returns results, your response MUST be:**
+  - Thought: The tool has returned information about deductibles from the policy document. I will now provide a comprehensive answer based on this information.
+  - Final Answer: Based on your policy.pdf, [provide detailed explanation of deductibles found in the document]
 
 - User: "Explain the coverage limits in my contract.pdf"
   - Action: query_pdf_document  
-  - Action Input: {{"user_id": "{user_id}", "filename": "contract.pdf", "query": "coverage limits"}}
+  - Action Input: {{"user_id": "{user_id}", "filename": "contract.pdf", "query": "Explain the coverage limits in my contract.pdf"}}
+  - **After tool returns results, your response MUST be:**
+  - Thought: The tool has retrieved information about coverage limits from the contract. I will summarize this for the user.
+  - Final Answer: According to your contract.pdf, [provide detailed explanation of coverage limits]
 
 - User: "I want to understand the premium calculation in my policy.pdf"
   - Action: query_pdf_document
-  - Action Input: {{"user_id": "{user_id}", "filename": "policy.pdf", "query": "premium calculation"}}
+  - Action Input: {{"user_id": "{user_id}", "filename": "policy.pdf", "query": "I want to understand the premium calculation in my policy.pdf"}}
+  - **After tool returns results, your response MUST be:**
+  - Thought: The tool has found information about premium calculations in the policy. I will explain this to the user.
+  - Final Answer: Your policy.pdf explains premium calculation as follows: [provide detailed explanation]
+
+- User: "What is this document about?" or "Give me a summary of web_page (1).pdf"
+  - Action: query_pdf_document
+  - Action Input: {{"user_id": "{user_id}", "filename": "web_page (1).pdf", "query": "What is this document about?"}}
+  - **After tool returns results, your response MUST be:**
+  - Thought: The tool has retrieved content from the document. I will now provide a comprehensive summary based on the information found.
+  - Final Answer: Based on the content in web_page (1).pdf, here's a summary: [provide comprehensive summary based on the retrieved content]
+
+- User: "Can you tell me about the main features in my manual.pdf?"
+  - Action: query_pdf_document
+  - Action Input: {{"user_id": "{user_id}", "filename": "manual.pdf", "query": "Can you tell me about the main features in my manual.pdf?"}}
+  - **After tool returns results, your response MUST be:**
+  - Thought: The tool has found information about main features in the manual. I will explain these features to the user.
+  - Final Answer: Based on your manual.pdf, the main features include: [provide detailed explanation of features found]
 
 You have access to the following tools:
 {tools}
@@ -134,6 +181,11 @@ You have access to the following tools:
     Action: [one of {tool_names}]
     Action Input: [The input for the action]
 
+*   **RULE 3: After using ANY tool (including query_pdf_document):** Your response MUST strictly follow this format:
+    Thought: [Brief reasoning about the tool results and what you will provide.]
+    Final Answer: [Your comprehensive response based on the tool results.]
+    
+*   **CRITICAL:** NEVER provide conversational responses without the proper format. ALWAYS use "Final Answer:" after tool usage.
 *   **NEVER mix these formats.**
 
 Begin!

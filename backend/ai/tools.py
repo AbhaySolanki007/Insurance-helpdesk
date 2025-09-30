@@ -78,7 +78,7 @@ def update_user_data_with_approval(user_id: str, updates: dict) -> str:
 
 def query_specific_document(user_id: str, filename: str, query: str) -> str:
     """
-    Search for information in a specific PDF document uploaded by the user.
+    Search for information in a specific PDF document uploaded by the user using intelligent RAG.
 
     Args:
         user_id: The user ID to search documents for
@@ -96,8 +96,9 @@ def query_specific_document(user_id: str, filename: str, query: str) -> str:
         sys.path.append(os.path.join(os.path.dirname(__file__), "..", "uploads"))
         from pdf_processor import pdf_processor
 
-        # Search the user's documents with filename filter
-        results = pdf_processor.search_documents(query=query, user_id=user_id, limit=5)
+        # Use the user's query directly for semantic search
+        # Search all documents in the database (no user filtering for simplicity)
+        results = pdf_processor.search_documents(query=query, user_id=None, limit=15)
 
         # Filter results to only include the specified filename
         filtered_results = []
@@ -108,9 +109,37 @@ def query_specific_document(user_id: str, filename: str, query: str) -> str:
         if not filtered_results:
             return f"No relevant information found in '{filename}' for the query: '{query}'. Please make sure the filename is correct and the document has been uploaded."
 
+        # Remove duplicates based on content similarity
+        unique_results = []
+        for result in filtered_results:
+            is_duplicate = False
+            for unique_result in unique_results:
+                # Simple similarity check - if content is very similar, skip
+                if (
+                    len(
+                        set(result["content"].split())
+                        & set(unique_result["content"].split())
+                    )
+                    / max(
+                        len(result["content"].split()),
+                        len(unique_result["content"].split()),
+                    )
+                    > 0.8
+                ):
+                    is_duplicate = True
+                    break
+            if not is_duplicate:
+                unique_results.append(result)
+
+        # Sort by relevance (lower distance = higher relevance)
+        unique_results.sort(key=lambda x: x["distance"])
+
+        # Take top 5 most relevant results
+        top_results = unique_results[:5]
+
         # Format the results
         formatted_results = []
-        for i, result in enumerate(filtered_results, 1):
+        for i, result in enumerate(top_results, 1):
             content = result["content"]
             relevance = (
                 1 - result["distance"]
@@ -121,7 +150,7 @@ def query_specific_document(user_id: str, filename: str, query: str) -> str:
             )
 
         return (
-            f"Found {len(filtered_results)} relevant sections in '{filename}':\n\n"
+            f"Found {len(top_results)} relevant sections in '{filename}':\n\n"
             + "\n".join(formatted_results)
         )
 
@@ -236,7 +265,7 @@ def create_tools(support_chain, tool_names: List[str]):
                 lambda x: query_specific_document(x.user_id, x.filename, x.query),
                 PDFDocumentQueryInput,
             ),
-            description="Use this to search for information in a specific PDF document uploaded by the user. Input requires user_id, filename (e.g., 'policy.pdf'), and query.",
+            description="Use this to intelligently search and retrieve information from a specific PDF document. The tool uses semantic search to understand the user's query and find relevant content from all uploaded documents. Input requires user_id, filename (e.g., 'policy.pdf'), and the user's natural language query (e.g., 'What is this document about?', 'Explain the deductibles', 'Give me a summary').",
         ),
     }
 

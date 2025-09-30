@@ -52,6 +52,7 @@ import sqlite3
 import traceback
 import threading
 import pickle
+from datetime import datetime
 from typing import Dict, Any
 
 from flask import Flask, request, jsonify
@@ -97,7 +98,9 @@ level2_agent_executor = create_level2_agent_executor(support_chain)
 
 
 # Manually create a persistent connection to the SQLite database Langgraph.
-sqlite_conn = sqlite3.connect("checkpoints.sqlite", check_same_thread=False)
+# Use Railway path if available, otherwise use local path
+checkpoints_path = config.CHECKPOINTS_PATH
+sqlite_conn = sqlite3.connect(checkpoints_path, check_same_thread=False)
 # Instantiate the checkpointer by passing the connection object to its constructor.
 memory = SqliteSaver(conn=sqlite_conn)
 
@@ -828,6 +831,61 @@ def upload_pdf():
 
 
 # ========== PDF UPLOAD ENDPOINTS END ==========
+
+
+@app.route("/health", methods=["GET"])
+def health_check():
+    """
+    Health check endpoint for Railway deployment.
+    """
+    try:
+        # Check if essential components are working
+        health_status = {
+            "status": "healthy",
+            "timestamp": str(datetime.now()),
+            "services": {
+                "flask": "ok",
+                "database": "unknown",  # Will be checked if needed
+                "chromadb": "unknown",  # Will be checked if needed
+            },
+        }
+
+        # Try to check database connection (optional)
+        try:
+            if USE_SUPABASE and SUPABASE_CLIENT:
+                # Simple Supabase health check
+                result = (
+                    SUPABASE_CLIENT.table("users").select("user_id").limit(1).execute()
+                )
+                health_status["services"]["database"] = "ok"
+            else:
+                health_status["services"]["database"] = "not_configured"
+        except Exception as e:
+            health_status["services"]["database"] = f"error: {str(e)[:50]}"
+
+        # Try to check ChromaDB (optional)
+        try:
+            # Simple ChromaDB health check
+            if hasattr(support_chain, "faq_vectorstore"):
+                health_status["services"]["chromadb"] = "ok"
+            else:
+                health_status["services"]["chromadb"] = "not_initialized"
+        except Exception as e:
+            health_status["services"]["chromadb"] = f"error: {str(e)[:50]}"
+
+        return jsonify(health_status), 200
+
+    except Exception as e:
+        return (
+            jsonify(
+                {
+                    "status": "unhealthy",
+                    "error": str(e),
+                    "timestamp": str(datetime.now()),
+                }
+            ),
+            500,
+        )
 
 
 if __name__ == "__main__":

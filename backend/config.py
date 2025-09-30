@@ -24,8 +24,37 @@ PORT = int(os.getenv("PORT", "8001"))
 
 # Vector Store Paths
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-FAQ_DB_PATH = os.getenv("FAQ_DB_PATH", os.path.join(BASE_DIR, "faq_database"))
-PDF_DB_PATH = os.getenv("PDF_DB_PATH", os.path.join(BASE_DIR, "uploads", "pdf_vectors"))
+
+# Railway-specific data directory for persistent storage
+RAILWAY_DATA_DIR = "/app/data"
+
+# Use Railway data directory if running in container, otherwise use local paths
+if os.path.exists(RAILWAY_DATA_DIR):
+    # Running in Railway container
+    FAQ_DB_PATH = os.getenv(
+        "FAQ_DB_PATH", os.path.join(RAILWAY_DATA_DIR, "faq_database")
+    )
+    PDF_DB_PATH = os.getenv(
+        "PDF_DB_PATH", os.path.join(RAILWAY_DATA_DIR, "pdf_vectors")
+    )
+    EMBEDDING_MODELS_PATH = os.getenv(
+        "EMBEDDING_MODELS_PATH", os.path.join(RAILWAY_DATA_DIR, "embedding_models")
+    )
+    CHECKPOINTS_PATH = os.getenv(
+        "CHECKPOINTS_PATH", os.path.join(RAILWAY_DATA_DIR, "checkpoints.sqlite")
+    )
+else:
+    # Running locally
+    FAQ_DB_PATH = os.getenv("FAQ_DB_PATH", os.path.join(BASE_DIR, "faq_database"))
+    PDF_DB_PATH = os.getenv(
+        "PDF_DB_PATH", os.path.join(BASE_DIR, "uploads", "pdf_vectors")
+    )
+    EMBEDDING_MODELS_PATH = os.getenv(
+        "EMBEDDING_MODELS_PATH", os.path.join(BASE_DIR, "ai", "Embedding_models")
+    )
+    CHECKPOINTS_PATH = os.getenv(
+        "CHECKPOINTS_PATH", os.path.join(BASE_DIR, "checkpoints.sqlite")
+    )
 
 FAQ_COLLECTION_NAME = os.getenv("FAQ_COLLECTION_NAME", "faq_collection")
 PDF_COLLECTION_NAME = os.getenv("PDF_COLLECTION_NAME", "pdf_documents")
